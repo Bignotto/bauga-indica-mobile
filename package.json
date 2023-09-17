@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@clerk/clerk-expo": "^0.19.1",
+    "@expo-google-fonts/bitter": "^0.2.3",
     "@expo-google-fonts/inter": "^0.2.3",
+    "@expo-google-fonts/roboto-slab": "^0.2.3",
     "@gluestack-ui/themed": "^0.1.33",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
