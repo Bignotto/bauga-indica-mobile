@@ -1,4 +1,5 @@
 import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
+import AppLogo from "@components/AppLogo";
 import { Box, Button, Divider, Text } from "@gluestack-ui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -18,6 +19,7 @@ export default function Home() {
       alignItems="center"
       backgroundColor="$trueGray300"
     >
+      <AppLogo size="lg" />
       <Text size="3xl" fontFamily="RobotoSlab_700Bold">
         This is template version 0
       </Text>
