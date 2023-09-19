@@ -1,14 +1,16 @@
 import { ClerkProvider } from "@clerk/clerk-expo";
 import {
+  RobotoSlab_300Light,
   RobotoSlab_400Regular,
   RobotoSlab_700Bold,
+  RobotoSlab_900Black,
   useFonts,
 } from "@expo-google-fonts/roboto-slab";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
 import Routes from "@routes/index";
 
 import * as SecureStore from "expo-secure-store";
-import { config } from "./gluestack-ui.config";
+import { ThemeProvider } from "styled-components";
+import DefaultTheme from "./src/styles/DefaultTheme";
 
 const tokenCache = {
   async getToken(key: string) {
@@ -31,6 +33,8 @@ export default function App() {
   const CLERK_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   let [fontsLoaded, fontError] = useFonts({
+    RobotoSlab_300Light,
+    RobotoSlab_900Black,
     RobotoSlab_400Regular,
     RobotoSlab_700Bold,
   });
@@ -40,10 +44,10 @@ export default function App() {
   }
 
   return (
-    <GluestackUIProvider config={config}>
+    <ThemeProvider theme={DefaultTheme}>
       <ClerkProvider publishableKey={`${CLERK_KEY}`} tokenCache={tokenCache}>
         <Routes />
       </ClerkProvider>
-    </GluestackUIProvider>
+    </ThemeProvider>
   );
 }

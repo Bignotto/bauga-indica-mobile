@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Box, Text } from "@gluestack-ui/themed";
+import { Container, Text } from "./styled";
 
 type AppLogoProps = {
   size?: "sm" | "md" | "lg";
@@ -12,6 +12,14 @@ export default function AppLogo({ size = "md" }: AppLogoProps) {
   const lineHeight = size === "lg" ? 60 : size === "md" ? 40 : undefined;
 
   return (
+    <Container>
+      <Text>Bauga Indica</Text>
+      <AntDesign name="like2" size={iconSize} color="#404040" />
+    </Container>
+  );
+
+  /*
+  return (
     <Box flexDirection="row" alignItems="center">
       <Text
         fontFamily="RobotoSlab_700Bold"
@@ -23,4 +31,5 @@ export default function AppLogo({ size = "md" }: AppLogoProps) {
       <AntDesign name="like2" size={iconSize} color="#404040" />
     </Box>
   );
+  */
 }
