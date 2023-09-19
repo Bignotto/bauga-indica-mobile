@@ -1,4 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
+import { useTheme } from "styled-components/native";
 import { Container, Text } from "./styled";
 
 type AppLogoProps = {
@@ -11,25 +12,12 @@ export default function AppLogo({ size = "md" }: AppLogoProps) {
   const iconSize = size === "lg" ? 100 : size === "md" ? 60 : 30;
   const lineHeight = size === "lg" ? 60 : size === "md" ? 40 : undefined;
 
+  const theme = useTheme();
+
   return (
     <Container>
       <Text>Bauga Indica</Text>
-      <AntDesign name="like2" size={iconSize} color="#404040" />
+      <AntDesign name="like2" size={iconSize} color={theme.colors.text} />
     </Container>
   );
-
-  /*
-  return (
-    <Box flexDirection="row" alignItems="center">
-      <Text
-        fontFamily="RobotoSlab_700Bold"
-        size={fontSize}
-        lineHeight={lineHeight}
-      >
-        Bauga{size === "sm" ? ` ` : `\n`}Indica
-      </Text>
-      <AntDesign name="like2" size={iconSize} color="#404040" />
-    </Box>
-  );
-  */
 }
