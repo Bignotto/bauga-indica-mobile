@@ -9,6 +9,7 @@ import {
 import Routes from "@routes/index";
 
 import * as SecureStore from "expo-secure-store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
 import DefaultTheme from "./src/styles/DefaultTheme";
 
@@ -44,10 +45,12 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={DefaultTheme}>
-      <ClerkProvider publishableKey={`${CLERK_KEY}`} tokenCache={tokenCache}>
-        <Routes />
-      </ClerkProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider theme={DefaultTheme}>
+        <ClerkProvider publishableKey={`${CLERK_KEY}`} tokenCache={tokenCache}>
+          <Routes />
+        </ClerkProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

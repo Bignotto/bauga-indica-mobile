@@ -14,7 +14,7 @@ export function PublicRoutes() {
     >
       <Screen name="Home" component={Home} options={{ title: "Home Screen" }} />
       <Screen
-        name="Google"
+        name="OAuth"
         component={OAuthSignIn}
         options={{ title: "OAuth Login" }}
       />

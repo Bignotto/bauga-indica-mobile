@@ -8,6 +8,10 @@ export const HomeContainer = styled.View`
   justify-content: center;
 `;
 
+export const SearchInputWrapper = styled.View`
+  width: 80%;
+`;
+
 export const CenterScreen = styled.View`
   background-color: red;
   justify-content: center;

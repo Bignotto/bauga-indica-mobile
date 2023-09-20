@@ -1,10 +1,10 @@
 export default {
   colors: {
-    secondary: "#0987A0",
-    secondary_dark: "#065666",
+    primary: "#4299E1",
+    primary_dark: "#2C5282",
 
-    primary: "#FF872C",
-    primary_dark: "rgba(255,135,44,0.3)",
+    secondary: "#FF872C",
+    secondary_dark: "rgba(255,135,44,0.3)",
 
     positive: "#12A454",
     positive_light: "rgba(18,164,84,.1)",
@@ -16,8 +16,9 @@ export default {
     text: "#1A202C",
     text_dark: "#0F111A",
     text_gray: "#4A5568",
-    shape: "#434343",
     text_disabled: "#718096",
+    shape: "#E2E8F0",
+    border: "#4A5568",
   },
 
   fonts: {
