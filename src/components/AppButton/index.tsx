@@ -1,9 +1,19 @@
+import { RectButtonProps } from "react-native-gesture-handler";
 import { ButtonContainer, ButtonText } from "./styles";
 
-export default function AppButton() {
+type AppButtonProps = RectButtonProps & {
+  title: string;
+  variant?: "dark" | "solid" | "light";
+};
+
+export default function AppButton({
+  title,
+  variant = "solid",
+  ...rest
+}: AppButtonProps) {
   return (
-    <ButtonContainer>
-      <ButtonText>Procurar</ButtonText>
+    <ButtonContainer {...rest}>
+      <ButtonText>{title}</ButtonText>
     </ButtonContainer>
   );
 }

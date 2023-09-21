@@ -6,10 +6,13 @@ export const HomeContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
   align-items: center;
   justify-content: center;
+  padding: 24px;
 `;
 
 export const SearchInputWrapper = styled.View`
-  width: 80%;
+  width: 100%;
+  margin-top: 32px;
+  gap: 16px;
 `;
 
 export const CenterScreen = styled.View`

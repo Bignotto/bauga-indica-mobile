@@ -5,6 +5,7 @@ import AppLogo from "@components/AppLogo";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
+import { useState } from "react";
 import { HomeContainer, SearchInputWrapper } from "./styles";
 
 export default function Home() {
@@ -12,13 +13,25 @@ export default function Home() {
   const { user } = useUser();
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [searchText, setSearchText] = useState("");
+
+  async function handleSearch() {
+    //TODO: Log search
+
+    navigation.navigate("Search", { searchText });
+  }
 
   return (
     <HomeContainer>
       <AppLogo size="lg" />
       <SearchInputWrapper>
-        <AppInput label="Procure" placeholder="O que você procura?" />
-        <AppButton />
+        <AppInput
+          label="Procure"
+          placeholder="O que você procura?"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+        <AppButton title="Procurar" variant={"solid"} onPress={handleSearch} />
       </SearchInputWrapper>
     </HomeContainer>
   );
