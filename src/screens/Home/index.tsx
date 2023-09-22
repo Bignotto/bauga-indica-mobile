@@ -18,6 +18,7 @@ export default function Home() {
   async function handleSearch() {
     //TODO: Log search
 
+    if (searchText.length === 0) return null;
     navigation.navigate("Search", { searchText });
   }
 
