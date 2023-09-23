@@ -19,6 +19,8 @@ export default {
     text_disabled: "#718096",
     shape: "#E2E8F0",
     border: "#4A5568",
+
+    white: "#FFFFFF",
   },
 
   fonts: {

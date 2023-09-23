@@ -1,10 +1,9 @@
 import AppLogo from "@components/AppLogo";
-import AppText from "@components/AppText";
 import { useRoute } from "@react-navigation/native";
 import { api } from "@services/api";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
 import { Service } from "src/@types/services/Service";
+import ResultList from "./ResultList";
 import { HeaderWrapper, ScreenContainer } from "./styles";
 
 type Params = {
@@ -35,12 +34,16 @@ export default function SearchResults() {
       <HeaderWrapper>
         <AppLogo size="sm" />
       </HeaderWrapper>
-      {services.map((s) => (
-        <View key={s.id}>
-          <AppText bold>{s.title}</AppText>
-          <AppText>{s.description}</AppText>
-        </View>
-      ))}
+      <ResultList itens={services} />
+      {
+        //TODO: implement service list card
+        // services.map((s) => (
+        //   <View key={s.id}>
+        //     <AppText bold>{s.title}</AppText>
+        //     <AppText>{s.description}</AppText>
+        //   </View>
+        // ))
+      }
     </ScreenContainer>
   );
 }
