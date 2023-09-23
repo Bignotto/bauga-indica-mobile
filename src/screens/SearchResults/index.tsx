@@ -1,4 +1,5 @@
 import AppLogo from "@components/AppLogo";
+import AppText from "@components/AppText";
 import { useRoute } from "@react-navigation/native";
 import { api } from "@services/api";
 import React, { useEffect, useState } from "react";
@@ -29,21 +30,15 @@ export default function SearchResults() {
     loadSearchResults();
   });
 
+  const servicesFound = services.length;
+
   return (
     <ScreenContainer>
       <HeaderWrapper>
         <AppLogo size="sm" />
       </HeaderWrapper>
+      <AppText>Encontrados {servicesFound} serviços</AppText>
       <ResultList itens={services} />
-      {
-        //TODO: implement service list card
-        // services.map((s) => (
-        //   <View key={s.id}>
-        //     <AppText bold>{s.title}</AppText>
-        //     <AppText>{s.description}</AppText>
-        //   </View>
-        // ))
-      }
     </ScreenContainer>
   );
 }

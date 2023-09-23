@@ -24,7 +24,14 @@ export const ContentWrapper = styled.View`
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
+`;
+
+export const ProviderPriceWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 `;
 
 export const TagWrapper = styled.View`
@@ -40,6 +47,7 @@ export const Tag = styled.View`
   padding-left: 8px;
   padding-right: 12px;
 `;
+
 export const TagText = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bold};
   font-size: ${RFValue(10)}px;
