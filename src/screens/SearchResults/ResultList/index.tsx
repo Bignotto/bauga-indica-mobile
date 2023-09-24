@@ -1,5 +1,8 @@
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import { Service } from "src/@types/services/Service";
 import { useTheme } from "styled-components";
 import {
@@ -21,8 +24,10 @@ interface ResultListProps {
 }
 
 export default function ResultList({ itens }: ResultListProps) {
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
   async function handleServiceDetails(serviceId: string) {
-    console.log({ serviceId });
+    navigation.navigate("ServiceDetails", { serviceId });
   }
 
   const theme = useTheme();

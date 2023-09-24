@@ -12,4 +12,7 @@ export const ScreenContainer = styled.View`
 
 export const HeaderWrapper = styled.View`
   margin-bottom: 16px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
 `;

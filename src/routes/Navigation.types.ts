@@ -4,4 +4,7 @@ export type StackParamList = {
   Search: {
     searchText: string;
   };
+  ServiceDetails: {
+    serviceId: string;
+  };
 };

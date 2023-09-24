@@ -35,9 +35,9 @@ export default function SearchResults() {
   return (
     <ScreenContainer>
       <HeaderWrapper>
-        <AppLogo size="sm" />
+        <AppLogo size="md" />
+        <AppText>Encontrados {servicesFound} serviços</AppText>
       </HeaderWrapper>
-      <AppText>Encontrados {servicesFound} serviços</AppText>
       <ResultList itens={services} />
     </ScreenContainer>
   );
