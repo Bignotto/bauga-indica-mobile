@@ -1,11 +1,12 @@
 import AppLogo from "@components/AppLogo";
+import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import { useRoute } from "@react-navigation/native";
 import { api } from "@services/api";
 import React, { useEffect, useState } from "react";
 import { Service } from "src/@types/services/Service";
 import ResultList from "./ResultList";
-import { HeaderWrapper, ScreenContainer } from "./styles";
+import { HeaderWrapper } from "./styles";
 
 type Params = {
   searchText: string;
@@ -33,12 +34,12 @@ export default function SearchResults() {
   const servicesFound = services.length;
 
   return (
-    <ScreenContainer>
+    <AppScreenContainer>
       <HeaderWrapper>
         <AppLogo size="md" />
         <AppText>Encontrados {servicesFound} serviços</AppText>
       </HeaderWrapper>
       <ResultList itens={services} />
-    </ScreenContainer>
+    </AppScreenContainer>
   );
 }

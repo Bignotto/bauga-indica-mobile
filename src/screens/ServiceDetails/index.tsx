@@ -1,7 +1,7 @@
+import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import { useRoute } from "@react-navigation/native";
 import React from "react";
-import { ScreenContainer } from "./styles";
 
 type Params = {
   serviceId: string;
@@ -12,8 +12,8 @@ export default function ServiceDetails() {
   const { serviceId } = route.params as Params;
 
   return (
-    <ScreenContainer>
+    <AppScreenContainer>
       <AppText>Service id {serviceId}</AppText>
-    </ScreenContainer>
+    </AppScreenContainer>
   );
 }
