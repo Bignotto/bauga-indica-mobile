@@ -21,6 +21,10 @@ interface ResultListProps {
 }
 
 export default function ResultList({ itens }: ResultListProps) {
+  async function handleServiceDetails(serviceId: string) {
+    console.log({ serviceId });
+  }
+
   const theme = useTheme();
   return (
     <ResultListWrapper>
@@ -54,7 +58,10 @@ export default function ResultList({ itens }: ResultListProps) {
                 {`R$ ${item.value.toFixed(2)}`}
               </AppText>
             </ProviderPriceWrapper>
-            <AppButton title="Ver detalhes" />
+            <AppButton
+              title="Ver detalhes"
+              onPress={() => handleServiceDetails(item.id)}
+            />
           </ContentWrapper>
         </ResultItem>
       ))}
