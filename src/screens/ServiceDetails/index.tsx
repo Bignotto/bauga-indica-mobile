@@ -1,5 +1,5 @@
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppText from "@components/AppText";
+import AppService from "@components/AppService";
 import { useRoute } from "@react-navigation/native";
 import { api } from "@services/api";
 import React, { useEffect, useState } from "react";
@@ -37,12 +37,7 @@ export default function ServiceDetails() {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <>
-          <AppText size="lg" bold>
-            {service?.title}
-          </AppText>
-          <AppText>{service?.description}</AppText>
-        </>
+        <AppService item={service!} buttonType="contact" />
       )}
     </AppScreenContainer>
   );
