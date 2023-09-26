@@ -8,17 +8,13 @@ export type Service = {
   validTo: Date;
   validFrom: Date;
   createdAt: Date;
-  updatedAt: Date;
-  providerId: Date;
+  providerId: string;
   provider: {
     id: string;
     name: string;
     email: string;
     phone: string;
     userType: string;
-    phoneConfirmed: true;
-    emailConfirmed: false;
-    emailVerified: null;
     image: string;
     createdAt: Date;
     updatedAt: Date;

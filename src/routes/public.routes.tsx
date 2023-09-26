@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@screens/Home";
+import NewContract from "@screens/NewContract";
 import OAuthSignIn from "@screens/OAuthSignIn";
 import SearchResults from "@screens/SearchResults";
 import ServiceDetails from "@screens/ServiceDetails";
@@ -17,6 +18,7 @@ export function PublicRoutes() {
       <Screen name="Home" component={Home} />
       <Screen name="Search" component={SearchResults} />
       <Screen name="ServiceDetails" component={ServiceDetails} />
+      <Screen name="NewContract" component={NewContract} />
       <Screen name="OAuth" component={OAuthSignIn} />
     </Navigator>
   );

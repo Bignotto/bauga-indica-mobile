@@ -37,7 +37,7 @@ export default function ServiceDetails() {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <AppService item={service!} buttonType="contact" />
+        <AppService item={service!} buttonType="contact" showButton />
       )}
     </AppScreenContainer>
   );

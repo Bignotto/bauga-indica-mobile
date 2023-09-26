@@ -1,3 +1,5 @@
+import { Service } from "src/@types/services/Service";
+
 export type StackParamList = {
   Home: {} | undefined;
   OAuth: {} | undefined;
@@ -6,5 +8,8 @@ export type StackParamList = {
   };
   ServiceDetails: {
     serviceId: string;
+  };
+  NewContract: {
+    serviceData: Service;
   };
 };
