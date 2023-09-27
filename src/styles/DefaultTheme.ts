@@ -18,6 +18,8 @@ export default {
     text_gray: "#4A5568",
     text_disabled: "#718096",
     shape: "#E2E8F0",
+    attention: "#f1c47b",
+
     border: "#4A5568",
 
     white: "#FFFFFF",

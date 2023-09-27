@@ -29,7 +29,6 @@ export default function Home() {
         <AppLogo size="lg" />
         <SearchInputWrapper>
           <AppInput
-            label="Procure"
             placeholder="O que você procura?"
             value={searchText}
             onChangeText={setSearchText}
