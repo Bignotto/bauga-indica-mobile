@@ -1,4 +1,3 @@
-import { ClerkProvider } from "@clerk/clerk-expo";
 import {
   RobotoSlab_300Light,
   RobotoSlab_400Regular,
@@ -7,8 +6,10 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto-slab";
 import Routes from "@routes/index";
-
 import * as SecureStore from "expo-secure-store";
+
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { AppAuthProvider } from "@hooks/AppAuthContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "styled-components";
 import DefaultTheme from "./src/styles/DefaultTheme";
@@ -31,7 +32,7 @@ const tokenCache = {
 };
 
 export default function App() {
-  const CLERK_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const CLERK_KEY = `${process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}`;
 
   let [fontsLoaded, fontError] = useFonts({
     RobotoSlab_300Light,
@@ -48,7 +49,9 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider theme={DefaultTheme}>
         <ClerkProvider publishableKey={`${CLERK_KEY}`} tokenCache={tokenCache}>
-          <Routes />
+          <AppAuthProvider>
+            <Routes />
+          </AppAuthProvider>
         </ClerkProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

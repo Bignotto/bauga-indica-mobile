@@ -1,8 +1,9 @@
 import { useOAuth } from "@clerk/clerk-expo";
+import AppButton from "@components/AppButton";
+import AppScreenContainer from "@components/AppScreenContainer";
 import { useWarmUpBrowser } from "@hooks/warmUpBrowser";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
-import { Container, Text } from "./styles";
 
 export default function OAuthSignIn() {
   useWarmUpBrowser();
@@ -27,8 +28,8 @@ export default function OAuthSignIn() {
   }, []);
 
   return (
-    <Container>
-      <Text>OAuth Sign In</Text>
-    </Container>
+    <AppScreenContainer>
+      <AppButton title="Login com Google" onPress={handleGoogle} />
+    </AppScreenContainer>
   );
 }
