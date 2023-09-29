@@ -13,6 +13,7 @@
     "@expo-google-fonts/bitter": "^0.2.3",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/roboto-slab": "^0.2.3",
+    "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "@types/react": "~18.2.14",

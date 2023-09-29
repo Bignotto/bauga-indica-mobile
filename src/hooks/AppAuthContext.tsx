@@ -23,8 +23,9 @@ type SessionUser = {
 type AuthContextData = {
   appSignIn(): Promise<void>;
   appSignOut(): Promise<void>;
-  status: "authenticated" | "loading" | "unauthenticated";
+  status: "authenticated" | "unauthenticated";
   session: SessionUser | undefined;
+  isLoading: boolean;
 };
 
 const AppAuthContext = createContext({} as AuthContextData);
@@ -36,15 +37,16 @@ function AppAuthProvider({ children }: AppAuthProviderProps) {
   const { userId, signOut, sessionId } = useAuth();
   const { user } = useUser();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [sessionStatus, setSessionStatus] = useState<
-    "authenticated" | "loading" | "unauthenticated"
+    "authenticated" | "unauthenticated"
   >("unauthenticated");
 
   const [sessionUser, setSessionUser] = useState<SessionUser>();
 
   useEffect(() => {
     async function loadUserProfile() {
-      setSessionStatus("loading");
+      setIsLoading(true);
       try {
         const response = await api.get(
           `users/${user?.primaryEmailAddress?.emailAddress}`
@@ -58,21 +60,24 @@ function AppAuthProvider({ children }: AppAuthProviderProps) {
         console.log("Auth loaded profile!");
       } catch (error) {
         console.log({ error });
+      } finally {
+        setIsLoading(false);
       }
     }
     if (sessionId) {
       loadUserProfile();
       setSessionStatus("authenticated");
     }
-  }, []);
+  }, [sessionStatus]);
 
   async function appSignIn() {
-    setSessionStatus("loading");
+    setIsLoading(true);
     try {
       const { createdSessionId, setActive } = await startOAuthFlow();
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
+
         setSessionStatus("authenticated");
       } else {
         // Use signIn or signUp for next steps such as MFA
@@ -80,6 +85,8 @@ function AppAuthProvider({ children }: AppAuthProviderProps) {
     } catch (err) {
       console.error("OAuth error", err);
       setSessionStatus("unauthenticated");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -87,8 +94,11 @@ function AppAuthProvider({ children }: AppAuthProviderProps) {
     try {
       signOut();
       setSessionStatus("unauthenticated");
+      setSessionUser(undefined);
     } catch (error) {
       console.log({ error });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -99,6 +109,7 @@ function AppAuthProvider({ children }: AppAuthProviderProps) {
         appSignOut,
         status: sessionStatus,
         session: sessionUser,
+        isLoading,
       }}
     >
       {children}
