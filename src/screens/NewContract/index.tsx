@@ -1,9 +1,9 @@
 import AppButton from "@components/AppButton";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppService from "@components/AppService";
 import AppText from "@components/AppText";
 import { useRoute } from "@react-navigation/native";
+import AppService from "@screens/SearchResults/ResultList/AppService";
 import React, { useState } from "react";
 import { Service } from "src/@types/services/Service";
 import { InfoPanel, Spacer } from "./styles";

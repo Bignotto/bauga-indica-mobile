@@ -1,4 +1,4 @@
-import AppService from "@components/AppService";
+import AppService from "@screens/SearchResults/ResultList/AppService";
 import { Service } from "src/@types/services/Service";
 import { ResultListWrapper } from "./styles";
 

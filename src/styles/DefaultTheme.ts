@@ -31,5 +31,6 @@ export default {
     black: "RobotoSlab_900Black",
     regular: "RobotoSlab_400Regular",
     bold: "RobotoSlab_700Bold",
+    logo: "RobotoSlab_700Bold",
   },
 };
