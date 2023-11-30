@@ -1,4 +1,4 @@
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import Dashboard from "@screens/Dashboard";
@@ -23,21 +23,61 @@ export default function Routes() {
           options={{
             tabBarLabel: "Início",
             tabBarActiveTintColor: theme.colors.primary,
+
+            tabBarLabelStyle: { fontSize: 14 },
             tabBarIcon: (tabInfo) => (
               <Entypo
                 name="home"
                 size={24}
                 color={
                   tabInfo.focused
-                    ? theme.colors.primary_dark
-                    : theme.colors.primary_light
+                    ? theme.colors.primary
+                    : theme.colors.primary_dark
                 }
               />
             ),
           }}
         />
-        <Screen name="Dashboard" component={Dashboard} />
-        <Screen name="Profile" component={Profile} />
+        <Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{
+            tabBarLabel: "Dashboard",
+            tabBarActiveTintColor: theme.colors.primary,
+            tabBarLabelStyle: { fontSize: 14 },
+            tabBarIcon: (tabInfo) => (
+              <MaterialIcons
+                name="dashboard"
+                size={24}
+                color={
+                  tabInfo.focused
+                    ? theme.colors.primary
+                    : theme.colors.primary_dark
+                }
+              />
+            ),
+          }}
+        />
+        <Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            tabBarLabel: "Perfil",
+            tabBarActiveTintColor: theme.colors.primary,
+            tabBarLabelStyle: { fontSize: 14 },
+            tabBarIcon: (tabInfo) => (
+              <FontAwesome5
+                name="user-alt"
+                size={24}
+                color={
+                  tabInfo.focused
+                    ? theme.colors.primary
+                    : theme.colors.primary_dark
+                }
+              />
+            ),
+          }}
+        />
       </Navigator>
     </NavigationContainer>
   );
