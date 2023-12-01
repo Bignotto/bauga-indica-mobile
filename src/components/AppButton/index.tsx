@@ -1,6 +1,6 @@
 import AppText from "@components/AppText";
 import { ReactNode } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { RectButtonProps } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { ButtonContainer, ButtonWrapper } from "./styles";
@@ -38,7 +38,7 @@ export default function AppButton({
   const textColor = outline ? buttonColor : theme.colors.white;
 
   return (
-    <ButtonWrapper outline={outline} color={buttonColor}>
+    <ButtonWrapper outline={outline} color={buttonColor} size={size}>
       <ButtonContainer enabled={enabled} {...rest}>
         {isLoading ? (
           <ActivityIndicator />
@@ -56,7 +56,7 @@ export default function AppButton({
             >
               {title}
             </AppText>
-            {rightIcon && <>{rightIcon}</>}
+            {rightIcon && <View style={{ marginRight: 8 }}>{rightIcon}</View>}
           </>
         )}
       </ButtonContainer>

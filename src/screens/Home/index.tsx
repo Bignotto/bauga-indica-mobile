@@ -2,6 +2,7 @@ import AppButton from "@components/AppButton";
 import AppInput from "@components/AppInput";
 import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
+import Header from "@components/Header";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -20,7 +21,7 @@ export default function Home() {
   }
 
   return (
-    <AppScreenContainer>
+    <AppScreenContainer header={<Header />}>
       <HomeContainer>
         <AppLogo size="lg" />
         <SearchInputWrapper>

@@ -6,12 +6,12 @@ import styled from "styled-components/native";
 interface ButtonProps extends RectButtonProps {
   color?: string;
   children: ReactNode;
-  size?: "lg" | "md" | "sm";
 }
 
 interface WrapperProps {
   outline: boolean;
   color: string;
+  size?: "lg" | "md" | "sm";
 }
 
 export const ButtonWrapper = styled.View<WrapperProps>`
@@ -21,6 +21,11 @@ export const ButtonWrapper = styled.View<WrapperProps>`
     ${({ theme, color }) => (color ? color : theme.colors.primary)};
   background-color: ${({ theme, outline, color }) =>
     outline ? rgba(color, 0.2) : color};
+
+  height: ${({ theme, size = "md" }) =>
+    size === "lg" ? 54 : size === "md" ? 46 : 36}px;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const ButtonContainer = styled(RectButton)<ButtonProps>`
@@ -30,6 +35,4 @@ export const ButtonContainer = styled(RectButton)<ButtonProps>`
 
   /* background-color: ${({ theme, color }) =>
     color ? color : theme.colors.primary}; */
-  height: ${({ theme, size = "md" }) =>
-    size === "lg" ? 54 : size === "md" ? 44 : 36}px;
 `;
