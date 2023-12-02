@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import { getContrast } from "polished";
 import React, { ReactNode } from "react";
 import {
   AppScreenContainerStylesProps,
@@ -24,7 +25,15 @@ export default function AppScreenContainer({
 }: AppScreenContainerProps) {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar
+        style={
+          headerColor
+            ? getContrast(headerColor, "#000000") > 10
+              ? "dark"
+              : "light"
+            : "dark"
+        }
+      />
       {header ? (
         <HeaderContainer color={headerColor}>{header}</HeaderContainer>
       ) : (

@@ -6,7 +6,7 @@ const TextSizes: { [size: string]: number } = {
   xlg: 32,
   lg: 24,
   md: 18,
-  sm: 12,
+  sm: 14,
   sxm: 8,
 };
 

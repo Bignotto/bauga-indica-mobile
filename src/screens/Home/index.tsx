@@ -7,11 +7,14 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { useState } from "react";
+import { useTheme } from "styled-components";
 import { HomeContainer, SearchInputWrapper } from "./styles";
 
 export default function Home() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [searchText, setSearchText] = useState("");
+
+  const theme = useTheme();
 
   async function handleSearch() {
     //TODO: Log search
@@ -21,7 +24,10 @@ export default function Home() {
   }
 
   return (
-    <AppScreenContainer header={<Header />}>
+    <AppScreenContainer
+      header={<Header />}
+      headerColor={theme.colors.primary_dark}
+    >
       <HomeContainer>
         <AppLogo size="lg" />
         <SearchInputWrapper>
