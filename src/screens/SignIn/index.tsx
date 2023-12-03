@@ -9,6 +9,8 @@ import AppText from "@components/AppText";
 import { FontAwesome } from "@expo/vector-icons";
 import { useWarmUpBrowser } from "@hooks/warmUpBrowser";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import { useCallback } from "react";
 import { useTheme } from "styled-components";
 import { HeaderContainer, LoginFormContainer } from "./styles";
@@ -16,7 +18,8 @@ import { HeaderContainer, LoginFormContainer } from "./styles";
 export default function SignIn() {
   useWarmUpBrowser();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
   const theme = useTheme();
@@ -83,7 +86,11 @@ export default function SignIn() {
         <AppText>Ainda não tem uma conta?</AppText>
       </AppCenter>
       <AppSpacer />
-      <AppButton outline title="Criar conta" />
+      <AppButton
+        outline
+        title="Criar conta"
+        onPress={() => navigation.navigate("SignUp")}
+      />
     </AppScreenContainer>
   );
 }

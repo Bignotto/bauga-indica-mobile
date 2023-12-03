@@ -38,7 +38,7 @@ export default function AppButton({
   const textColor = outline ? buttonColor : theme.colors.white;
 
   return (
-    <ButtonWrapper outline={outline} color={buttonColor} size={size}>
+    <ButtonWrapper outline={outline} color={buttonColor}>
       <ButtonContainer enabled={enabled} {...rest}>
         {isLoading ? (
           <ActivityIndicator />

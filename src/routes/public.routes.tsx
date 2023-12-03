@@ -4,6 +4,7 @@ import NewContract from "@screens/NewContract";
 import SearchResults from "@screens/SearchResults";
 import ServiceDetails from "@screens/ServiceDetails";
 import SignIn from "@screens/SignIn";
+import SignUp from "@screens/SignUp";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export function PublicRoutes() {
       <Screen name="ServiceDetails" component={ServiceDetails} />
       <Screen name="NewContract" component={NewContract} />
       <Screen name="SignIn" component={SignIn} />
+      <Screen name="SignUp" component={SignUp} />
     </Navigator>
   );
 }

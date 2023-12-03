@@ -24,10 +24,7 @@ export default function Home() {
   }
 
   return (
-    <AppScreenContainer
-      header={<Header />}
-      headerColor={theme.colors.primary_dark}
-    >
+    <AppScreenContainer header={<Header />} headerColor={theme.colors.white}>
       <HomeContainer>
         <AppLogo size="lg" />
         <SearchInputWrapper>

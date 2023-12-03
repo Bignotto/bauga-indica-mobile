@@ -3,6 +3,7 @@ import { Service } from "src/@types/services/Service";
 export type StackParamList = {
   Home: {} | undefined;
   SignIn: {} | undefined;
+  SignUp: {} | undefined;
   Search: {
     searchText: string;
   };

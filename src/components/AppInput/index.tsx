@@ -11,8 +11,9 @@ export default function AppInput({ label, ...rest }: AppInputProps) {
     <Container>
       {label && (
         <AppText
+          size="sm"
           style={{
-            marginBottom: 8,
+            marginBottom: 4,
           }}
         >
           {label}

@@ -25,7 +25,11 @@ export default function Header() {
             title="Sair"
             size="sm"
             rightIcon={
-              <Feather name="log-out" size={16} color={theme.colors.white} />
+              <Feather
+                name="log-out"
+                size={16}
+                color={theme.colors.text_dark}
+              />
             }
             onPress={() => signOut()}
           />
@@ -33,9 +37,7 @@ export default function Header() {
       </SignedIn>
       <SignedOut>
         <SignedOutContainer>
-          <AppText color={theme.colors.white} size="sm">
-            Olá! Entre ou crie sua conta!
-          </AppText>
+          <AppText size="sm">Olá! Entre para acessar mais recursos!</AppText>
           <AppButton
             title="Entrar"
             size="sm"
