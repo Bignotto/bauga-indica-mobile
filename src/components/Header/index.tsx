@@ -21,15 +21,12 @@ export default function Header() {
       <SignedIn>
         <SignedInContainer>
           <AppAvatar size={34} imagePath={`${user?.imageUrl}`} />
+          <AppText>{user?.firstName}</AppText>
           <AppButton
             title="Sair"
             size="sm"
             rightIcon={
-              <Feather
-                name="log-out"
-                size={16}
-                color={theme.colors.text_dark}
-              />
+              <Feather name="log-out" size={16} color={theme.colors.white} />
             }
             onPress={() => signOut()}
           />

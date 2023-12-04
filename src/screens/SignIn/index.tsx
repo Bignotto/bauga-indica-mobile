@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { useCallback } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { HeaderContainer, LoginFormContainer } from "./styles";
 
@@ -53,44 +54,46 @@ export default function SignIn() {
       }
       headerColor={theme.colors.white}
     >
-      <AppSpacer verticalSpace="xlg" />
-      <AppText>Entre com seu e-mail e senha</AppText>
-      <AppSpacer />
-      <LoginFormContainer>
-        <AppInput label="E-Mail" />
-        <AppSpacer verticalSpace="lg" />
-        <AppInput label="Senha" />
-      </LoginFormContainer>
-      <AppSpacer verticalSpace="xlg" />
-      <AppCenter>
-        <AppText>Ou entre com:</AppText>
-      </AppCenter>
-      <AppSpacer />
-      <AppButton
-        title="Google"
-        onPress={handleGoogle}
-        leftIcon={
-          <FontAwesome name="google" size={24} color={theme.colors.white} />
-        }
-      />
-      <AppSpacer verticalSpace="sm" />
-      <AppButton
-        title="Apple"
-        leftIcon={
-          <FontAwesome name="apple" size={24} color={theme.colors.white} />
-        }
-      />
-      <AppSpacer verticalSpace="xlg" />
-      <AppSpacer verticalSpace="xlg" />
-      <AppCenter>
-        <AppText>Ainda não tem uma conta?</AppText>
-      </AppCenter>
-      <AppSpacer />
-      <AppButton
-        outline
-        title="Criar conta"
-        onPress={() => navigation.navigate("SignUp")}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <AppSpacer verticalSpace="xlg" />
+        <AppText>Entre com seu e-mail e senha</AppText>
+        <AppSpacer />
+        <LoginFormContainer>
+          <AppInput label="E-Mail" />
+          <AppSpacer verticalSpace="lg" />
+          <AppInput label="Senha" />
+        </LoginFormContainer>
+        <AppSpacer verticalSpace="xlg" />
+        <AppCenter>
+          <AppText>Ou entre com:</AppText>
+        </AppCenter>
+        <AppSpacer />
+        <AppButton
+          title="Google"
+          onPress={handleGoogle}
+          leftIcon={
+            <FontAwesome name="google" size={24} color={theme.colors.white} />
+          }
+        />
+        <AppSpacer verticalSpace="sm" />
+        <AppButton
+          title="Apple"
+          leftIcon={
+            <FontAwesome name="apple" size={24} color={theme.colors.white} />
+          }
+        />
+        <AppSpacer verticalSpace="xlg" />
+        <AppSpacer verticalSpace="xlg" />
+        <AppCenter>
+          <AppText>Ainda não tem uma conta?</AppText>
+        </AppCenter>
+        <AppSpacer />
+        <AppButton
+          outline
+          title="Criar conta"
+          onPress={() => navigation.navigate("SignUp")}
+        />
+      </ScrollView>
     </AppScreenContainer>
   );
 }
