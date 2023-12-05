@@ -7,12 +7,17 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { useData } from "@hooks/DataContext";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { FormContainer, HeaderContainer } from "./styles";
 
 export default function SignUp() {
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
   const theme = useTheme();
   const { isLoaded, signUp, setActive } = useSignUp();
 
@@ -23,27 +28,33 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function handleCreateNewAccount() {
-    if (name.length == 0 || email.length == 0) return;
+    if (name.length === 0 || email.length === 0) return;
     if (!isLoaded) {
       return;
     }
 
     try {
+      setIsLoading(true);
       const available = await isEmailAvailable(email);
 
       if (available) {
         const created = await signUp?.create({
-          emailAddress: email,
+          emailAddress: email.toLowerCase().trim(),
           password,
         });
 
-        console.log(JSON.stringify(created, null, 2));
         await setActive({ session: created.createdSessionId });
+        navigation.navigate("CreateAccount", {
+          name,
+        });
       }
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
-      console.log({ error });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -86,18 +97,21 @@ export default function SignUp() {
             label="Senha"
             value={password}
             onChangeText={(text) => setPassword(text)}
+            secureTextEntry={true}
           />
           <AppSpacer />
           <AppInput
             label="Confirme sua senha"
             value={confirmation}
             onChangeText={(text) => setConfirmation(text)}
+            secureTextEntry={true}
           />
           <AppSpacer verticalSpace="xlg" />
           <AppButton
             title="Criar nova conta"
             variant="positive"
             onPress={handleCreateNewAccount}
+            isLoading={isLoading}
           />
           <AppSpacer />
           <AppButton title="Cancelar" variant="negative" outline />
