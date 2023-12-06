@@ -3,10 +3,11 @@ import AppAvatar from "@components/AppAvatar";
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
 import { Feather } from "@expo/vector-icons";
+import { IUserDTO, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "styled-components";
 import { Container, SignedInContainer, SignedOutContainer } from "./styles";
 
@@ -16,12 +17,29 @@ export default function Header() {
   const { signOut } = useAuth();
   const theme = useTheme();
 
+  const { loadUserProfile } = useData();
+  const [profile, setProfile] = useState<IUserDTO>();
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const response = await loadUserProfile(`${user!.id}`);
+        setProfile(response);
+
+        console.log({ response });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    load();
+  }, []);
+
   return (
     <Container>
       <SignedIn>
         <SignedInContainer>
-          <AppAvatar size={34} imagePath={`${user?.imageUrl}`} />
-          <AppText>{user?.firstName}</AppText>
+          <AppAvatar size={34} imagePath={`${profile?.image}`} />
+          <AppText>{profile?.name}</AppText>
           <AppButton
             title="Sair"
             size="sm"

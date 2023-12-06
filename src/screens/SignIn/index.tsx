@@ -32,9 +32,10 @@ export default function SignIn() {
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
-        navigation.goBack();
+        navigation.reset({ routes: [{ name: "Home" }] });
       } else {
         // Use signIn or signUp for next steps such as MFA
+        console.log({ createdSessionId });
       }
     } catch (err) {
       console.error("OAuth error", err);

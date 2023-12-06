@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import React, { useState } from "react";
+import { Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { FormContainer, HeaderContainer } from "./styles";
@@ -31,7 +32,24 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleCreateNewAccount() {
-    if (name.length === 0 || email.length === 0) return;
+    if (name.length === 0) {
+      Alert.alert("Nome não pode estar em branco.");
+      return;
+    }
+    if (email.length === 0) {
+      Alert.alert("E-Mail não pode estar em branco.");
+      return;
+    }
+
+    if (password.length === 0) {
+      Alert.alert("Você precisa definir uma senha.");
+      return;
+    }
+
+    if (password !== confirmation) {
+      Alert.alert("A confirmação de senha não bate com a senha.");
+    }
+
     if (!isLoaded) {
       return;
     }
@@ -51,8 +69,13 @@ export default function SignUp() {
           name,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(JSON.stringify(error, null, 2));
+      if (error.errors[0].code === "form_identifier_exists") {
+        Alert.alert(
+          "Endereço de e-mail em uso. Faça login usando este e-mail."
+        );
+      }
     } finally {
       setIsLoading(false);
     }

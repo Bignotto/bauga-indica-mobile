@@ -1,3 +1,4 @@
+import { AppError } from "@errors/AppError";
 import supabase from "@services/supabase";
 import { ReactNode, createContext, useContext } from "react";
 
@@ -17,6 +18,7 @@ type IUserDTO = {
 interface IDataContextProps {
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
+  loadUserProfile(userId: string): Promise<IUserDTO>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -29,7 +31,7 @@ function DataProvider({ children }: DataProviderProps) {
       .eq("email", email);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
-      throw new Error("ERROR while getting user by id");
+      throw new AppError("ERROR on email available check", 500, "supabase");
     }
 
     if (data.length > 0) return false;
@@ -38,12 +40,30 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function createNewAccount(newUser: IUserDTO) {
-    const user: IUserDTO = {
-      name: "dunha",
-      email: "dunha@gmail.com",
-    };
+    const { data, error } = await supabase.from("users").insert([newUser]);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while saving new user into database",
+        500,
+        "supabase"
+      );
+    }
 
-    return user;
+    return data![0];
+  }
+
+  async function loadUserProfile(userId: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .select()
+      .eq("id", userId);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while loading user profile", 500, "supabase");
+    }
+
+    return data![0];
   }
 
   return (
@@ -51,6 +71,7 @@ function DataProvider({ children }: DataProviderProps) {
       value={{
         isEmailAvailable,
         createNewAccount,
+        loadUserProfile,
       }}
     >
       {children}
@@ -62,4 +83,4 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, useData };
+export { DataProvider, IUserDTO, useData };
