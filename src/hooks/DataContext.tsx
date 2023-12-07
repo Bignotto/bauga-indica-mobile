@@ -40,6 +40,7 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function createNewAccount(newUser: IUserDTO) {
+    console.log({ message: "create new user", newUser });
     const { data, error } = await supabase.from("users").insert([newUser]);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
@@ -54,6 +55,7 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function loadUserProfile(userId: string) {
+    console.log({ message: "load user profile", userId });
     const { data, error } = await supabase
       .from("users")
       .select()

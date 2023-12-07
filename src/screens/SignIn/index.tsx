@@ -6,12 +6,14 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
+import { AppError } from "@errors/AppError";
 import { FontAwesome } from "@expo/vector-icons";
 import { useWarmUpBrowser } from "@hooks/warmUpBrowser";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { useCallback } from "react";
+import { Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import { HeaderContainer, LoginFormContainer } from "./styles";
@@ -27,8 +29,7 @@ export default function SignIn() {
 
   const handleGoogle = useCallback(async () => {
     try {
-      const { createdSessionId, signIn, signUp, setActive } =
-        await startOAuthFlow();
+      const { createdSessionId, setActive } = await startOAuthFlow();
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
@@ -37,8 +38,12 @@ export default function SignIn() {
         // Use signIn or signUp for next steps such as MFA
         console.log({ createdSessionId });
       }
-    } catch (err) {
-      console.error("OAuth error", err);
+    } catch (error) {
+      console.error("OAuth error", error);
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) {
+        Alert.alert(error.message);
+      }
     }
   }, []);
 
