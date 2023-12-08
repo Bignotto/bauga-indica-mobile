@@ -25,6 +25,7 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(true);
 
   async function loadProfile() {
+    if (!isLoaded) return;
     setIsLoading(true);
 
     try {
@@ -37,16 +38,14 @@ export default function Header() {
           email: `${user?.primaryEmailAddress?.emailAddress}`,
           image: `${user?.imageUrl}`,
         };
-        await createNewAccount(newProfile);
-        setProfile(newProfile);
+        const response = await createNewAccount(newProfile);
+        setProfile(response);
         setIsLoading(false);
         return;
       }
 
       setProfile(loadedProfile);
     } catch (error) {
-      console.log({ message: "aqui", error });
-      //esta merda está dando erro em algum lugar aqui!
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
         Alert.alert(error.message);

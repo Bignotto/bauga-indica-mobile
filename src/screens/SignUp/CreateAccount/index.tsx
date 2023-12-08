@@ -49,6 +49,7 @@ export default function CreateAccount() {
         setIsLoading(false);
       }
     }
+
     saveAccount();
   }, []);
 

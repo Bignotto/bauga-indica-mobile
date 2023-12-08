@@ -36,7 +36,6 @@ export default function SignIn() {
         navigation.reset({ routes: [{ name: "Home" }] });
       } else {
         // Use signIn or signUp for next steps such as MFA
-        console.log({ createdSessionId });
       }
     } catch (error) {
       console.error("OAuth error", error);

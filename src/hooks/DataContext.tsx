@@ -40,7 +40,6 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function createNewAccount(newUser: IUserDTO) {
-    console.log({ message: "create new user", newUser });
     const { data, error } = await supabase.from("users").insert([newUser]);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
@@ -51,11 +50,10 @@ function DataProvider({ children }: DataProviderProps) {
       );
     }
 
-    return data![0];
+    return newUser;
   }
 
   async function loadUserProfile(userId: string) {
-    console.log({ message: "load user profile", userId });
     const { data, error } = await supabase
       .from("users")
       .select()
@@ -65,7 +63,9 @@ function DataProvider({ children }: DataProviderProps) {
       throw new AppError("ERROR while loading user profile", 500, "supabase");
     }
 
-    return data![0];
+    if (data) return data[0];
+
+    return undefined;
   }
 
   return (
