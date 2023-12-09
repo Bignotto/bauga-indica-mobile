@@ -1,4 +1,4 @@
-import { useOAuth } from "@clerk/clerk-expo";
+import { useOAuth, useSignIn } from "@clerk/clerk-expo";
 import AppButton from "@components/AppButton";
 import AppCenter from "@components/AppCenter";
 import AppInput from "@components/AppInput";
@@ -12,7 +12,7 @@ import { useWarmUpBrowser } from "@hooks/warmUpBrowser";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
@@ -24,8 +24,14 @@ export default function SignIn() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { signIn, isLoaded, setActive } = useSignIn();
 
   const theme = useTheme();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogle = useCallback(async () => {
     try {
@@ -46,6 +52,32 @@ export default function SignIn() {
     }
   }, []);
 
+  async function handleLogin() {
+    if (!isLoaded) return;
+
+    if (email.length === 0 || password.length === 0) return;
+
+    setIsLoading(true);
+    try {
+      const doSignIn = await signIn.create({
+        identifier: email,
+        password,
+      });
+
+      await setActive({ session: doSignIn.createdSessionId });
+      navigation.reset({ routes: [{ name: "Home" }] });
+    } catch (error: any) {
+      if (error.errors[0].code === "form_identifier_not_found")
+        return Alert.alert("Conta não encontrada.");
+      if (error.errors[0].code === "form_password_incorrect")
+        return Alert.alert("E-Mail ou senha inválidos!");
+
+      console.log(JSON.stringify(error, null, 2));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <AppScreenContainer
       header={
@@ -64,9 +96,27 @@ export default function SignIn() {
         <AppText>Entre com seu e-mail e senha</AppText>
         <AppSpacer />
         <LoginFormContainer>
-          <AppInput label="E-Mail" />
+          <AppInput
+            label="E-Mail"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+            keyboardType="email-address"
+          />
           <AppSpacer verticalSpace="lg" />
-          <AppInput label="Senha" />
+          <AppInput
+            label="Senha"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry
+          />
+          <AppSpacer />
+          <AppButton
+            title="Entrar"
+            size="sm"
+            outline
+            onPress={handleLogin}
+            isLoading={isLoading}
+          />
         </LoginFormContainer>
         <AppSpacer verticalSpace="xlg" />
         <AppCenter>
