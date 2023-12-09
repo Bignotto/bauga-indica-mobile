@@ -22,17 +22,23 @@ import {
 type AppServiceProps = {
   item: Service;
   buttonType?: "details" | "contact";
+  showButton?: boolean;
 };
 
 export default function AppService({
   item,
   buttonType = "details",
+  showButton = true,
 }: AppServiceProps) {
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   async function handleServiceDetails(serviceId: string) {
     navigation.navigate("ServiceDetails", { serviceId });
+  }
+
+  async function handleContactProvider() {
+    navigation.navigate("NewContract", { serviceData: item });
   }
   return (
     <ResultItem>
@@ -64,13 +70,17 @@ export default function AppService({
             {`R$ ${item.value.toFixed(2)}`}
           </AppText>
         </ProviderPriceWrapper>
-        {buttonType === "details" ? (
+        {showButton && buttonType === "details" && (
           <AppButton
-            title="Ver detalhes"
+            title="Ver mais detalhes"
             onPress={() => handleServiceDetails(item.id)}
           />
-        ) : (
-          <AppButton title="Entrar em contato!" />
+        )}
+        {showButton && buttonType === "contact" && (
+          <AppButton
+            title="Entrar em contato!"
+            onPress={handleContactProvider}
+          />
         )}
       </ContentWrapper>
     </ResultItem>

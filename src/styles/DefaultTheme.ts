@@ -2,6 +2,7 @@ export default {
   colors: {
     primary: "#4299E1",
     primary_dark: "#2C5282",
+    primary_light: "#A0CCF0",
 
     secondary: "#FF872C",
     secondary_dark: "rgba(255,135,44,0.3)",
@@ -12,13 +13,15 @@ export default {
     negative: "#E83F5B",
     negative_light: "rgba(232,63,91,.1)",
 
-    background: "#CBD5E0",
+    background: "#E7E7E7",
     text: "#1A202C",
     text_dark: "#0F111A",
     text_gray: "#4A5568",
     text_disabled: "#718096",
     shape: "#E2E8F0",
-    border: "#4A5568",
+    attention: "#f1c47b",
+
+    border: "#C4C4C4",
 
     white: "#FFFFFF",
   },
@@ -28,5 +31,6 @@ export default {
     black: "RobotoSlab_900Black",
     regular: "RobotoSlab_400Regular",
     bold: "RobotoSlab_700Bold",
+    logo: "RobotoSlab_700Bold",
   },
 };

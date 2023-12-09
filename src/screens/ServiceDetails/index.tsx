@@ -1,6 +1,6 @@
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppService from "@components/AppService";
 import { useRoute } from "@react-navigation/native";
+import AppService from "@screens/SearchResults/ResultList/AppService";
 import { api } from "@services/api";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
@@ -37,7 +37,7 @@ export default function ServiceDetails() {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <AppService item={service!} buttonType="contact" />
+        <AppService item={service!} buttonType="contact" showButton />
       )}
     </AppScreenContainer>
   );

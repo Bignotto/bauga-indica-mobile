@@ -5,8 +5,8 @@ import styled from "styled-components/native";
 const TextSizes: { [size: string]: number } = {
   xlg: 32,
   lg: 24,
-  md: 16,
-  sm: 12,
+  md: 18,
+  sm: 14,
   sxm: 8,
 };
 

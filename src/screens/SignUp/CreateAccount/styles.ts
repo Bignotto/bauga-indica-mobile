@@ -5,8 +5,6 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-export const Text = styled.Text`
-  font-size: 18px;
-  color: blue;
-  font-weight: 500;
+export const HeaderContainer = styled.View`
+  flex-direction: column;
 `;

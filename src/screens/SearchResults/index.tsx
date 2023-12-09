@@ -34,11 +34,14 @@ export default function SearchResults() {
   const servicesFound = services.length;
 
   return (
-    <AppScreenContainer>
-      <HeaderWrapper>
-        <AppLogo size="md" />
-        <AppText>Encontrados {servicesFound} serviços</AppText>
-      </HeaderWrapper>
+    <AppScreenContainer
+      header={
+        <HeaderWrapper>
+          <AppLogo size="sm" />
+          <AppText>Encontrados {servicesFound} serviços</AppText>
+        </HeaderWrapper>
+      }
+    >
       <ResultList itens={services} />
     </AppScreenContainer>
   );

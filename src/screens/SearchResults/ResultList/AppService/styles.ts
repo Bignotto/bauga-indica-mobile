@@ -3,11 +3,14 @@ import styled from "styled-components/native";
 
 export const ResultItem = styled.View`
   width: 100%;
+
+  /*TODO: fix margin bottom should not be inside component */
   margin-bottom: 16px;
   background-color: ${({ theme }) => theme.colors.shape};
 `;
 
 export const TitleWrapper = styled.View`
+  padding-top: 8px;
   padding-left: 8px;
   padding-right: 8px;
 `;
