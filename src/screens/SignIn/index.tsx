@@ -24,6 +24,8 @@ export default function SignIn() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { startOAuthFlow: appleLogin } = useOAuth({ strategy: "oauth_apple" });
+
   const { signIn, isLoaded, setActive } = useSignIn();
 
   const theme = useTheme();
@@ -36,6 +38,25 @@ export default function SignIn() {
   const handleGoogle = useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow();
+
+      if (createdSessionId) {
+        setActive!({ session: createdSessionId });
+        navigation.reset({ routes: [{ name: "Home" }] });
+      } else {
+        // Use signIn or signUp for next steps such as MFA
+      }
+    } catch (error) {
+      console.error("OAuth error", error);
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) {
+        Alert.alert(error.message);
+      }
+    }
+  }, []);
+
+  const handleApple = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await appleLogin();
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
@@ -133,6 +154,7 @@ export default function SignIn() {
         <AppSpacer verticalSpace="sm" />
         <AppButton
           title="Apple"
+          onPress={handleApple}
           leftIcon={
             <FontAwesome name="apple" size={24} color={theme.colors.white} />
           }
