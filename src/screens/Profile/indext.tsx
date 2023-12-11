@@ -11,9 +11,11 @@ import { IUserDTO, useData } from "@hooks/DataContext";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
+import { isPhoneNumberValid } from "@utils/phoneValidator";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { Masks } from "react-native-mask-input";
 import { useTheme } from "styled-components";
 import { HeaderContainer } from "./styles";
 
@@ -22,10 +24,14 @@ export default function Profile() {
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { loadUserProfile } = useData();
+  const { loadUserProfile, updateProfile } = useData();
 
   const [profile, setProfile] = useState<IUserDTO>();
   const [isLoading, setIsLoading] = useState(true);
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -37,8 +43,11 @@ export default function Profile() {
     loadUserProfile(user!.id).then((data) => {
       setProfile(data);
       setIsLoading(false);
+      setName(data.name);
+      setEmail(`${data.email}`);
+      setPhone(data.phone ? `${data.phone}` : "");
     });
-  }, []);
+  }, [isSignedIn]);
 
   useFocusEffect(
     useCallback(() => {
@@ -46,8 +55,24 @@ export default function Profile() {
         navigation.navigate("SignIn");
         return;
       }
-    }, [])
+    }, [isSignedIn])
   );
+
+  async function handleSaveProfile() {
+    if (name.length === 0) return Alert.alert("Nome não pode estar em branco.");
+
+    if (phone.length > 0 && !isPhoneNumberValid(phone)) {
+      return Alert.alert(`Número de telefone inválido.`);
+    }
+
+    try {
+      const updated = await updateProfile(user!.id, name, phone);
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("error");
+      console.log(JSON.stringify(error, null, 2));
+    }
+  }
 
   return (
     <AppScreenContainer
@@ -75,15 +100,36 @@ export default function Profile() {
     >
       <ScrollView>
         <AppSpacer verticalSpace="lg" />
-        <AppInput label="Nome completo:" />
+        <AppInput
+          label="Nome completo:"
+          value={name}
+          onChangeText={(text) => setName(text)}
+        />
         <AppSpacer verticalSpace="lg" />
-        <AppInput label="E-Mail:" />
+        <AppInput
+          label="E-Mail:"
+          editable={false}
+          value={email}
+          style={{
+            color: theme.colors.text_disabled,
+          }}
+        />
         <AppSpacer verticalSpace="lg" />
-        <AppInput label="Telefone:" />
+        <AppInput
+          label="Telefone:"
+          value={phone}
+          mask={Masks.BRL_PHONE}
+          onChangeText={(text) => setPhone(text)}
+        />
         <AppSpacer verticalSpace="xlg" />
-        <AppButton title="Salvar" variant="positive" />
+        <AppButton
+          title="Salvar"
+          variant="positive"
+          outline
+          onPress={handleSaveProfile}
+        />
         <AppSpacer />
-        <AppButton title="Cancelar" variant="negative" />
+        <AppButton title="Cancelar" variant="negative" outline />
       </ScrollView>
     </AppScreenContainer>
   );

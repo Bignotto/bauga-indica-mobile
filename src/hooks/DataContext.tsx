@@ -19,6 +19,7 @@ interface IDataContextProps {
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
   loadUserProfile(userId: string): Promise<IUserDTO>;
+  updateProfile(userId: string, name: string, phone: string): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -68,12 +69,36 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function updateProfile(userId: string, name: string, phone: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        name,
+        phone,
+      })
+      .eq("id", userId)
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while saving new user into database",
+        500,
+        "supabase"
+      );
+    }
+
+    if (data) return data[0];
+    return undefined;
+  }
+
   return (
     <DataContext.Provider
       value={{
         isEmailAvailable,
         createNewAccount,
         loadUserProfile,
+        updateProfile,
       }}
     >
       {children}
