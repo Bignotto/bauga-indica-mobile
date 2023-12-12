@@ -4,11 +4,11 @@ import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
 import { Feather } from "@expo/vector-icons";
-import { IUserDTO, useData } from "@hooks/DataContext";
-import { useNavigation } from "@react-navigation/native";
+import { useData } from "@hooks/DataContext";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert } from "react-native";
 import { useTheme } from "styled-components";
 import { Container, SignedInContainer, SignedOutContainer } from "./styles";
@@ -19,9 +19,8 @@ export default function Header() {
   const { signOut } = useAuth();
   const theme = useTheme();
 
-  const { loadUserProfile, createNewAccount } = useData();
+  const { loadUserProfile, createNewAccount, userProfile } = useData();
 
-  const [profile, setProfile] = useState<IUserDTO>();
   const [isLoading, setIsLoading] = useState(true);
 
   async function loadProfile() {
@@ -38,13 +37,10 @@ export default function Header() {
           email: `${user?.primaryEmailAddress?.emailAddress}`,
           image: `${user?.imageUrl}`,
         };
-        const response = await createNewAccount(newProfile);
-        setProfile(response);
+        await createNewAccount(newProfile);
         setIsLoading(false);
         return;
       }
-
-      setProfile(loadedProfile);
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
@@ -61,16 +57,24 @@ export default function Header() {
     }
   }, [isSignedIn, user]);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (!isSignedIn) {
+        loadProfile();
+      }
+    }, [isSignedIn])
+  );
+
   return (
     <Container>
       <SignedIn>
         {isLoading ? (
-          <ActivityIndicator />
+          <ActivityIndicator size="large" />
         ) : (
           <>
             <SignedInContainer>
-              <AppAvatar size={34} imagePath={`${profile?.image}`} />
-              <AppText>{profile?.name}</AppText>
+              <AppAvatar size={34} imagePath={`${userProfile?.image}`} />
+              <AppText>{userProfile?.name}</AppText>
               <AppButton
                 title="Sair"
                 size="sm"

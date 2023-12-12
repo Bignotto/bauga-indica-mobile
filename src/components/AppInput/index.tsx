@@ -1,12 +1,19 @@
 import AppText from "@components/AppText";
 import { TextInputProps } from "react-native";
-import { Container, InputComponent, Wrapper } from "./styles";
+import { Mask } from "react-native-mask-input";
+import {
+  Container,
+  InputComponent,
+  MaskedInputComponent,
+  Wrapper,
+} from "./styles";
 
 interface AppInputProps extends TextInputProps {
   label?: string;
+  mask?: Mask;
 }
 
-export default function AppInput({ label, ...rest }: AppInputProps) {
+export default function AppInput({ label, mask, ...rest }: AppInputProps) {
   return (
     <Container>
       {label && (
@@ -20,7 +27,11 @@ export default function AppInput({ label, ...rest }: AppInputProps) {
         </AppText>
       )}
       <Wrapper>
-        <InputComponent {...rest} />
+        {mask ? (
+          <MaskedInputComponent {...rest} mask={mask} />
+        ) : (
+          <InputComponent {...rest} />
+        )}
       </Wrapper>
     </Container>
   );

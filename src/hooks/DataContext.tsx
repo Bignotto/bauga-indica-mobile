@@ -1,6 +1,6 @@
 import { AppError } from "@errors/AppError";
 import supabase from "@services/supabase";
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 
 interface DataProviderProps {
   children: ReactNode;
@@ -16,14 +16,18 @@ type IUserDTO = {
 };
 
 interface IDataContextProps {
+  userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
   loadUserProfile(userId: string): Promise<IUserDTO>;
+  updateProfile(userId: string, name: string, phone: string): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
 
 function DataProvider({ children }: DataProviderProps) {
+  const [userProfile, setUserProfile] = useState<IUserDTO>();
+
   async function isEmailAvailable(email: string) {
     const { data, error } = await supabase
       .from("users")
@@ -50,6 +54,7 @@ function DataProvider({ children }: DataProviderProps) {
       );
     }
 
+    setUserProfile(newUser);
     return newUser;
   }
 
@@ -63,17 +68,48 @@ function DataProvider({ children }: DataProviderProps) {
       throw new AppError("ERROR while loading user profile", 500, "supabase");
     }
 
-    if (data) return data[0];
+    if (data) {
+      setUserProfile(data[0]);
+      return data[0];
+    }
 
+    return undefined;
+  }
+
+  async function updateProfile(userId: string, name: string, phone: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        name,
+        phone,
+      })
+      .eq("id", userId)
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while saving new user into database",
+        500,
+        "supabase"
+      );
+    }
+
+    if (data) {
+      setUserProfile(data[0]);
+      return data[0];
+    }
     return undefined;
   }
 
   return (
     <DataContext.Provider
       value={{
+        userProfile,
         isEmailAvailable,
         createNewAccount,
         loadUserProfile,
+        updateProfile,
       }}
     >
       {children}

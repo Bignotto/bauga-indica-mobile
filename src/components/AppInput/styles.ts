@@ -1,3 +1,4 @@
+import MaskInput from "react-native-mask-input";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
@@ -14,6 +15,13 @@ export const Wrapper = styled.View`
 //   placeholderTextColor: "#4A5568",
 // })`
 export const InputComponent = styled.TextInput`
+  padding: 10px;
+  font-family: ${({ theme }) => theme.fonts.regular};
+  font-size: ${RFValue(14)}px;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const MaskedInputComponent = styled(MaskInput)`
   padding: 10px;
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(14)}px;
