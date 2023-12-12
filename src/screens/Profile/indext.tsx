@@ -24,7 +24,7 @@ export default function Profile() {
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { loadUserProfile, updateProfile } = useData();
+  const { loadUserProfile, updateProfile, userProfile } = useData();
 
   const [profile, setProfile] = useState<IUserDTO>();
   const [isLoading, setIsLoading] = useState(true);
@@ -40,13 +40,18 @@ export default function Profile() {
       return;
     }
 
-    loadUserProfile(user!.id).then((data) => {
-      setProfile(data);
-      setIsLoading(false);
-      setName(data.name);
-      setEmail(`${data.email}`);
-      setPhone(data.phone ? `${data.phone}` : "");
-    });
+    // loadUserProfile(user!.id).then((data) => {
+    //   setProfile(data);
+    //   setIsLoading(false);
+    //   setName(data.name);
+    //   setEmail(`${data.email}`);
+    //   setPhone(data.phone ? `${data.phone}` : "");
+    // });
+
+    setName(`${userProfile?.name}`);
+    setEmail(`${userProfile?.email}`);
+    setPhone(`${userProfile?.phone}`);
+    setIsLoading(false);
   }, [isSignedIn]);
 
   useFocusEffect(
@@ -86,11 +91,11 @@ export default function Profile() {
               <AppCenter>
                 <AppLogo size="sm" />
                 <AppSpacer verticalSpace="sm" />
-                <AppAvatar imagePath={`${profile!.image}`} size={180} />
+                <AppAvatar imagePath={`${userProfile?.image}`} size={180} />
                 <AppSpacer verticalSpace="sm" />
                 <AppText bold>Perfil público de </AppText>
                 <AppText size="xlg" bold>
-                  {profile?.name}
+                  {userProfile?.name}
                 </AppText>
               </AppCenter>
             )}
