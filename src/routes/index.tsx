@@ -32,7 +32,7 @@ export default function Routes() {
                 color={
                   tabInfo.focused
                     ? theme.colors.primary
-                    : theme.colors.primary_dark
+                    : theme.colors.text_disabled
                 }
               />
             ),
@@ -52,7 +52,7 @@ export default function Routes() {
                 color={
                   tabInfo.focused
                     ? theme.colors.primary
-                    : theme.colors.primary_dark
+                    : theme.colors.text_disabled
                 }
               />
             ),
@@ -72,7 +72,7 @@ export default function Routes() {
                 color={
                   tabInfo.focused
                     ? theme.colors.primary
-                    : theme.colors.primary_dark
+                    : theme.colors.text_disabled
                 }
               />
             ),
