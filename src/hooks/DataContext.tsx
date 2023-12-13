@@ -15,12 +15,19 @@ type IUserDTO = {
   image?: string;
 };
 
+type IDashboardData = {
+  servicesCount: number;
+  contractsCount: number;
+  visualisationsCount: number;
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
   loadUserProfile(userId: string): Promise<IUserDTO>;
   updateProfile(userId: string, name: string, phone: string): Promise<void>;
+  getDashboardData(): Promise<IDashboardData>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -102,6 +109,26 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function getDashboardData() {
+    const { data: servicesData, error } = await supabase
+      .from("services")
+      .select("id")
+      .eq("providerId", userProfile?.id);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR on dashboard data loading", 500, "supabase");
+    }
+
+    console.log(JSON.stringify(servicesData, null, 2));
+
+    const dashboardData: IDashboardData = {
+      contractsCount: 0,
+      servicesCount: servicesData.length,
+      visualisationsCount: 0,
+    };
+    return dashboardData;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -110,6 +137,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewAccount,
         loadUserProfile,
         updateProfile,
+        getDashboardData,
       }}
     >
       {children}
