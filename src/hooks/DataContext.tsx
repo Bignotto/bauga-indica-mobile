@@ -19,6 +19,7 @@ type IDashboardData = {
   servicesCount: number;
   contractsCount: number;
   visualisationsCount: number;
+  reviewsCount: number;
 };
 
 interface IDataContextProps {
@@ -110,22 +111,32 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function getDashboardData() {
-    const { data: servicesData, error } = await supabase
+    const { data: servicesData, error: servicesError } = await supabase
       .from("services")
       .select("id")
       .eq("providerId", userProfile?.id);
-    if (error) {
-      console.log(JSON.stringify(error, null, 2));
+    if (servicesError) {
+      console.log(JSON.stringify(servicesError, null, 2));
       throw new AppError("ERROR on dashboard data loading", 500, "supabase");
     }
 
-    console.log(JSON.stringify(servicesData, null, 2));
+    const { data: contractsData, error: contractsError } = await supabase
+      .from("contract")
+      .select("id")
+      .eq("user_provider_id", userProfile?.id);
+    if (contractsError) {
+      console.log(JSON.stringify(contractsError, null, 2));
+      throw new AppError("ERROR on dashboard data loading", 500, "supabase");
+    }
 
     const dashboardData: IDashboardData = {
-      contractsCount: 0,
+      contractsCount: contractsData.length,
       servicesCount: servicesData.length,
       visualisationsCount: 0,
+      reviewsCount: 0,
     };
+
+    console.log({ dashboardData });
     return dashboardData;
   }
 
@@ -149,4 +160,4 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, IUserDTO, useData };
+export { DataProvider, IDashboardData, IUserDTO, useData };
