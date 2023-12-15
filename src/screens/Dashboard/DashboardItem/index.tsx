@@ -1,27 +1,27 @@
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import React from "react";
+import { RectButtonProps } from "react-native-gesture-handler";
 import {
   DashboardItemColorBorder,
   DashboardItemContainer,
   InformationContainer,
 } from "./styles";
 
-interface DashboardItemProps {
+interface DashboardItemProps extends RectButtonProps {
   title: string;
   description?: string;
-  navigateTo?: string;
   information: string;
 }
 
 export default function DashboardItem({
   title,
   description,
-  navigateTo,
   information,
+  ...rest
 }: DashboardItemProps) {
   return (
-    <DashboardItemContainer>
+    <DashboardItemContainer {...rest}>
       <DashboardItemColorBorder />
       <InformationContainer>
         <AppText bold size="xlg">

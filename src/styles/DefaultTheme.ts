@@ -13,7 +13,7 @@ export default {
     negative: "#E83F5B",
     negative_light: "rgba(232,63,91,.1)",
 
-    background: "#E7E7E7",
+    background: "#F0F0F0",
     text: "#1A202C",
     text_dark: "#0F111A",
     text_gray: "#4A5568",

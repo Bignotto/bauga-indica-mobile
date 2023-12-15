@@ -4,6 +4,9 @@ import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import Header from "@components/Header";
 import { IDashboardData, useData } from "@hooks/DataContext";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -14,6 +17,7 @@ import { DashboardContainer } from "./styles";
 export default function Dashboard() {
   const theme = useTheme();
   const { getDashboardData } = useData();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const [dashboardData, setDashboardData] = useState<IDashboardData>();
 
@@ -43,6 +47,11 @@ export default function Dashboard() {
             title="Anúncios"
             description="seus anúncios cadastrados"
             information={`${dashboardData?.servicesCount}`}
+            onPress={() =>
+              navigation.navigate("ServiceDetails", {
+                serviceId: "mcDYCcX4ub4Z3e9wRH1Tig",
+              })
+            }
           />
           <DashboardItem
             title="Visualizações"

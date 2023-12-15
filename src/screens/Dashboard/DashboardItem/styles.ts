@@ -1,6 +1,7 @@
+import { RectButton, RectButtonProps } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
-export const DashboardItemContainer = styled.View`
+export const DashboardItemContainer = styled(RectButton)<RectButtonProps>`
   flex-direction: row;
   height: 155px;
   margin: 8px;

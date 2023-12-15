@@ -23,7 +23,6 @@ export default function Routes() {
           options={{
             tabBarLabel: "Início",
             tabBarActiveTintColor: theme.colors.primary,
-
             tabBarLabelStyle: { fontSize: 14 },
             tabBarIcon: (tabInfo) => (
               <Entypo
