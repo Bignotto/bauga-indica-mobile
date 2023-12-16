@@ -25,6 +25,7 @@ export default function SignUp() {
   const { isEmailAvailable } = useData();
 
   const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -34,6 +35,10 @@ export default function SignUp() {
   async function handleCreateNewAccount() {
     if (name.length === 0) {
       Alert.alert("Nome não pode estar em branco.");
+      return;
+    }
+    if (lastName.length === 0) {
+      Alert.alert("Sobrenome não pode estar em branco.");
       return;
     }
     if (email.length === 0) {
@@ -60,13 +65,15 @@ export default function SignUp() {
 
       if (available) {
         const created = await signUp?.create({
+          firstName: name,
+          lastName,
           emailAddress: email.toLowerCase().trim(),
           password,
         });
 
         await setActive({ session: created.createdSessionId });
         navigation.navigate("CreateAccount", {
-          name,
+          name: `${name} ${lastName}`,
         });
       }
     } catch (error: any) {
@@ -103,14 +110,22 @@ export default function SignUp() {
         <AppSpacer verticalSpace="xlg" />
         <FormContainer>
           <AppInput
-            label="Seu nome"
+            label="Seu primeiro nome"
             value={name}
             onChangeText={(text) => setName(text)}
           />
           <AppSpacer />
           <AppInput
+            label="Seu sobrenome"
+            value={lastName}
+            onChangeText={(text) => setLastName(text)}
+            keyboardType="default"
+          />
+          <AppSpacer />
+          <AppInput
             label="Seu e-mail"
             value={email}
+            keyboardType="email-address"
             onChangeText={(text) => setEmail(text)}
           />
           <AppSpacer verticalSpace="xlg" />
