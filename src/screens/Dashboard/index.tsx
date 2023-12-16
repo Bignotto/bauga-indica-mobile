@@ -18,6 +18,7 @@ export default function Dashboard() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const [dashboardData, setDashboardData] = useState<IDashboardData>();
+  const [isLoading, setIsLoading] = useState(true);
 
   async function loadDashboardData() {
     try {
@@ -26,14 +27,14 @@ export default function Dashboard() {
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       Alert.alert("Erro ao carregar dados");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
     loadDashboardData();
   }, []);
-
-  async function handlePress() {}
 
   return (
     <AppScreenContainer>
@@ -45,21 +46,25 @@ export default function Dashboard() {
             title="Anúncios"
             description="seus anúncios cadastrados"
             information={`${dashboardData?.servicesCount} anúncios`}
+            isLoading={isLoading}
           />
           <DashboardItem
             title="Visualizações"
             description="visualizações em seus anúncios"
             information={`${dashboardData?.visualisationsCount} visualizações`}
+            isLoading={isLoading}
           />
           <DashboardItem
             title="Contratos"
             description="seus serviços prestados"
             information={`${dashboardData?.contractsCount} contratos`}
+            isLoading={isLoading}
           />
           <DashboardItem
             title="Avaliações"
             description="suas avaliações recebidas"
             information={`${dashboardData?.reviewsCount} avaliações`}
+            isLoading={isLoading}
           />
         </DashboardContainer>
       </ScrollView>
