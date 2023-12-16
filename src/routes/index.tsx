@@ -1,18 +1,63 @@
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import Header from "@components/Header";
+import { AppError } from "@errors/AppError";
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { useData } from "@hooks/DataContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "@screens/Dashboard";
-import Profile from "@screens/Profile/indext";
+import Profile from "@screens/Profile";
+import { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import { useTheme } from "styled-components";
 import { PublicRoutes } from "./public.routes";
+import { SearchRoutes } from "./search.routes";
 
-const { Navigator, Screen } = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { loadUserProfile, createNewAccount } = useData();
   const theme = useTheme();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function loadProfile() {
+    if (!isLoaded) return;
+    if (!user) return;
+    setIsLoading(true);
+
+    try {
+      const loadedProfile = await loadUserProfile(`${user?.id}`);
+
+      if (!loadedProfile) {
+        const newProfile = {
+          id: `${user?.id}`,
+          name: `${user?.fullName}`,
+          email: `${user?.primaryEmailAddress?.emailAddress}`,
+          image: `${user?.imageUrl}`,
+        };
+        await createNewAccount(newProfile);
+        setIsLoading(false);
+        return;
+      }
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isSignedIn && user) {
+      loadProfile();
+    }
+  }, [isSignedIn, user]);
 
   return (
     <NavigationContainer>
@@ -20,14 +65,15 @@ export default function Routes() {
         <PublicRoutes />
       </SignedOut>
       <SignedIn>
-        <Navigator
+        <BottomTab.Navigator
           screenOptions={{
-            headerShown: false,
+            // headerShown: false,
+            header: (props) => <Header />,
           }}
         >
-          <Screen
+          <BottomTab.Screen
             name="Start"
-            component={PublicRoutes}
+            component={SearchRoutes}
             options={{
               tabBarLabel: "Início",
               tabBarActiveTintColor: theme.colors.primary,
@@ -45,7 +91,7 @@ export default function Routes() {
               ),
             }}
           />
-          <Screen
+          <BottomTab.Screen
             name="Dashboard"
             component={Dashboard}
             options={{
@@ -65,7 +111,7 @@ export default function Routes() {
               ),
             }}
           />
-          <Screen
+          <BottomTab.Screen
             name="Profile"
             component={Profile}
             options={{
@@ -83,9 +129,10 @@ export default function Routes() {
                   }
                 />
               ),
+              headerShown: false,
             }}
           />
-        </Navigator>
+        </BottomTab.Navigator>
       </SignedIn>
     </NavigationContainer>
   );

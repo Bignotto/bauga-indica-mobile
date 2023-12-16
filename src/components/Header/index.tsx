@@ -2,14 +2,13 @@ import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import AppAvatar from "@components/AppAvatar";
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
-import { AppError } from "@errors/AppError";
 import { Feather } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import React from "react";
+import { ActivityIndicator } from "react-native";
 import { useTheme } from "styled-components";
 import { Container, SignedInContainer, SignedOutContainer } from "./styles";
 
@@ -19,57 +18,12 @@ export default function Header() {
   const { signOut } = useAuth();
   const theme = useTheme();
 
-  const { loadUserProfile, createNewAccount, userProfile } = useData();
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  async function loadProfile() {
-    if (!isLoaded) return;
-    if (!user) return;
-    setIsLoading(true);
-
-    try {
-      const loadedProfile = await loadUserProfile(`${user?.id}`);
-
-      if (!loadedProfile) {
-        const newProfile = {
-          id: `${user?.id}`,
-          name: `${user?.fullName}`,
-          email: `${user?.primaryEmailAddress?.emailAddress}`,
-          image: `${user?.imageUrl}`,
-        };
-        await createNewAccount(newProfile);
-        setIsLoading(false);
-        return;
-      }
-    } catch (error) {
-      console.log(JSON.stringify(error, null, 2));
-      if (error instanceof AppError) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (isSignedIn && user) {
-      loadProfile();
-    }
-  }, [isSignedIn, user]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!isSignedIn) {
-        loadProfile();
-      }
-    }, [isSignedIn])
-  );
+  const { userProfile } = useData();
 
   return (
     <Container>
       <SignedIn>
-        {isLoading ? (
+        {!isLoaded ? (
           <ActivityIndicator size="large" />
         ) : (
           <>
