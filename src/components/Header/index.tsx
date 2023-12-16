@@ -5,10 +5,10 @@ import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
 import { Feather } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Alert } from "react-native";
 import { useTheme } from "styled-components";
 import { Container, SignedInContainer, SignedOutContainer } from "./styles";
@@ -21,7 +21,7 @@ export default function Header() {
 
   const { loadUserProfile, createNewAccount, userProfile } = useData();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function loadProfile() {
     if (!isLoaded) return;
@@ -52,19 +52,19 @@ export default function Header() {
     }
   }
 
-  useEffect(() => {
-    if (isSignedIn && user) {
-      loadProfile();
-    }
-  }, [isSignedIn, user]);
+  // useEffect(() => {
+  //   if (isSignedIn && user) {
+  //     loadProfile();
+  //   }
+  // }, [isSignedIn, user]);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!isSignedIn) {
-        loadProfile();
-      }
-    }, [isSignedIn])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (!isSignedIn) {
+  //       loadProfile();
+  //     }
+  //   }, [isSignedIn])
+  // );
 
   return (
     <Container>

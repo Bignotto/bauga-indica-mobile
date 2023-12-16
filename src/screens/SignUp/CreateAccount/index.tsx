@@ -23,35 +23,68 @@ export default function CreateAccount() {
   const route = useRoute();
   const { name } = route.params as CreateAccountParams;
 
-  const { createNewAccount } = useData();
-  const { user } = useUser();
+  const { createNewAccount, loadUserProfile } = useData();
+  const { user, isLoaded, isSignedIn } = useUser();
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const theme = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function saveAccount() {
-      try {
-        const response = await createNewAccount({
-          id: user?.id,
-          name,
+  async function saveAccount() {
+    try {
+      const response = await createNewAccount({
+        id: user?.id,
+        name,
+        email: `${user?.primaryEmailAddress?.emailAddress}`,
+        image: `${user?.imageUrl}`,
+      });
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function loadProfile() {
+    if (!isLoaded) return;
+    if (!user) return;
+    setIsLoading(true);
+
+    try {
+      const loadedProfile = await loadUserProfile(`${user?.id}`);
+
+      if (!loadedProfile) {
+        const newProfile = {
+          id: `${user?.id}`,
+          name: name ? name : `${user?.fullName}`,
           email: `${user?.primaryEmailAddress?.emailAddress}`,
           image: `${user?.imageUrl}`,
-        });
-      } catch (error) {
-        console.log(JSON.stringify(error, null, 2));
-        if (error instanceof AppError) {
-          Alert.alert(error.message);
-        }
-      } finally {
+        };
+        await createNewAccount(newProfile);
         setIsLoading(false);
+        return;
       }
-    }
 
-    saveAccount();
-  }, []);
+      navigation.reset({ routes: [{ name: "Home" }] });
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isSignedIn && user) {
+      loadProfile();
+    }
+  }, [isSignedIn, user]);
 
   return (
     <AppScreenContainer
@@ -64,7 +97,9 @@ export default function CreateAccount() {
           {isLoading ? (
             <ActivityIndicator />
           ) : (
-            <AppText size="xlg">Sua conta foi criada!</AppText>
+            <AppText size="xlg">
+              {name ? name : `${user?.fullName}`} sua conta foi criada!
+            </AppText>
           )}
           <AppSpacer verticalSpace="xlg" />
         </HeaderContainer>

@@ -40,8 +40,8 @@ export default function SignIn() {
       const { createdSessionId, setActive } = await startOAuthFlow();
 
       if (createdSessionId) {
-        setActive!({ session: createdSessionId });
-        navigation.reset({ routes: [{ name: "Home" }] });
+        await setActive!({ session: createdSessionId });
+        navigation.navigate("CreateAccount");
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
