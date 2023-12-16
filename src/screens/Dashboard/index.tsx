@@ -1,7 +1,6 @@
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import Header from "@components/Header";
 import { IDashboardData, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -37,7 +36,7 @@ export default function Dashboard() {
   async function handlePress() {}
 
   return (
-    <AppScreenContainer header={<Header />} headerColor={theme.colors.white}>
+    <AppScreenContainer>
       <AppText size="xlg">Dashboard</AppText>
       <AppSpacer />
       <ScrollView>

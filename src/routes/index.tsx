@@ -1,4 +1,5 @@
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import Header from "@components/Header";
 import { AppError } from "@errors/AppError";
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
@@ -6,13 +7,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "@screens/Dashboard";
-import Profile from "@screens/Profile/indext";
+import Profile from "@screens/Profile";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useTheme } from "styled-components";
 import { PublicRoutes } from "./public.routes";
+import { SearchRoutes } from "./search.routes";
 
-const { Navigator, Screen } = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
@@ -63,14 +65,15 @@ export default function Routes() {
         <PublicRoutes />
       </SignedOut>
       <SignedIn>
-        <Navigator
+        <BottomTab.Navigator
           screenOptions={{
-            headerShown: false,
+            // headerShown: false,
+            header: (props) => <Header />,
           }}
         >
-          <Screen
+          <BottomTab.Screen
             name="Start"
-            component={PublicRoutes}
+            component={SearchRoutes}
             options={{
               tabBarLabel: "Início",
               tabBarActiveTintColor: theme.colors.primary,
@@ -88,7 +91,7 @@ export default function Routes() {
               ),
             }}
           />
-          <Screen
+          <BottomTab.Screen
             name="Dashboard"
             component={Dashboard}
             options={{
@@ -108,7 +111,7 @@ export default function Routes() {
               ),
             }}
           />
-          <Screen
+          <BottomTab.Screen
             name="Profile"
             component={Profile}
             options={{
@@ -126,9 +129,10 @@ export default function Routes() {
                   }
                 />
               ),
+              headerShown: false,
             }}
           />
-        </Navigator>
+        </BottomTab.Navigator>
       </SignedIn>
     </NavigationContainer>
   );
