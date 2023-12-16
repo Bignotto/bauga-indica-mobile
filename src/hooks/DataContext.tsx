@@ -136,7 +136,6 @@ function DataProvider({ children }: DataProviderProps) {
       reviewsCount: 0,
     };
 
-    console.log({ dashboardData });
     return dashboardData;
   }
 

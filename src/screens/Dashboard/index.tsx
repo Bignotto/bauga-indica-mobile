@@ -1,4 +1,3 @@
-import AppButton from "@components/AppButton";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
@@ -46,31 +45,25 @@ export default function Dashboard() {
           <DashboardItem
             title="Anúncios"
             description="seus anúncios cadastrados"
-            information={`${dashboardData?.servicesCount}`}
-            onPress={() =>
-              navigation.navigate("ServiceDetails", {
-                serviceId: "mcDYCcX4ub4Z3e9wRH1Tig",
-              })
-            }
+            information={`${dashboardData?.servicesCount} anúncios`}
           />
           <DashboardItem
             title="Visualizações"
             description="visualizações em seus anúncios"
-            information={`${dashboardData?.visualisationsCount}`}
+            information={`${dashboardData?.visualisationsCount} visualizações`}
           />
           <DashboardItem
             title="Contratos"
             description="seus serviços prestados"
-            information={`${dashboardData?.contractsCount}`}
+            information={`${dashboardData?.contractsCount} contratos`}
           />
           <DashboardItem
             title="Avaliações"
             description="suas avaliações recebidas"
-            information={`${dashboardData?.reviewsCount}`}
+            information={`${dashboardData?.reviewsCount} avaliações`}
           />
         </DashboardContainer>
       </ScrollView>
-      <AppButton title="test" onPress={handlePress} />
     </AppScreenContainer>
   );
 }
