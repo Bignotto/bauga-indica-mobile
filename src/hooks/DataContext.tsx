@@ -15,12 +15,20 @@ type IUserDTO = {
   image?: string;
 };
 
+type IDashboardData = {
+  servicesCount: number;
+  contractsCount: number;
+  visualisationsCount: number;
+  reviewsCount: number;
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
   loadUserProfile(userId: string): Promise<IUserDTO>;
   updateProfile(userId: string, name: string, phone: string): Promise<void>;
+  getDashboardData(): Promise<IDashboardData>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -102,6 +110,35 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function getDashboardData() {
+    const { data: servicesData, error: servicesError } = await supabase
+      .from("services")
+      .select("id")
+      .eq("providerId", userProfile?.id);
+    if (servicesError) {
+      console.log(JSON.stringify(servicesError, null, 2));
+      throw new AppError("ERROR on dashboard data loading", 500, "supabase");
+    }
+
+    const { data: contractsData, error: contractsError } = await supabase
+      .from("contract")
+      .select("id")
+      .eq("user_provider_id", userProfile?.id);
+    if (contractsError) {
+      console.log(JSON.stringify(contractsError, null, 2));
+      throw new AppError("ERROR on dashboard data loading", 500, "supabase");
+    }
+
+    const dashboardData: IDashboardData = {
+      contractsCount: contractsData.length,
+      servicesCount: servicesData.length,
+      visualisationsCount: 0,
+      reviewsCount: 0,
+    };
+
+    return dashboardData;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -110,6 +147,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewAccount,
         loadUserProfile,
         updateProfile,
+        getDashboardData,
       }}
     >
       {children}
@@ -121,4 +159,4 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, IUserDTO, useData };
+export { DataProvider, IDashboardData, IUserDTO, useData };

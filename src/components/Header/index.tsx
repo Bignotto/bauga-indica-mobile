@@ -25,6 +25,7 @@ export default function Header() {
 
   async function loadProfile() {
     if (!isLoaded) return;
+    if (!user) return;
     setIsLoading(true);
 
     try {
