@@ -18,4 +18,6 @@ export type StackParamList = {
   NewContract: {
     serviceData: Service;
   };
+  Dashboard: {} | undefined;
+  UserServiceAds: {} | undefined;
 };

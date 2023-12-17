@@ -6,11 +6,11 @@ import { useData } from "@hooks/DataContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Dashboard from "@screens/Dashboard";
 import Profile from "@screens/Profile";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useTheme } from "styled-components";
+import { DashboardRoutes } from "./dashboard.routes";
 import { PublicRoutes } from "./public.routes";
 import { SearchRoutes } from "./search.routes";
 
@@ -67,7 +67,6 @@ export default function Routes() {
       <SignedIn>
         <BottomTab.Navigator
           screenOptions={{
-            // headerShown: false,
             header: (props) => <Header />,
           }}
         >
@@ -92,8 +91,8 @@ export default function Routes() {
             }}
           />
           <BottomTab.Screen
-            name="Dashboard"
-            component={Dashboard}
+            name="DashboardHome"
+            component={DashboardRoutes}
             options={{
               tabBarLabel: "Dashboard",
               tabBarActiveTintColor: theme.colors.primary,

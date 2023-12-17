@@ -47,6 +47,7 @@ export default function Dashboard() {
             description="seus anúncios cadastrados"
             information={`${dashboardData?.servicesCount} anúncios`}
             isLoading={isLoading}
+            onPress={() => navigation.navigate("UserServiceAds")}
           />
           <DashboardItem
             title="Visualizações"
