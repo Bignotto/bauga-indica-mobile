@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   return (
     <AppScreenContainer>
-      <AppText size="xlg">Dashboard</AppText>
+      <AppText size="xlg">Dashboard {`${isLoading}`}</AppText>
       <AppSpacer />
       <ScrollView>
         <DashboardContainer>

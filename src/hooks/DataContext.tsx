@@ -37,7 +37,11 @@ type IUserServiceAd = {
     name: string;
     image: string;
   };
-  serviceTypeId: number;
+  serviceTypeId: {
+    id: number;
+    name: string;
+    description: string;
+  };
 };
 
 interface IDataContextProps {
@@ -161,7 +165,7 @@ function DataProvider({ children }: DataProviderProps) {
   async function getUserServiceAds(): Promise<IUserServiceAd[] | undefined> {
     const { data, error } = await supabase
       .from("services")
-      .select("*,providerId(id,name,image)")
+      .select("*,providerId(id,name,image),serviceTypeId(*)")
       .eq("providerId", userProfile?.id);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
@@ -197,4 +201,4 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, IDashboardData, IUserDTO, useData };
+export { DataProvider, IDashboardData, IUserDTO, IUserServiceAd, useData };
