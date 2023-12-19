@@ -10,8 +10,6 @@ export const ResultItem = styled.View`
 `;
 
 export const TitleWrapper = styled.View`
-  padding-top: 8px;
-  padding-left: 8px;
   padding-right: 8px;
 `;
 
@@ -61,4 +59,11 @@ export const ProviderAvatar = styled.Image`
 export const ProviderName = styled.View`
   justify-content: center;
   margin-left: 8px;
+`;
+
+export const OwnerButtonsWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 `;

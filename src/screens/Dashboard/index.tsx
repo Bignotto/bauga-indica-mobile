@@ -38,9 +38,11 @@ export default function Dashboard() {
 
   return (
     <AppScreenContainer>
-      <AppText size="xlg">Dashboard {`${isLoading}`}</AppText>
+      <AppText size="xlg" bold>
+        Dashboard
+      </AppText>
       <AppSpacer />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <DashboardContainer>
           <DashboardItem
             title="Anúncios"

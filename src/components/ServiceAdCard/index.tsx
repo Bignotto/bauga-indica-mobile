@@ -1,6 +1,6 @@
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
-import { IUserServiceAd } from "@hooks/DataContext";
+import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -8,6 +8,7 @@ import React from "react";
 import { useTheme } from "styled-components";
 import {
   ContentWrapper,
+  OwnerButtonsWrapper,
   ProviderAvatar,
   ProviderInfoWrapper,
   ProviderName,
@@ -34,6 +35,7 @@ export default function ServiceAdCard({
   showDescription = true,
   showProvider = true,
 }: AppServiceProps) {
+  const { userProfile } = useData();
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
@@ -46,19 +48,18 @@ export default function ServiceAdCard({
   }
   return (
     <ResultItem>
-      <TitleWrapper>
-        <AppText bold size="lg">
-          {item.title}
-        </AppText>
-      </TitleWrapper>
       <ContentWrapper>
-        {showDescription && <AppText>{item.description}</AppText>}
-
         <TagWrapper>
           <Tag>
             <TagText>{item.serviceTypeId.name}</TagText>
           </Tag>
         </TagWrapper>
+        <TitleWrapper>
+          <AppText bold size="lg">
+            {item.title}
+          </AppText>
+        </TitleWrapper>
+        {showDescription && <AppText>{item.description}</AppText>}
 
         <ProviderPriceWrapper>
           {showProvider && (
@@ -78,17 +79,26 @@ export default function ServiceAdCard({
             {`R$ ${item.value.toFixed(2)}`}
           </AppText>
         </ProviderPriceWrapper>
-        {showButton && buttonType === "details" && (
-          <AppButton
-            title="Ver mais detalhes"
-            onPress={() => handleServiceDetails(item.id)}
-          />
-        )}
-        {showButton && buttonType === "contact" && (
-          <AppButton
-            title="Entrar em contato!"
-            onPress={handleContactProvider}
-          />
+        {userProfile?.id === item.providerId.id ? (
+          <OwnerButtonsWrapper>
+            <AppButton size="sm" title="Excluir" variant="negative" />
+            <AppButton size="sm" title="Editar" />
+          </OwnerButtonsWrapper>
+        ) : (
+          <>
+            {showButton && buttonType === "details" && (
+              <AppButton
+                title="Ver mais detalhes"
+                onPress={() => handleServiceDetails(item.id)}
+              />
+            )}
+            {showButton && buttonType === "contact" && (
+              <AppButton
+                title="Entrar em contato!"
+                onPress={handleContactProvider}
+              />
+            )}
+          </>
         )}
       </ContentWrapper>
     </ResultItem>
