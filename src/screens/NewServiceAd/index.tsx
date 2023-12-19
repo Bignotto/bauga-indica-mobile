@@ -2,10 +2,10 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import React from "react";
 
-export default function UserServices() {
+export default function NewServiceAd() {
   return (
     <AppScreenContainer>
-      <AppText>User services list</AppText>
+      <AppText>New Service Form</AppText>
     </AppScreenContainer>
   );
 }

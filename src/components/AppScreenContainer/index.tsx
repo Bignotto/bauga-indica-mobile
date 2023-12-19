@@ -5,7 +5,6 @@ import {
   AppScreenContainerStylesProps,
   FooterContainer,
   HeaderContainer,
-  HeaderSpace,
   ScreenContainer,
 } from "./styles";
 
@@ -34,10 +33,8 @@ export default function AppScreenContainer({
             : "dark"
         }
       />
-      {header ? (
+      {header && (
         <HeaderContainer color={headerColor}>{header}</HeaderContainer>
-      ) : (
-        <HeaderSpace color={headerColor} />
       )}
       <ScreenContainer>{children}</ScreenContainer>
       {footer && (

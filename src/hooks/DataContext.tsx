@@ -22,6 +22,28 @@ type IDashboardData = {
   reviewsCount: number;
 };
 
+type IUserServiceAd = {
+  id: string;
+  title: string;
+  description: string;
+  value: number;
+  service_class: string;
+  valid_to: Date;
+  valid_from: Date;
+  created_at: Date;
+  updated_at: Date;
+  providerId: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  serviceTypeId: {
+    id: number;
+    name: string;
+    description: string;
+  };
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
@@ -29,6 +51,7 @@ interface IDataContextProps {
   loadUserProfile(userId: string): Promise<IUserDTO>;
   updateProfile(userId: string, name: string, phone: string): Promise<void>;
   getDashboardData(): Promise<IDashboardData>;
+  getUserServiceAds(): Promise<IUserServiceAd[] | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -139,6 +162,24 @@ function DataProvider({ children }: DataProviderProps) {
     return dashboardData;
   }
 
+  async function getUserServiceAds(): Promise<IUserServiceAd[] | undefined> {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*,providerId(id,name,image),serviceTypeId(*)")
+      .eq("providerId", userProfile?.id);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while loading user service ads",
+        500,
+        "supabase"
+      );
+    }
+    if (data) return data;
+
+    return undefined;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -148,6 +189,7 @@ function DataProvider({ children }: DataProviderProps) {
         loadUserProfile,
         updateProfile,
         getDashboardData,
+        getUserServiceAds,
       }}
     >
       {children}
@@ -159,4 +201,4 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, IDashboardData, IUserDTO, useData };
+export { DataProvider, IDashboardData, IUserDTO, IUserServiceAd, useData };
