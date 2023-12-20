@@ -1,9 +1,12 @@
 import AppAvatar from "@components/AppAvatar";
 import AppButton from "@components/AppButton";
+import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
+import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
+import { FormContainer } from "./styles";
 
 type AppImagesList = {
   id: string | undefined;
@@ -39,7 +42,17 @@ export default function NewServiceAd() {
 
   return (
     <AppScreenContainer>
-      <AppText>New Service Form</AppText>
+      <AppText size="md" bold>
+        Cadastrar um anúncio de serviço:
+      </AppText>
+      <AppText size="sm">Descreva o serviço que deseja anunciar.</AppText>
+      <FormContainer>
+        <AppInput label="Título do anúncio" />
+        <AppSpacer />
+        <AppInput label="Descrição do anúncio" multiline numberOfLines={4} />
+        <AppSpacer />
+        <AppInput label="Preço" />
+      </FormContainer>
       <AppButton onPress={handleImageSelect} title="Pick image" />
       <AppAvatar imagePath={theImage} size={120} />
     </AppScreenContainer>
