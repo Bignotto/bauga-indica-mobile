@@ -1,3 +1,4 @@
+import Header from "@components/Header";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@screens/Home";
 import NewContract from "@screens/NewContract";
@@ -11,7 +12,7 @@ export function SearchRoutes() {
     <Navigator
       initialRouteName="Home"
       screenOptions={{
-        headerShown: false,
+        header: (props) => <Header />,
       }}
     >
       <Screen name="Home" component={Home} />

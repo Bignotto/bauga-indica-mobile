@@ -144,7 +144,7 @@ function DataProvider({ children }: DataProviderProps) {
     }
 
     const { data: contractsData, error: contractsError } = await supabase
-      .from("contract")
+      .from("contracts")
       .select("id")
       .eq("user_provider_id", userProfile?.id);
     if (contractsError) {

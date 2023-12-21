@@ -1,5 +1,4 @@
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import Header from "@components/Header";
 import { AppError } from "@errors/AppError";
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
@@ -67,7 +66,8 @@ export default function Routes() {
       <SignedIn>
         <BottomTab.Navigator
           screenOptions={{
-            header: (props) => <Header />,
+            // header: (props) => <Header />,
+            headerShown: false,
           }}
         >
           <BottomTab.Screen
