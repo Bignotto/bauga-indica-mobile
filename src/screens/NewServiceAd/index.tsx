@@ -1,12 +1,11 @@
-import AppButton from "@components/AppButton";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
+import ImageSelector from "./ImageSelector";
 import { FormContainer } from "./styles";
 
 type AppImagesList = {
@@ -20,27 +19,18 @@ export default function NewServiceAd() {
 
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
 
-  const [theImage, setTheImage] = useState("");
+  function onUpdate(imagesList: AppImagesList[]) {
+    console.log(JSON.stringify(imagesList, null, 2));
+  }
 
-  async function handleImageSelect() {
-    const selectedImages = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-      aspect: [4, 4],
-      allowsEditing: true,
-    });
+  function handleAddImage(imagePath: string) {
+    const newImage: AppImagesList = {
+      id: imagePath,
+      path: imagePath,
+      local: true,
+    };
 
-    if (selectedImages.canceled) return;
-
-    setTheImage(selectedImages.assets[0].uri);
-
-    // const newImage: AppImagesList = {
-    //   id: selectedImages.assets[0].uri,
-    //   path: selectedImages.assets[0].uri,
-    //   local: true,
-    // };
-
-    // setAdImages([...adImages, newImage]);
+    setAdImages([...adImages, newImage]);
   }
 
   return (
@@ -65,7 +55,11 @@ export default function NewServiceAd() {
           <AppInput label="Válido até" />
         </FormContainer>
         <AppSpacer verticalSpace="xlg" />
-        <AppButton onPress={handleImageSelect} title="Pick image" />
+        <ImageSelector
+          onAddImage={handleAddImage}
+          onRemoveImage={() => {}}
+          selectedImages={adImages}
+        />
       </ScrollView>
     </AppScreenContainer>
   );
