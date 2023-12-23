@@ -11,3 +11,14 @@ export const LeftWrapper = styled.View``;
 export const MiddleWrapper = styled.View``;
 
 export const RightWrapper = styled.View``;
+
+export const TwoColumnsWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const DatePickerWrapper = styled.View`
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+`;
