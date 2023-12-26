@@ -20,12 +20,14 @@ interface ImageSelectorProps {
   onAddImage(imagePath: string): void;
   onRemoveImage(imagePath: string): void;
   selectedImages: AppImagesList[];
+  imageLimit?: number;
 }
 
 export default function ImageSelector({
   onAddImage,
   onRemoveImage,
   selectedImages,
+  imageLimit = 3,
 }: ImageSelectorProps) {
   const theme = useTheme();
 
@@ -57,7 +59,7 @@ export default function ImageSelector({
           />
         ))}
 
-        {selectedImages.length <= 3 && (
+        {selectedImages.length <= imageLimit && (
           <AdImageAddButtonWrapper>
             <AdImageAddButton onPress={handleImageSelect}>
               <Ionicons

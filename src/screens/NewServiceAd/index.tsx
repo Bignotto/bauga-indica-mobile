@@ -22,7 +22,9 @@ export default function NewServiceAd() {
   const [showDatePickerTo, setShowDatePickerTo] = useState(false);
 
   const [validFrom, setValidFrom] = useState<Date | undefined>(new Date());
-  const [validTo, setValidTo] = useState<Date | undefined>(new Date());
+  const [validTo, setValidTo] = useState<Date | undefined>(
+    moment(new Date()).add(14, "days").toDate()
+  );
 
   function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
@@ -67,6 +69,8 @@ export default function NewServiceAd() {
           <AppInput label="Valor" />
           <AppSpacer verticalSpace="xlg" />
           <AppText>Validade do anúncio</AppText>
+          <AppText size="sm">Por quanto tempo quer seu anúncio ativo?</AppText>
+          <AppSpacer />
           <TwoColumnsWrapper>
             <DatePickerWrapper>
               <AppInput
