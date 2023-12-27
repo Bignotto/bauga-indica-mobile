@@ -17,6 +17,10 @@ export const TwoColumnsWrapper = styled.View`
   justify-content: space-between;
 `;
 
+export const ColumnWrapper = styled.View`
+  flex: 1;
+`;
+
 export const DatePickerWrapper = styled.View`
   flex-direction: row;
   align-items: flex-end;

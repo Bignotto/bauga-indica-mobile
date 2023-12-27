@@ -12,7 +12,12 @@ import { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import ImageSelector, { AppImagesList } from "./ImageSelector";
-import { DatePickerWrapper, FormContainer, TwoColumnsWrapper } from "./styles";
+import {
+  ColumnWrapper,
+  DatePickerWrapper,
+  FormContainer,
+  TwoColumnsWrapper,
+} from "./styles";
 
 export default function NewServiceAd() {
   const theme = useTheme();
@@ -56,11 +61,8 @@ export default function NewServiceAd() {
     <AppScreenContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
         <AppSpacer verticalSpace="lg" />
-        <AppText size="md" bold>
-          Cadastrar um anúncio de serviço:
-        </AppText>
-        <AppSpacer verticalSpace="lg" />
-        <AppText size="md">Descreva o serviço que deseja anunciar.</AppText>
+        <AppText>Cadastrar um anúncio de serviço:</AppText>
+        <AppText size="sm">Descreva o serviço que deseja anunciar.</AppText>
         <FormContainer>
           <AppInput label="Título do anúncio" />
           <AppSpacer />
@@ -134,11 +136,28 @@ export default function NewServiceAd() {
           </TwoColumnsWrapper>
         </FormContainer>
         <AppSpacer verticalSpace="xlg" />
+        <AppText>Imagens</AppText>
+        <AppText size="sm">Selecione até 4 imagens para o seu anúncio.</AppText>
+        <AppSpacer verticalSpace="sm" />
         <ImageSelector
           onAddImage={handleAddImage}
           onRemoveImage={() => {}}
           selectedImages={adImages}
         />
+        <AppSpacer />
+        <TwoColumnsWrapper
+          style={{
+            gap: 12,
+          }}
+        >
+          <ColumnWrapper>
+            <AppButton title="Cancelar" variant="negative" />
+          </ColumnWrapper>
+          <ColumnWrapper>
+            <AppButton title="Salvar" variant="positive" />
+          </ColumnWrapper>
+        </TwoColumnsWrapper>
+        <AppSpacer />
       </ScrollView>
     </AppScreenContainer>
   );
