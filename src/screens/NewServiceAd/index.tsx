@@ -4,6 +4,8 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { AntDesign } from "@expo/vector-icons";
+import { yupResolver } from "@hookform/resolvers/yup";
+
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -19,8 +21,32 @@ import {
   TwoColumnsWrapper,
 } from "./styles";
 
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
+
+const validationSchema = yup.object({
+  title: yup.string().required("O anúncio precisa de um título."),
+  description: yup.string().required("Descreva seu anúncio."),
+  adValue: yup
+    .number()
+    .required()
+    .typeError("Valor inválido.")
+    .positive("Valor inválido."),
+});
+
 export default function NewServiceAd() {
   const theme = useTheme();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      adValue: 0,
+    },
+  });
 
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -57,6 +83,10 @@ export default function NewServiceAd() {
     setValidTo(selectedDate);
   }
 
+  async function onSubmit({ adValue, description, title }: any) {
+    console.log({ adValue, description, title });
+  }
+
   return (
     <AppScreenContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -64,11 +94,49 @@ export default function NewServiceAd() {
         <AppText>Cadastrar um anúncio de serviço:</AppText>
         <AppText size="sm">Descreva o serviço que deseja anunciar.</AppText>
         <FormContainer>
-          <AppInput label="Título do anúncio" />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                label="Título do anúncio"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={errors.title?.message}
+              />
+            )}
+            name="title"
+          />
           <AppSpacer />
-          <AppInput label="Descrição do anúncio" multiline numberOfLines={4} />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                label="Descrição do anúncio"
+                multiline
+                numberOfLines={4}
+                error={errors.description?.message}
+              />
+            )}
+            name="description"
+          />
           <AppSpacer verticalSpace="xlg" />
-          <AppInput label="Valor" />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={`${value}`}
+                label="Valor"
+                error={errors.adValue?.message}
+              />
+            )}
+            name="adValue"
+          />
           <AppSpacer verticalSpace="xlg" />
           <AppText>Validade do anúncio</AppText>
           <AppText size="sm">Por quanto tempo quer seu anúncio ativo?</AppText>
@@ -154,7 +222,11 @@ export default function NewServiceAd() {
             <AppButton title="Cancelar" variant="negative" />
           </ColumnWrapper>
           <ColumnWrapper>
-            <AppButton title="Salvar" variant="positive" />
+            <AppButton
+              title="Salvar"
+              variant="positive"
+              onPress={() => handleSubmit(onSubmit)()}
+            />
           </ColumnWrapper>
         </TwoColumnsWrapper>
         <AppSpacer />

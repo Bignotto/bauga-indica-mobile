@@ -2,12 +2,17 @@ import MaskInput from "react-native-mask-input";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
+interface WrapperProps {
+  error?: string;
+}
+
 export const Container = styled.View``;
 
-export const Wrapper = styled.View`
+export const Wrapper = styled.View<WrapperProps>`
   background-color: ${({ theme }) => "#F9F9F9"};
   border-radius: 5px;
-  border-color: ${({ theme }) => theme.colors.border};
+  border-color: ${({ theme, error }) =>
+    error ? theme.colors.negative : theme.colors.border};
   border-width: 1px;
 `;
 
