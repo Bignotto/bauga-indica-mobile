@@ -5,7 +5,6 @@ import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { AntDesign } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
-
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -23,6 +22,7 @@ import {
 
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+import ServiceCategorySelector from "./ServiceCategorySelector";
 
 const validationSchema = yup.object({
   title: yup.string().required("O anúncio precisa de um título."),
@@ -57,6 +57,8 @@ export default function NewServiceAd() {
     moment(new Date()).add(14, "days").toDate()
   );
 
+  const [modalOn, setModalOn] = useState(false);
+
   function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
       id: imagePath,
@@ -85,6 +87,11 @@ export default function NewServiceAd() {
 
   async function onSubmit({ adValue, description, title }: any) {
     console.log({ adValue, description, title });
+  }
+
+  function handleClose() {
+    console.log("set visible false!!");
+    setModalOn(false);
   }
 
   return (
@@ -203,6 +210,24 @@ export default function NewServiceAd() {
             </DatePickerWrapper>
           </TwoColumnsWrapper>
         </FormContainer>
+        <AppSpacer verticalSpace="xlg" />
+        <ServiceCategorySelector
+          visible={modalOn}
+          itens={[
+            {
+              id: "adsfkjahsdf",
+              title: "something",
+            },
+            { id: "dkjçlakjdf", title: "others" },
+          ]}
+          onClose={handleClose}
+        />
+        <AppButton
+          title={`select ${modalOn}`}
+          onPress={() => {
+            setModalOn(true);
+          }}
+        />
         <AppSpacer verticalSpace="xlg" />
         <AppText>Imagens</AppText>
         <AppText size="sm">Selecione até 4 imagens para o seu anúncio.</AppText>
