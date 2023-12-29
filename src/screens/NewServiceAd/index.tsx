@@ -89,11 +89,6 @@ export default function NewServiceAd() {
     console.log({ adValue, description, title });
   }
 
-  function handleClose() {
-    console.log("set visible false!!");
-    setModalOn(false);
-  }
-
   return (
     <AppScreenContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -212,15 +207,18 @@ export default function NewServiceAd() {
         </FormContainer>
         <AppSpacer verticalSpace="xlg" />
         <ServiceCategorySelector
+          animationType="slide"
+          transparent={true}
           visible={modalOn}
           itens={[
             {
               id: "adsfkjahsdf",
               title: "something",
             },
-            { id: "dkjçlakjdf", title: "others" },
+            { id: "dkjçlakjdf", title: `modal visible ${modalOn}` },
           ]}
-          onClose={handleClose}
+          onClose={() => setModalOn(!modalOn)}
+          // onRequestClose={() => setModalOn(!modalOn)}
         />
         <AppButton
           title={`select ${modalOn}`}
