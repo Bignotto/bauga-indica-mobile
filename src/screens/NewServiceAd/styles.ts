@@ -23,6 +23,5 @@ export const ColumnWrapper = styled.View`
 
 export const DatePickerWrapper = styled.View`
   flex-direction: row;
-  align-items: flex-end;
-  gap: 8px;
+  align-items: center;
 `;

@@ -22,7 +22,9 @@ import {
 
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import ServiceCategorySelector from "./ServiceCategorySelector";
+import ServiceCategorySelector, {
+  ServiceCategoryItem,
+} from "./ServiceCategorySelector";
 
 const validationSchema = yup.object({
   title: yup.string().required("O anúncio precisa de um título."),
@@ -89,6 +91,11 @@ export default function NewServiceAd() {
     console.log({ adValue, description, title });
   }
 
+  function handleSelected(item: ServiceCategoryItem) {
+    setModalOn(!modalOn);
+    console.log({ item });
+  }
+
   return (
     <AppScreenContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -144,12 +151,12 @@ export default function NewServiceAd() {
           <AppText size="sm">Por quanto tempo quer seu anúncio ativo?</AppText>
           <AppSpacer />
           <TwoColumnsWrapper>
+            <AppInput
+              label="Válido de"
+              editable={false}
+              value={`${moment(validFrom).format("DD/MM/yyyy")}`}
+            />
             <DatePickerWrapper>
-              <AppInput
-                label="Válido de"
-                editable={false}
-                value={`${moment(validFrom).format("DD/MM/yyyy")}`}
-              />
               <AppButton
                 title=""
                 onPress={() => setShowDatePicker(true)}
@@ -174,12 +181,12 @@ export default function NewServiceAd() {
               )}
             </DatePickerWrapper>
             <AppSpacer />
+            <AppInput
+              label="Válido até"
+              editable={false}
+              value={`${moment(validTo).format("DD/MM/yyyy")}`}
+            />
             <DatePickerWrapper>
-              <AppInput
-                label="Válido até"
-                editable={false}
-                value={`${moment(validTo).format("DD/MM/yyyy")}`}
-              />
               <AppButton
                 title=""
                 onPress={() => setShowDatePickerTo(true)}
@@ -207,17 +214,24 @@ export default function NewServiceAd() {
         </FormContainer>
         <AppSpacer verticalSpace="xlg" />
         <ServiceCategorySelector
-          animationType="slide"
-          transparent={true}
           visible={modalOn}
+          onRequestClose={() => setModalOn(!modalOn)}
           itens={[
             {
               id: "adsfkjahsdf",
               title: "something",
             },
-            { id: "dkjçlakjdf", title: `modal visible ${modalOn}` },
+            { id: "dkjçlakjdf", title: `jardinagem` },
+            { id: "adfasdfsdf", title: `construção` },
+            { id: "xcvxcvsdfs", title: `elétrica` },
+            { id: "vxcvxcvx", title: `encanamentos` },
+            { id: "asdasdasd", title: `diaristas` },
+            { id: "erwerwsadsf", title: `pintura` },
+            { id: "werwerwer", title: `dedetização` },
+            { id: "sdfsf", title: `marcenaria` },
+            { id: "werwer", title: `limpeza` },
           ]}
-          onClose={() => setModalOn(!modalOn)}
+          onClose={handleSelected}
           // onRequestClose={() => setModalOn(!modalOn)}
         />
         <AppButton
