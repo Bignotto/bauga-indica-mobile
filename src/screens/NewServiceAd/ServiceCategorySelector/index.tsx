@@ -2,10 +2,12 @@ import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import React from "react";
 import { Modal, ModalProps, Pressable, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import {
   CancelButton,
   ContentWrapper,
+  ItemWrapper,
   ModalItemsWrapper,
   OptionsWrapper,
 } from "./styles";
@@ -43,21 +45,42 @@ export default function ServiceCategorySelector({
           <AppSpacer verticalSpace="xlg" />
 
           <OptionsWrapper>
-            {itens &&
-              itens.map((i) => (
-                <Pressable
-                  key={i.id}
-                  onPress={() => onClose(i)}
-                  style={({ pressed }) => [
-                    {
-                      opacity: pressed ? 0.2 : 1,
-                    },
-                  ]}
-                >
-                  <AppText>{i.title}</AppText>
-                </Pressable>
-              ))}
+            <ScrollView>
+              {itens &&
+                itens.map((i) => (
+                  <Pressable
+                    key={i.id}
+                    onPress={() => onClose(i)}
+                    style={({ pressed }) => [
+                      {
+                        opacity: pressed ? 0.2 : 1,
+                      },
+                    ]}
+                  >
+                    <ItemWrapper>
+                      <AppText>{i.title}</AppText>
+                    </ItemWrapper>
+                  </Pressable>
+                ))}
+              {itens &&
+                itens.map((i) => (
+                  <Pressable
+                    key={i.id}
+                    onPress={() => onClose(i)}
+                    style={({ pressed }) => [
+                      {
+                        opacity: pressed ? 0.2 : 1,
+                      },
+                    ]}
+                  >
+                    <ItemWrapper>
+                      <AppText>{i.title}</AppText>
+                    </ItemWrapper>
+                  </Pressable>
+                ))}
+            </ScrollView>
           </OptionsWrapper>
+          <AppSpacer />
           <TouchableOpacity onPress={() => onClose(undefined)}>
             <CancelButton>
               <AppText color={theme.colors.white}>Cancelar</AppText>

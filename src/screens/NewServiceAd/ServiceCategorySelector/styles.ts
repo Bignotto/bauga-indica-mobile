@@ -16,13 +16,30 @@ export const ContentWrapper = styled.View`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.white};
-  border-color: ${({ theme }) => theme.colors.border};
-  border-width: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
+
   border-radius: 18px;
 `;
 
 export const OptionsWrapper = styled.View`
   flex: 1;
+  width: 100%;
+
+  flex-direction: column;
+  border-color: ${({ theme }) => theme.colors.border};
+  border-width: 1px;
+`;
+
+export const ItemWrapper = styled.View`
+  flex-direction: row;
+  height: 44px;
+  align-items: center;
+
+  padding-left: 12px;
+
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.colors.border};
 `;
 
 export const CancelButton = styled.View`
