@@ -21,6 +21,7 @@ import {
 } from "./styles";
 
 import { Controller, useForm } from "react-hook-form";
+import { Alert } from "react-native";
 import * as yup from "yup";
 import ServiceCategorySelector, {
   ServiceCategoryItem,
@@ -59,6 +60,10 @@ export default function NewServiceAd() {
     moment(new Date()).add(14, "days").toDate()
   );
 
+  const [selectedCategory, setSelectedCategory] = useState<
+    ServiceCategoryItem | undefined
+  >(undefined);
+
   const [modalOn, setModalOn] = useState(false);
 
   function handleAddImage(imagePath: string) {
@@ -88,12 +93,14 @@ export default function NewServiceAd() {
   }
 
   async function onSubmit({ adValue, description, title }: any) {
-    console.log({ adValue, description, title });
+    if (!selectedCategory)
+      return Alert.alert("Selecione uma categoria para o anúncio.");
+    console.log({ adValue, description, title, selectedCategory });
   }
 
   function handleSelected(item: ServiceCategoryItem) {
     setModalOn(!modalOn);
-    console.log({ item });
+    setSelectedCategory(item);
   }
 
   return (
@@ -231,8 +238,7 @@ export default function NewServiceAd() {
             { id: "sdfsf", title: `marcenaria` },
             { id: "werwer", title: `limpeza` },
           ]}
-          onClose={handleSelected}
-          // onRequestClose={() => setModalOn(!modalOn)}
+          onSelect={handleSelected}
         />
         <AppButton
           title={`select ${modalOn}`}

@@ -20,13 +20,13 @@ export interface ServiceCategoryItem {
 interface ServiceCategorySelectorProps extends ModalProps {
   someProps?: boolean;
   itens: ServiceCategoryItem[];
-  onClose(category: ServiceCategoryItem | undefined): void;
+  onSelect(category: ServiceCategoryItem | undefined): void;
 }
 
 export default function ServiceCategorySelector({
   someProps,
   itens,
-  onClose,
+  onSelect,
   ...rest
 }: ServiceCategorySelectorProps) {
   const theme = useTheme();
@@ -50,23 +50,7 @@ export default function ServiceCategorySelector({
                 itens.map((i) => (
                   <Pressable
                     key={i.id}
-                    onPress={() => onClose(i)}
-                    style={({ pressed }) => [
-                      {
-                        opacity: pressed ? 0.2 : 1,
-                      },
-                    ]}
-                  >
-                    <ItemWrapper>
-                      <AppText>{i.title}</AppText>
-                    </ItemWrapper>
-                  </Pressable>
-                ))}
-              {itens &&
-                itens.map((i) => (
-                  <Pressable
-                    key={i.id}
-                    onPress={() => onClose(i)}
+                    onPress={() => onSelect(i)}
                     style={({ pressed }) => [
                       {
                         opacity: pressed ? 0.2 : 1,
@@ -81,7 +65,7 @@ export default function ServiceCategorySelector({
             </ScrollView>
           </OptionsWrapper>
           <AppSpacer />
-          <TouchableOpacity onPress={() => onClose(undefined)}>
+          <TouchableOpacity onPress={() => onSelect(undefined)}>
             <CancelButton>
               <AppText color={theme.colors.white}>Cancelar</AppText>
             </CancelButton>
