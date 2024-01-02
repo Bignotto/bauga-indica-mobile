@@ -1,5 +1,6 @@
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
+import { IServiceType } from "@hooks/DataContext";
 import React from "react";
 import { Modal, ModalProps, Pressable, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -12,15 +13,10 @@ import {
   OptionsWrapper,
 } from "./styles";
 
-export interface ServiceCategoryItem {
-  title?: string;
-  id?: string;
-}
-
 interface ServiceCategorySelectorProps extends ModalProps {
   someProps?: boolean;
-  itens: ServiceCategoryItem[];
-  onSelect(category: ServiceCategoryItem | undefined): void;
+  itens: IServiceType[] | undefined;
+  onSelect(category: IServiceType | undefined): void;
 }
 
 export default function ServiceCategorySelector({
@@ -58,7 +54,7 @@ export default function ServiceCategorySelector({
                     ]}
                   >
                     <ItemWrapper>
-                      <AppText>{i.title}</AppText>
+                      <AppText>{i.name}</AppText>
                     </ItemWrapper>
                   </Pressable>
                 ))}

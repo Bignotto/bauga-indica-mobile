@@ -9,7 +9,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import ImageSelector, { AppImagesList } from "./ImageSelector";
@@ -20,12 +20,11 @@ import {
   TwoColumnsWrapper,
 } from "./styles";
 
+import { IServiceType, useData } from "@hooks/DataContext";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import * as yup from "yup";
-import ServiceCategorySelector, {
-  ServiceCategoryItem,
-} from "./ServiceCategorySelector";
+import ServiceCategorySelector from "./ServiceCategorySelector";
 
 const validationSchema = yup.object({
   title: yup.string().required("O anúncio precisa de um título."),
@@ -39,6 +38,7 @@ const validationSchema = yup.object({
 
 export default function NewServiceAd() {
   const theme = useTheme();
+  const { getAvailableServiceTypes } = useData();
 
   const {
     control,
@@ -61,10 +61,30 @@ export default function NewServiceAd() {
   );
 
   const [selectedCategory, setSelectedCategory] = useState<
-    ServiceCategoryItem | undefined
+    IServiceType | undefined
+  >(undefined);
+
+  const [availableServiceTypes, setAvailableServiceTypes] = useState<
+    IServiceType[] | undefined
   >(undefined);
 
   const [modalOn, setModalOn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function loadServiceTypes() {
+    try {
+      const response = await getAvailableServiceTypes();
+      setAvailableServiceTypes(response);
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadServiceTypes();
+  });
 
   function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
@@ -92,15 +112,17 @@ export default function NewServiceAd() {
     setValidTo(selectedDate);
   }
 
+  function handleSelected(item: IServiceType) {
+    setModalOn(!modalOn);
+    setSelectedCategory(item);
+  }
+
   async function onSubmit({ adValue, description, title }: any) {
     if (!selectedCategory)
       return Alert.alert("Selecione uma categoria para o anúncio.");
+    if (adImages.length === 0)
+      return Alert.alert("Selecione ao menos uma imagem para o seu anúncio.");
     console.log({ adValue, description, title, selectedCategory });
-  }
-
-  function handleSelected(item: ServiceCategoryItem) {
-    setModalOn(!modalOn);
-    setSelectedCategory(item);
   }
 
   return (
@@ -223,28 +245,19 @@ export default function NewServiceAd() {
         <ServiceCategorySelector
           visible={modalOn}
           onRequestClose={() => setModalOn(!modalOn)}
-          itens={[
-            {
-              id: "adsfkjahsdf",
-              title: "something",
-            },
-            { id: "dkjçlakjdf", title: `jardinagem` },
-            { id: "adfasdfsdf", title: `construção` },
-            { id: "xcvxcvsdfs", title: `elétrica` },
-            { id: "vxcvxcvx", title: `encanamentos` },
-            { id: "asdasdasd", title: `diaristas` },
-            { id: "erwerwsadsf", title: `pintura` },
-            { id: "werwerwer", title: `dedetização` },
-            { id: "sdfsf", title: `marcenaria` },
-            { id: "werwer", title: `limpeza` },
-          ]}
+          itens={availableServiceTypes}
           onSelect={handleSelected}
         />
         <AppButton
-          title={`select ${modalOn}`}
+          title={
+            selectedCategory
+              ? selectedCategory.name
+              : "Selecione a categoria do anúncio"
+          }
           onPress={() => {
             setModalOn(true);
           }}
+          isLoading={isLoading}
         />
         <AppSpacer verticalSpace="xlg" />
         <AppText>Imagens</AppText>

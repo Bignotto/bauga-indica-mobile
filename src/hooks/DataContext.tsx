@@ -15,6 +15,12 @@ type IUserDTO = {
   image?: string;
 };
 
+type IServiceType = {
+  id: number;
+  name?: string;
+  description?: string;
+};
+
 type IDashboardData = {
   servicesCount: number;
   contractsCount: number;
@@ -52,6 +58,7 @@ interface IDataContextProps {
   updateProfile(userId: string, name: string, phone: string): Promise<void>;
   getDashboardData(): Promise<IDashboardData>;
   getUserServiceAds(): Promise<IUserServiceAd[] | undefined>;
+  getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -180,6 +187,19 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function getAvailableServiceTypes(): Promise<
+    IServiceType[] | undefined
+  > {
+    const { data, error } = await supabase.from("service_types").select();
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while loading service types", 500, "supabase");
+    }
+    if (data) return data;
+
+    return undefined;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -190,6 +210,7 @@ function DataProvider({ children }: DataProviderProps) {
         updateProfile,
         getDashboardData,
         getUserServiceAds,
+        getAvailableServiceTypes,
       }}
     >
       {children}
@@ -201,4 +222,11 @@ function useData() {
   return useContext(DataContext);
 }
 
-export { DataProvider, IDashboardData, IUserDTO, IUserServiceAd, useData };
+export {
+  DataProvider,
+  IDashboardData,
+  IServiceType,
+  IUserDTO,
+  IUserServiceAd,
+  useData,
+};
