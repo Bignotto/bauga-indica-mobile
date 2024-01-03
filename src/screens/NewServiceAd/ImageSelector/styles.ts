@@ -19,3 +19,15 @@ export const AdImageAddButton = styled(RectButton)<RectButtonProps>`
   align-items: center;
   justify-content: center;
 `;
+
+export const AdImageContainer = styled.View`
+  overflow: hidden;
+  width: 100px;
+  height: 164px;
+  align-items: flex-end;
+`;
+
+export const RemoveIconButton = styled(RectButton)`
+  margin-top: 4px;
+  margin-right: 4px;
+`;

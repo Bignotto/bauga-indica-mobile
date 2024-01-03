@@ -84,7 +84,7 @@ export default function NewServiceAd() {
 
   useEffect(() => {
     loadServiceTypes();
-  });
+  }, []);
 
   function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
@@ -94,6 +94,11 @@ export default function NewServiceAd() {
     };
 
     setAdImages([...adImages, newImage]);
+  }
+
+  function handleRemoveImage(imagePath: string) {
+    const filteredImages = adImages.filter((image) => imagePath !== image.path);
+    setAdImages(filteredImages);
   }
 
   function onChangeValidFrom(
@@ -122,6 +127,14 @@ export default function NewServiceAd() {
       return Alert.alert("Selecione uma categoria para o anúncio.");
     if (adImages.length === 0)
       return Alert.alert("Selecione ao menos uma imagem para o seu anúncio.");
+
+    const yesterday = moment(new Date()).add(-1, "days").toDate().getTime();
+
+    if (validFrom && validFrom.getTime() < yesterday)
+      return Alert.alert("Data de início não pode ser no passado.");
+    if (validTo && validTo.getTime() < validFrom!.getTime())
+      return Alert.alert("Data final inválida.");
+
     console.log({ adValue, description, title, selectedCategory });
   }
 
@@ -154,8 +167,9 @@ export default function NewServiceAd() {
                 onChangeText={onChange}
                 value={value}
                 label="Descrição do anúncio"
-                multiline
+                multiline={true}
                 numberOfLines={4}
+                textAlignVertical="top"
                 error={errors.description?.message}
               />
             )}
@@ -170,6 +184,7 @@ export default function NewServiceAd() {
                 onChangeText={onChange}
                 value={`${value}`}
                 label="Valor"
+                keyboardType="decimal-pad"
                 error={errors.adValue?.message}
               />
             )}
@@ -265,7 +280,7 @@ export default function NewServiceAd() {
         <AppSpacer verticalSpace="sm" />
         <ImageSelector
           onAddImage={handleAddImage}
-          onRemoveImage={() => {}}
+          onRemoveImage={handleRemoveImage}
           selectedImages={adImages}
         />
         <AppSpacer />

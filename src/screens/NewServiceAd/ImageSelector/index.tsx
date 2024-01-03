@@ -7,6 +7,8 @@ import { useTheme } from "styled-components";
 import {
   AdImageAddButton,
   AdImageAddButtonWrapper,
+  AdImageContainer,
+  RemoveIconButton,
   SelectorContainer,
 } from "./styles";
 
@@ -47,16 +49,26 @@ export default function ImageSelector({
     <ScrollView horizontal>
       <SelectorContainer>
         {selectedImages.map((image) => (
-          <Image
-            key={image.id}
-            source={{
-              uri: image.path,
-            }}
-            style={{
-              height: 164,
-              width: 100,
-            }}
-          />
+          <AdImageContainer key={image.id}>
+            <Image
+              source={{
+                uri: image.path,
+              }}
+              style={{
+                position: "absolute",
+
+                height: 164,
+                width: 100,
+              }}
+            />
+            <RemoveIconButton onPress={() => onRemoveImage(image.path)}>
+              <Ionicons
+                name="close-circle"
+                size={20}
+                color={theme.colors.white}
+              />
+            </RemoveIconButton>
+          </AdImageContainer>
         ))}
 
         {selectedImages.length <= imageLimit && (
