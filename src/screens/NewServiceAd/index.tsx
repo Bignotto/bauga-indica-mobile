@@ -38,7 +38,7 @@ const validationSchema = yup.object({
 
 export default function NewServiceAd() {
   const theme = useTheme();
-  const { getAvailableServiceTypes } = useData();
+  const { getAvailableServiceTypes, createServiceAd, userProfile } = useData();
 
   const {
     control,
@@ -135,7 +135,17 @@ export default function NewServiceAd() {
     if (validTo && validTo.getTime() < validFrom!.getTime())
       return Alert.alert("Data final inválida.");
 
-    console.log({ adValue, description, title, selectedCategory });
+    const response = await createServiceAd({
+      description,
+      value: adValue,
+      title,
+      serviceTypeId: selectedCategory.id,
+      validFrom: validFrom ? validFrom : new Date(),
+      validTo: validTo ? validTo : new Date(),
+      providerId: `${userProfile?.id}`,
+    });
+
+    console.log({ response });
   }
 
   return (

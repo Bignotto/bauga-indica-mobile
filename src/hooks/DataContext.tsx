@@ -29,25 +29,36 @@ type IDashboardData = {
 };
 
 type IUserServiceAd = {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   value: number;
-  service_class: string;
-  valid_to: Date;
-  valid_from: Date;
-  created_at: Date;
-  updated_at: Date;
-  providerId: {
+  service_class?: string;
+  valid_to?: Date;
+  valid_from?: Date;
+  created_at?: Date;
+  updated_at?: Date;
+  providerId?: {
     id: string;
     name: string;
     image: string;
   };
-  serviceTypeId: {
+  serviceTypeId?: {
     id: number;
     name: string;
     description: string;
   };
+};
+
+type ICreateServiceDTO = {
+  id?: string;
+  title: string;
+  description: string;
+  value: number;
+  validFrom: Date;
+  validTo: Date;
+  serviceTypeId: number;
+  providerId: string;
 };
 
 interface IDataContextProps {
@@ -59,6 +70,7 @@ interface IDataContextProps {
   getDashboardData(): Promise<IDashboardData>;
   getUserServiceAds(): Promise<IUserServiceAd[] | undefined>;
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
+  createServiceAd(newService: ICreateServiceDTO): Promise<IUserServiceAd>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -187,6 +199,48 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function createServiceAd(
+    newService: ICreateServiceDTO
+  ): Promise<IUserServiceAd> {
+    console.log({
+      title: newService.title,
+      description: newService.description,
+      value: newService.value,
+      service_class: "A",
+      valid_to: newService.validTo,
+      valid_from: newService.validFrom,
+      providerId: newService.providerId,
+      serviceTypeId: newService.serviceTypeId,
+    });
+
+    const { data, error } = await supabase
+      .from("services")
+      .insert([
+        {
+          title: newService.title,
+          description: newService.description,
+          value: newService.value,
+          service_class: "A",
+          valid_to: newService.validTo,
+          valid_from: newService.validFrom,
+          providerId: newService.providerId,
+          serviceTypeId: newService.serviceTypeId,
+        },
+      ])
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while saving new service into database",
+        500,
+        "supabase"
+      );
+    }
+
+    return data[0];
+  }
+
   async function getAvailableServiceTypes(): Promise<
     IServiceType[] | undefined
   > {
@@ -211,6 +265,7 @@ function DataProvider({ children }: DataProviderProps) {
         getDashboardData,
         getUserServiceAds,
         getAvailableServiceTypes,
+        createServiceAd,
       }}
     >
       {children}
