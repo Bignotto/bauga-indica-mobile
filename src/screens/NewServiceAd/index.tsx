@@ -20,7 +20,9 @@ import {
   TwoColumnsWrapper,
 } from "./styles";
 
+import { AppError } from "@errors/AppError";
 import { IServiceType, useData } from "@hooks/DataContext";
+import { useStorage } from "@hooks/StorageContext";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import * as yup from "yup";
@@ -39,6 +41,7 @@ const validationSchema = yup.object({
 export default function NewServiceAd() {
   const theme = useTheme();
   const { getAvailableServiceTypes, createServiceAd, userProfile } = useData();
+  const { upload } = useStorage();
 
   const {
     control,
@@ -135,17 +138,34 @@ export default function NewServiceAd() {
     if (validTo && validTo.getTime() < validFrom!.getTime())
       return Alert.alert("Data final inválida.");
 
-    const response = await createServiceAd({
-      description,
-      value: adValue,
-      title,
-      serviceTypeId: selectedCategory.id,
-      validFrom: validFrom ? validFrom : new Date(),
-      validTo: validTo ? validTo : new Date(),
-      providerId: `${userProfile?.id}`,
-    });
+    try {
+      const response = await createServiceAd({
+        description,
+        value: adValue,
+        title,
+        serviceTypeId: selectedCategory.id,
+        validFrom: validFrom ? validFrom : new Date(),
+        validTo: validTo ? validTo : new Date(),
+        providerId: `${userProfile?.id}`,
+      });
 
-    console.log({ response });
+      console.log({ adImages });
+      await upload(
+        adImages.map((image, i) => {
+          return {
+            name: `${response.id}__${i}`,
+            path: image.path,
+          };
+        })
+      );
+
+      console.log({ response });
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
   }
 
   return (

@@ -2,6 +2,7 @@ import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { AppError } from "@errors/AppError";
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
+import { StorageProvider } from "@hooks/StorageContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -64,74 +65,76 @@ export default function Routes() {
         <PublicRoutes />
       </SignedOut>
       <SignedIn>
-        <BottomTab.Navigator
-          screenOptions={{
-            // header: (props) => <Header />,
-            headerShown: false,
-          }}
-        >
-          <BottomTab.Screen
-            name="Start"
-            component={SearchRoutes}
-            options={{
-              tabBarLabel: "Início",
-              tabBarActiveTintColor: theme.colors.primary,
-              tabBarLabelStyle: { fontSize: 14 },
-              tabBarIcon: (tabInfo) => (
-                <Entypo
-                  name="home"
-                  size={24}
-                  color={
-                    tabInfo.focused
-                      ? theme.colors.primary
-                      : theme.colors.text_disabled
-                  }
-                />
-              ),
-            }}
-          />
-          <BottomTab.Screen
-            name="DashboardHome"
-            component={DashboardRoutes}
-            options={{
-              tabBarLabel: "Dashboard",
-              tabBarActiveTintColor: theme.colors.primary,
-              tabBarLabelStyle: { fontSize: 14 },
-              tabBarIcon: (tabInfo) => (
-                <MaterialIcons
-                  name="dashboard"
-                  size={24}
-                  color={
-                    tabInfo.focused
-                      ? theme.colors.primary
-                      : theme.colors.text_disabled
-                  }
-                />
-              ),
-            }}
-          />
-          <BottomTab.Screen
-            name="Profile"
-            component={Profile}
-            options={{
-              tabBarLabel: "Perfil",
-              tabBarActiveTintColor: theme.colors.primary,
-              tabBarLabelStyle: { fontSize: 14 },
-              tabBarIcon: (tabInfo) => (
-                <FontAwesome5
-                  name="user-alt"
-                  size={24}
-                  color={
-                    tabInfo.focused
-                      ? theme.colors.primary
-                      : theme.colors.text_disabled
-                  }
-                />
-              ),
+        <StorageProvider>
+          <BottomTab.Navigator
+            screenOptions={{
+              // header: (props) => <Header />,
               headerShown: false,
             }}
-          />
-        </BottomTab.Navigator>
+          >
+            <BottomTab.Screen
+              name="Start"
+              component={SearchRoutes}
+              options={{
+                tabBarLabel: "Início",
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarLabelStyle: { fontSize: 14 },
+                tabBarIcon: (tabInfo) => (
+                  <Entypo
+                    name="home"
+                    size={24}
+                    color={
+                      tabInfo.focused
+                        ? theme.colors.primary
+                        : theme.colors.text_disabled
+                    }
+                  />
+                ),
+              }}
+            />
+            <BottomTab.Screen
+              name="DashboardHome"
+              component={DashboardRoutes}
+              options={{
+                tabBarLabel: "Dashboard",
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarLabelStyle: { fontSize: 14 },
+                tabBarIcon: (tabInfo) => (
+                  <MaterialIcons
+                    name="dashboard"
+                    size={24}
+                    color={
+                      tabInfo.focused
+                        ? theme.colors.primary
+                        : theme.colors.text_disabled
+                    }
+                  />
+                ),
+              }}
+            />
+            <BottomTab.Screen
+              name="Profile"
+              component={Profile}
+              options={{
+                tabBarLabel: "Perfil",
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarLabelStyle: { fontSize: 14 },
+                tabBarIcon: (tabInfo) => (
+                  <FontAwesome5
+                    name="user-alt"
+                    size={24}
+                    color={
+                      tabInfo.focused
+                        ? theme.colors.primary
+                        : theme.colors.text_disabled
+                    }
+                  />
+                ),
+                headerShown: false,
+              }}
+            />
+          </BottomTab.Navigator>
+        </StorageProvider>
       </SignedIn>
     </NavigationContainer>
   );

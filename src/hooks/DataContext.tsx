@@ -202,17 +202,6 @@ function DataProvider({ children }: DataProviderProps) {
   async function createServiceAd(
     newService: ICreateServiceDTO
   ): Promise<IUserServiceAd> {
-    console.log({
-      title: newService.title,
-      description: newService.description,
-      value: newService.value,
-      service_class: "A",
-      valid_to: newService.validTo,
-      valid_from: newService.validFrom,
-      providerId: newService.providerId,
-      serviceTypeId: newService.serviceTypeId,
-    });
-
     const { data, error } = await supabase
       .from("services")
       .insert([
