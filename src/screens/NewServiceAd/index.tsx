@@ -23,6 +23,7 @@ import {
 import { AppError } from "@errors/AppError";
 import { IServiceType, useData } from "@hooks/DataContext";
 import { useStorage } from "@hooks/StorageContext";
+import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import * as yup from "yup";
@@ -40,7 +41,12 @@ const validationSchema = yup.object({
 
 export default function NewServiceAd() {
   const theme = useTheme();
-  const { getAvailableServiceTypes, createServiceAd, userProfile } = useData();
+  const {
+    getAvailableServiceTypes,
+    createServiceAd,
+    userProfile,
+    updateServiceAdImages,
+  } = useData();
   const { upload } = useStorage();
 
   const {
@@ -53,6 +59,8 @@ export default function NewServiceAd() {
       adValue: 0,
     },
   });
+
+  const navigation = useNavigation();
 
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -139,6 +147,7 @@ export default function NewServiceAd() {
       return Alert.alert("Data final inválida.");
 
     try {
+      setIsLoading(true);
       const response = await createServiceAd({
         description,
         value: adValue,
@@ -149,8 +158,7 @@ export default function NewServiceAd() {
         providerId: `${userProfile?.id}`,
       });
 
-      console.log({ adImages });
-      await upload(
+      const uploadResponse = await upload(
         adImages.map((image, i) => {
           return {
             name: `${response.id}__${i}`,
@@ -159,12 +167,19 @@ export default function NewServiceAd() {
         })
       );
 
-      console.log({ response });
+      if (!uploadResponse)
+        return Alert.alert("Ocorreu um erro ao fazer upload das imagens...");
+
+      await updateServiceAdImages(response.id!, uploadResponse);
+
+      navigation.goBack();
     } catch (error) {
       if (error instanceof AppError) {
         return Alert.alert(error.message);
       }
       Alert.alert("Ocorreu um erro desconhecido!");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -327,6 +342,7 @@ export default function NewServiceAd() {
               title="Salvar"
               variant="positive"
               onPress={() => handleSubmit(onSubmit)()}
+              isLoading={isLoading}
             />
           </ColumnWrapper>
         </TwoColumnsWrapper>

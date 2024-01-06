@@ -71,6 +71,7 @@ interface IDataContextProps {
   getUserServiceAds(): Promise<IUserServiceAd[] | undefined>;
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
   createServiceAd(newService: ICreateServiceDTO): Promise<IUserServiceAd>;
+  updateServiceAdImages(serviceId: string, images: string[]): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -243,6 +244,30 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function updateServiceAdImages(
+    serviceId: string,
+    images: string[]
+  ): Promise<void> {
+    const insertArray = images.map((img) => {
+      return {
+        imagePath: `${process.env.EXPO_PUBLIC_STORAGE_BASE_URL}/images_services/${img}`,
+        serviceId,
+      };
+    });
+    const { data, error } = await supabase
+      .from("service_images")
+      .insert(insertArray);
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while saving new user into database",
+        500,
+        "supabase"
+      );
+    }
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -255,6 +280,7 @@ function DataProvider({ children }: DataProviderProps) {
         getUserServiceAds,
         getAvailableServiceTypes,
         createServiceAd,
+        updateServiceAdImages,
       }}
     >
       {children}
