@@ -6,7 +6,7 @@ import { useTheme } from "styled-components";
 import { ButtonContainer, ButtonWrapper } from "./styles";
 
 type AppButtonProps = RectButtonProps & {
-  title: string;
+  title?: string;
   variant?: "positive" | "solid" | "negative";
   isLoading?: boolean;
   size?: "lg" | "md" | "sm";
@@ -45,17 +45,19 @@ export default function AppButton({
         ) : (
           <>
             {leftIcon && <>{leftIcon}</>}
-            <AppText
-              bold
-              color={enabled ? textColor : theme.colors.text_disabled}
-              size={size}
-              style={{
-                paddingLeft: 16,
-                paddingRight: 16,
-              }}
-            >
-              {title}
-            </AppText>
+            {title && (
+              <AppText
+                bold
+                color={enabled ? textColor : theme.colors.text_disabled}
+                size={size}
+                style={{
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                }}
+              >
+                {title}
+              </AppText>
+            )}
             {rightIcon && <View style={{ marginRight: 8 }}>{rightIcon}</View>}
           </>
         )}

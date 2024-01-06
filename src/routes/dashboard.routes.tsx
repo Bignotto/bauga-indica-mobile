@@ -10,12 +10,30 @@ export function DashboardRoutes() {
     <Navigator
       initialRouteName="Dashboard"
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
       }}
     >
-      <Screen name="Dashboard" component={Dashboard} />
-      <Screen name="UserServiceAds" component={UserServiceAds} />
-      <Screen name="NewServiceAd" component={NewServiceAd} />
+      <Screen
+        name="Dashboard"
+        component={Dashboard}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <Screen
+        name="UserServiceAds"
+        options={{
+          title: "Meus serviços anunciados",
+        }}
+        component={UserServiceAds}
+      />
+      <Screen
+        name="NewServiceAd"
+        component={NewServiceAd}
+        options={{
+          title: "Novo anúncio de serviço",
+        }}
+      />
     </Navigator>
   );
 }

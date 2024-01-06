@@ -1,6 +1,7 @@
 import AppText from "@components/AppText";
 import { TextInputProps } from "react-native";
 import { Mask } from "react-native-mask-input";
+import { useTheme } from "styled-components";
 import {
   Container,
   InputComponent,
@@ -11,9 +12,17 @@ import {
 interface AppInputProps extends TextInputProps {
   label?: string;
   mask?: Mask;
+  error?: string | undefined;
 }
 
-export default function AppInput({ label, mask, ...rest }: AppInputProps) {
+export default function AppInput({
+  label,
+  mask,
+  error,
+  ...rest
+}: AppInputProps) {
+  const theme = useTheme();
+
   return (
     <Container>
       {label && (
@@ -26,13 +35,20 @@ export default function AppInput({ label, mask, ...rest }: AppInputProps) {
           {label}
         </AppText>
       )}
-      <Wrapper>
+      <Wrapper error={error}>
         {mask ? (
           <MaskedInputComponent {...rest} mask={mask} />
         ) : (
           <InputComponent {...rest} />
         )}
       </Wrapper>
+      {error ? (
+        <AppText size="xsm" color={theme.colors.negative}>
+          {error}
+        </AppText>
+      ) : (
+        <AppText size="xsm"> </AppText>
+      )}
     </Container>
   );
 }

@@ -7,7 +7,7 @@ const TextSizes: { [size: string]: number } = {
   lg: 24,
   md: 18,
   sm: 14,
-  sxm: 8,
+  xsm: 10,
 };
 
 export interface AppTextStyleProps extends TextProps {
