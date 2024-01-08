@@ -1,6 +1,7 @@
 import { AppError } from "@errors/AppError";
 import supabase from "@services/supabase";
 import { ReactNode, createContext, useContext, useState } from "react";
+import { Service } from "src/@types/services/Service";
 
 interface DataProviderProps {
   children: ReactNode;
@@ -72,6 +73,7 @@ interface IDataContextProps {
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
   createServiceAd(newService: ICreateServiceDTO): Promise<IUserServiceAd>;
   updateServiceAdImages(serviceId: string, images: string[]): Promise<void>;
+  search(searchText: string): Promise<Service[]>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -261,11 +263,28 @@ function DataProvider({ children }: DataProviderProps) {
     if (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError(
-        "ERROR while saving new user into database",
+        "ERROR while updating service images database",
         500,
         "supabase"
       );
     }
+  }
+
+  async function search(searchText: string): Promise<Service[]> {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*,serviceTypeId(*),providerId(*)")
+      .or(`title.ilike.%${searchText}%,description.ilike.%${searchText}%`);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while searching database", 500, "supabase");
+    }
+
+    console.log(JSON.stringify(data, null, 2));
+
+    if (data) return data;
+
+    return [];
   }
 
   return (
@@ -281,6 +300,7 @@ function DataProvider({ children }: DataProviderProps) {
         getAvailableServiceTypes,
         createServiceAd,
         updateServiceAdImages,
+        search,
       }}
     >
       {children}

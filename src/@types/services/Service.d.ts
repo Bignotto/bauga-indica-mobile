@@ -3,13 +3,11 @@ export type Service = {
   title: string;
   description: string;
   value: number;
-  serviceTypeId: number;
   serviceClass: string;
   validTo: Date;
   validFrom: Date;
   createdAt: Date;
-  providerId: string;
-  provider: {
+  providerId: {
     id: string;
     name: string;
     email: string;
@@ -19,7 +17,7 @@ export type Service = {
     createdAt: Date;
     updatedAt: Date;
   };
-  serviceType: {
+  serviceTypeId: {
     id: number;
     name: string;
     description: string;
