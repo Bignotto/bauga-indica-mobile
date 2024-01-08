@@ -1,7 +1,6 @@
 import { AppError } from "@errors/AppError";
 import supabase from "@services/supabase";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { Service } from "src/@types/services/Service";
 
 interface DataProviderProps {
   children: ReactNode;
@@ -73,7 +72,7 @@ interface IDataContextProps {
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
   createServiceAd(newService: ICreateServiceDTO): Promise<IUserServiceAd>;
   updateServiceAdImages(serviceId: string, images: string[]): Promise<void>;
-  search(searchText: string): Promise<Service[]>;
+  search(searchText: string): Promise<IUserServiceAd[]>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -270,7 +269,7 @@ function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  async function search(searchText: string): Promise<Service[]> {
+  async function search(searchText: string): Promise<IUserServiceAd[]> {
     const { data, error } = await supabase
       .from("services")
       .select("*,serviceTypeId(*),providerId(*)")
