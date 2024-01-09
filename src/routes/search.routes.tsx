@@ -11,12 +11,24 @@ export function SearchRoutes() {
   return (
     <Navigator
       initialRouteName="Home"
-      screenOptions={{
-        header: (props) => <Header />,
-      }}
+      // screenOptions={{
+      //   header: (props) => <Header />,
+      // }}
     >
-      <Screen name="Home" component={Home} />
-      <Screen name="Search" component={SearchResults} />
+      <Screen
+        name="Home"
+        component={Home}
+        options={{
+          header: (props) => <Header />,
+        }}
+      />
+      <Screen
+        name="Search"
+        component={SearchResults}
+        options={{
+          headerTitle: "Encontrar serviço",
+        }}
+      />
       <Screen name="ServiceDetails" component={ServiceDetails} />
       <Screen name="NewContract" component={NewContract} />
       {/* <Screen name="ReviewService" component={ReviwService} /> */}

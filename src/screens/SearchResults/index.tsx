@@ -1,13 +1,12 @@
-import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
+import { AntDesign } from "@expo/vector-icons";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Pressable } from "react-native";
 import ResultList from "./ResultList";
-import { HeaderWrapper } from "./styles";
+import { InputComponent, InputWrapper, SearchInputWrapper } from "./styles";
 
 type Params = {
   searchText: string;
@@ -19,8 +18,9 @@ export default function SearchResults() {
 
   const { search } = useData();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [searchedText, setSearchedText] = useState(searchText);
   const [services, setServices] = useState<IUserServiceAd[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   async function doSearch(text: string) {
     try {
@@ -43,10 +43,17 @@ export default function SearchResults() {
   return (
     <AppScreenContainer
       header={
-        <HeaderWrapper>
-          <AppLogo size="sm" />
-          <AppText>Encontrados {servicesFound} serviços</AppText>
-        </HeaderWrapper>
+        <SearchInputWrapper>
+          <InputWrapper>
+            <InputComponent
+              value={searchedText}
+              onChangeText={(t) => setSearchedText(t)}
+            />
+          </InputWrapper>
+          <Pressable onPress={() => doSearch(searchedText)}>
+            <AntDesign name="search1" size={24} color="black" />
+          </Pressable>
+        </SearchInputWrapper>
       }
     >
       <ResultList itens={services} />

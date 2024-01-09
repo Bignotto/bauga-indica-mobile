@@ -279,8 +279,6 @@ function DataProvider({ children }: DataProviderProps) {
       throw new AppError("ERROR while searching database", 500, "supabase");
     }
 
-    console.log(JSON.stringify(data, null, 2));
-
     if (data) return data;
 
     return [];
