@@ -18,7 +18,7 @@ interface FooterProps {
 export const HeaderContainer = styled(View)<HeaderProps>`
   background-color: ${({ theme, color }) =>
     color ? color : theme.colors.background};
-  padding-top: ${() => getStatusBarHeight() + 8}px;
+  padding-top: 8px;
   padding-left: 16px;
   padding-right: 16px;
   padding-bottom: 16px;

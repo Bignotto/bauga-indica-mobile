@@ -4,7 +4,8 @@ import { AntDesign } from "@expo/vector-icons";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Alert, Pressable } from "react-native";
+import { ActivityIndicator, Alert, Pressable } from "react-native";
+import { useTheme } from "styled-components";
 import ResultList from "./ResultList";
 import { InputComponent, InputWrapper, SearchInputWrapper } from "./styles";
 
@@ -16,6 +17,8 @@ export default function SearchResults() {
   const route = useRoute();
   const { searchText } = route.params as Params;
 
+  const theme = useTheme();
+
   const { search } = useData();
 
   const [searchedText, setSearchedText] = useState(searchText);
@@ -23,6 +26,8 @@ export default function SearchResults() {
   const [isLoading, setIsLoading] = useState(true);
 
   async function doSearch(text: string) {
+    setIsLoading(true);
+
     try {
       const response = await search(text);
       setServices(response);
@@ -31,6 +36,8 @@ export default function SearchResults() {
       if (error instanceof AppError) return Alert.alert(error.message);
 
       return Alert.alert("erro desconhecido");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -51,7 +58,11 @@ export default function SearchResults() {
             />
           </InputWrapper>
           <Pressable onPress={() => doSearch(searchedText)}>
-            <AntDesign name="search1" size={24} color="black" />
+            {isLoading ? (
+              <ActivityIndicator color={theme.colors.border} />
+            ) : (
+              <AntDesign name="search1" size={24} color={theme.colors.text} />
+            )}
           </Pressable>
         </SearchInputWrapper>
       }
