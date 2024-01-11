@@ -20,13 +20,13 @@ import {
   TitleWrapper,
 } from "./styles";
 
-type AppServiceProps = {
+interface ServiceAdCard {
   item: IUserServiceAd;
   buttonType?: "details" | "contact";
   showButton?: boolean;
   showDescription?: boolean;
   showProvider?: boolean;
-};
+}
 
 export default function ServiceAdCard({
   item,
@@ -34,7 +34,7 @@ export default function ServiceAdCard({
   showButton = true,
   showDescription = true,
   showProvider = true,
-}: AppServiceProps) {
+}: ServiceAdCard) {
   const { userProfile } = useData();
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -51,7 +51,7 @@ export default function ServiceAdCard({
       <ContentWrapper>
         <TagWrapper>
           <Tag>
-            <TagText>{item.serviceTypeId.name}</TagText>
+            <TagText>{item.serviceTypeId!.name}</TagText>
           </Tag>
         </TagWrapper>
         <TitleWrapper>
@@ -66,11 +66,11 @@ export default function ServiceAdCard({
             <ProviderInfoWrapper>
               <ProviderAvatar
                 source={{
-                  uri: item.providerId.image,
+                  uri: item.providerId!.image,
                 }}
               />
               <ProviderName>
-                <AppText bold>{item.providerId.name}</AppText>
+                <AppText bold>{item.providerId!.name}</AppText>
               </ProviderName>
             </ProviderInfoWrapper>
           )}
@@ -79,7 +79,7 @@ export default function ServiceAdCard({
             {`R$ ${item.value.toFixed(2)}`}
           </AppText>
         </ProviderPriceWrapper>
-        {userProfile?.id === item.providerId.id ? (
+        {userProfile?.id === item.providerId!.id ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton size="sm" title="Editar" />
@@ -89,7 +89,7 @@ export default function ServiceAdCard({
             {showButton && buttonType === "details" && (
               <AppButton
                 title="Ver mais detalhes"
-                onPress={() => handleServiceDetails(item.id)}
+                onPress={() => handleServiceDetails(`${item.id}`)}
               />
             )}
             {showButton && buttonType === "contact" && (

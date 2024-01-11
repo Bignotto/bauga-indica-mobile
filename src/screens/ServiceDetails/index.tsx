@@ -1,12 +1,34 @@
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppText from "@components/AppText";
+import ServiceAdCard from "@components/ServiceAdCard";
+import { AppError } from "@errors/AppError";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Image } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  ListRenderItem,
+  ViewToken,
+} from "react-native";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 type Params = {
   serviceId: string;
+};
+
+type HandleScrollProps = {
+  viewableItems: Array<ViewToken>;
+};
+
+type ImageItem = {
+  id: number;
+  imagePath: string;
+};
+
+type RenderProps = {
+  img: ImageItem;
 };
 
 export default function ServiceDetails() {
@@ -21,28 +43,56 @@ export default function ServiceDetails() {
 
   useEffect(() => {
     async function loadService() {
-      const response = await getServiceAdById(serviceId);
-      setService(response);
+      setIsLoading(true);
+      try {
+        const response = await getServiceAdById(serviceId);
+        setService(response);
+      } catch (error) {
+        if (error instanceof AppError) return Alert.alert(error.message);
+        return Alert.alert("erro desconhecido");
+      } finally {
+        setIsLoading(false);
+      }
     }
     loadService();
   }, []);
 
+  const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
+    return (
+      <Image
+        source={{
+          uri: item.imagePath,
+        }}
+        width={Dimensions.get("window").width}
+        height={280}
+        resizeMode="cover"
+      />
+    );
+  };
+
   return (
-    <AppScreenContainer>
-      <AppText>This is service ad details!</AppText>
-      {service?.service_images &&
-        service.service_images.map((img) => (
-          <Image
-            key={img.id}
-            source={{
-              uri: img.imagePath,
-            }}
-            style={{
-              width: 120,
-              height: 80,
-            }}
+    <AppScreenContainer
+      header={
+        isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            horizontal
+            decelerationRate={"fast"}
+            snapToInterval={Dimensions.get("window").width}
+            // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
+            //   console.log({ viewableItems })
+            // }
+            data={service?.service_images}
+            keyExtractor={(item) => `${item.id}`}
+            renderItem={renderItem}
           />
-        ))}
+        )
+      }
+    >
+      <ScrollView>
+        {isLoading ? <ActivityIndicator /> : <ServiceAdCard item={service!} />}
+      </ScrollView>
     </AppScreenContainer>
   );
 }
