@@ -1,4 +1,5 @@
 import AppButton from "@components/AppButton";
+import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
@@ -44,7 +45,7 @@ export default function ServiceAdCard({
   }
 
   async function handleContactProvider() {
-    //navigation.navigate("NewContract", { serviceData: item });
+    navigation.navigate("NewContract", { service: item });
   }
   return (
     <ResultItem>
@@ -61,6 +62,7 @@ export default function ServiceAdCard({
         </TitleWrapper>
         {showDescription && <AppText>{item.description}</AppText>}
 
+        <AppSpacer verticalSpace="lg" />
         <ProviderPriceWrapper>
           {showProvider && (
             <ProviderInfoWrapper>
@@ -96,6 +98,7 @@ export default function ServiceAdCard({
               <AppButton
                 title="Entrar em contato!"
                 onPress={handleContactProvider}
+                variant="positive"
               />
             )}
           </>

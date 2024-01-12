@@ -1,4 +1,4 @@
-import { Service } from "src/@types/services/Service";
+import { IUserServiceAd } from "@hooks/DataContext";
 
 export type StackParamList = {
   Home: {} | undefined;
@@ -16,7 +16,7 @@ export type StackParamList = {
     serviceId: string;
   };
   NewContract: {
-    serviceData: Service;
+    service: IUserServiceAd;
   };
   Dashboard: {} | undefined;
   UserServiceAds: {} | undefined;

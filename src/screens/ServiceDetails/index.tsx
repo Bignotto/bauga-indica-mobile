@@ -2,7 +2,7 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import ServiceAdCard from "@components/ServiceAdCard";
 import { AppError } from "@errors/AppError";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -34,6 +34,7 @@ type RenderProps = {
 export default function ServiceDetails() {
   const route = useRoute();
   const { serviceId } = route.params as Params;
+  const navigation = useNavigation();
 
   const { getServiceAdById } = useData();
 
@@ -47,6 +48,7 @@ export default function ServiceDetails() {
       try {
         const response = await getServiceAdById(serviceId);
         setService(response);
+        navigation.setOptions({ headerTitle: response?.title });
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
         return Alert.alert("erro desconhecido");
@@ -91,7 +93,11 @@ export default function ServiceDetails() {
       }
     >
       <ScrollView>
-        {isLoading ? <ActivityIndicator /> : <ServiceAdCard item={service!} />}
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <ServiceAdCard item={service!} buttonType="contact" />
+        )}
       </ScrollView>
     </AppScreenContainer>
   );

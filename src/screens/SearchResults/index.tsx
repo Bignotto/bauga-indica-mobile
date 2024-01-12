@@ -4,7 +4,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable } from "react-native";
+import { ActivityIndicator, Alert, Pressable, View } from "react-native";
 import { useTheme } from "styled-components";
 import ResultList from "./ResultList";
 import { InputComponent, InputWrapper, SearchInputWrapper } from "./styles";
@@ -50,21 +50,27 @@ export default function SearchResults() {
   return (
     <AppScreenContainer
       header={
-        <SearchInputWrapper>
-          <InputWrapper>
-            <InputComponent
-              value={searchedText}
-              onChangeText={(t) => setSearchedText(t)}
-            />
-          </InputWrapper>
-          <Pressable onPress={() => doSearch(searchedText)}>
-            {isLoading ? (
-              <ActivityIndicator color={theme.colors.border} />
-            ) : (
-              <AntDesign name="search1" size={24} color={theme.colors.text} />
-            )}
-          </Pressable>
-        </SearchInputWrapper>
+        <View
+          style={{
+            padding: 16,
+          }}
+        >
+          <SearchInputWrapper>
+            <InputWrapper>
+              <InputComponent
+                value={searchedText}
+                onChangeText={(t) => setSearchedText(t)}
+              />
+            </InputWrapper>
+            <Pressable onPress={() => doSearch(searchedText)}>
+              {isLoading ? (
+                <ActivityIndicator color={theme.colors.border} />
+              ) : (
+                <AntDesign name="search1" size={24} color={theme.colors.text} />
+              )}
+            </Pressable>
+          </SearchInputWrapper>
+        </View>
       }
     >
       <ResultList itens={services} />
