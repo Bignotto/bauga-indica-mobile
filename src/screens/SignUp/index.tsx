@@ -32,6 +32,7 @@ export default function SignUp() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  //TODO: use yup and hook-form
   async function handleCreateNewAccount() {
     if (name.length === 0) {
       Alert.alert("Nome não pode estar em branco.");
