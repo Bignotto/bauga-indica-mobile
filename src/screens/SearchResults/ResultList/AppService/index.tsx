@@ -1,10 +1,10 @@
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
+import { IUserServiceAd } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import React from "react";
-import { Service } from "src/@types/services/Service";
 import { useTheme } from "styled-components";
 import {
   ContentWrapper,
@@ -20,7 +20,7 @@ import {
 } from "./styles";
 
 type AppServiceProps = {
-  item: Service;
+  item: IUserServiceAd;
   buttonType?: "details" | "contact";
   showButton?: boolean;
 };
@@ -38,7 +38,8 @@ export default function AppService({
   }
 
   async function handleContactProvider() {
-    navigation.navigate("NewContract", { serviceData: item });
+    //TODO: reimplement
+    //navigation.navigate("NewContract", { serviceData: item });
   }
   return (
     <ResultItem>
@@ -51,7 +52,7 @@ export default function AppService({
         <AppText>{item.description}</AppText>
         <TagWrapper>
           <Tag>
-            <TagText>{item.serviceType.name}</TagText>
+            <TagText>{item.serviceTypeId!.name}</TagText>
           </Tag>
         </TagWrapper>
 
@@ -59,11 +60,11 @@ export default function AppService({
           <ProviderInfoWrapper>
             <ProviderAvatar
               source={{
-                uri: item.provider.image,
+                uri: item.providerId!.image,
               }}
             />
             <ProviderName>
-              <AppText bold>{item.provider.name}</AppText>
+              <AppText bold>{item.providerId!.name}</AppText>
             </ProviderName>
           </ProviderInfoWrapper>
           <AppText bold size="lg" color={theme.colors.primary_dark}>
@@ -73,7 +74,7 @@ export default function AppService({
         {showButton && buttonType === "details" && (
           <AppButton
             title="Ver mais detalhes"
-            onPress={() => handleServiceDetails(item.id)}
+            onPress={() => handleServiceDetails(item.id!)}
           />
         )}
         {showButton && buttonType === "contact" && (

@@ -40,14 +40,6 @@ export default function Profile() {
       return;
     }
 
-    // loadUserProfile(user!.id).then((data) => {
-    //   setProfile(data);
-    //   setIsLoading(false);
-    //   setName(data.name);
-    //   setEmail(`${data.email}`);
-    //   setPhone(data.phone ? `${data.phone}` : "");
-    // });
-
     setName(`${userProfile?.name}`);
     setEmail(`${userProfile?.email}`);
     setPhone(`${userProfile?.phone}`);

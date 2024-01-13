@@ -1,37 +1,45 @@
 import AppButton from "@components/AppButton";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
+import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { useRoute } from "@react-navigation/native";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { IUserServiceAd } from "@hooks/DataContext";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import AppService from "@screens/SearchResults/ResultList/AppService";
 import React, { useState } from "react";
-import { Service } from "src/@types/services/Service";
-import { InfoPanel, Spacer } from "./styles";
+import { InfoPanel } from "./styles";
 
 type Params = {
-  serviceData: Service;
+  service: IUserServiceAd;
 };
 
 export default function NewContract() {
   const route = useRoute();
-  const { serviceData } = route.params as Params;
+  const { service } = route.params as Params;
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const [message, setMessage] = useState(
-    `Olá ${serviceData.provider.name}! Gostaria de um orçamento e da sua disponibilidade para o serviço descrito acima. Obrigado.`
+    `Olá ${service.providerId?.name}! Gostaria de um orçamento e da sua disponibilidade para o serviço descrito acima. Obrigado.`
   );
+
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <AppScreenContainer>
-      <Spacer />
-      <AppText>Contatar {serviceData.provider.name} sobre:</AppText>
-      <Spacer />
-      <AppService item={serviceData} showButton={false} buttonType="contact" />
+      <AppSpacer />
       <InfoPanel>
         <AppText>
-          Entre em contato com {serviceData.provider.name} para combinar os
+          Entre em contato com {service.providerId?.name} para combinar os
           detalhes do serviço que você precisa e quando quer o serviço
           executado.
         </AppText>
       </InfoPanel>
+      <AppText>Contatar {service.providerId?.name} sobre:</AppText>
+      <AppSpacer />
+      <AppService item={service} showButton={false} />
       <AppInput
         label="Mensagem:"
         multiline
@@ -43,9 +51,7 @@ export default function NewContract() {
       <AppButton
         title="Enviar mensagem"
         variant="positive"
-        style={{
-          marginTop: 16,
-        }}
+        rightIcon={<FontAwesome5 name="whatsapp" size={24} color="white" />}
       />
     </AppScreenContainer>
   );

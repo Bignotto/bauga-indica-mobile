@@ -1,9 +1,9 @@
+import { IUserServiceAd } from "@hooks/DataContext";
 import AppService from "@screens/SearchResults/ResultList/AppService";
-import { Service } from "src/@types/services/Service";
 import { ResultListWrapper } from "./styles";
 
 interface ResultListProps {
-  itens: Service[];
+  itens: IUserServiceAd[];
 }
 
 export default function ResultList({ itens }: ResultListProps) {

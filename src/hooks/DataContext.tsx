@@ -48,6 +48,10 @@ type IUserServiceAd = {
     name: string;
     description: string;
   };
+  service_images?: {
+    id: number;
+    imagePath: string;
+  }[];
 };
 
 type ICreateServiceDTO = {
@@ -72,6 +76,8 @@ interface IDataContextProps {
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
   createServiceAd(newService: ICreateServiceDTO): Promise<IUserServiceAd>;
   updateServiceAdImages(serviceId: string, images: string[]): Promise<void>;
+  search(searchText: string): Promise<IUserServiceAd[]>;
+  getServiceAdById(serviceAdId: string): Promise<IUserServiceAd | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -261,11 +267,43 @@ function DataProvider({ children }: DataProviderProps) {
     if (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError(
-        "ERROR while saving new user into database",
+        "ERROR while updating service images database",
         500,
         "supabase"
       );
     }
+  }
+
+  async function search(searchText: string): Promise<IUserServiceAd[]> {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*,serviceTypeId(*),providerId(*)")
+      .or(`title.ilike.%${searchText}%,description.ilike.%${searchText}%`);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while searching database", 500, "supabase");
+    }
+
+    if (data) return data;
+
+    return [];
+  }
+
+  async function getServiceAdById(
+    serviceAdId: string
+  ): Promise<IUserServiceAd | undefined> {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*,serviceTypeId(*),providerId(*),service_images(id,imagePath)")
+      .eq("id", serviceAdId);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while loading service ad", 500, "supabase");
+    }
+
+    if (data) return data[0];
+
+    return undefined;
   }
 
   return (
@@ -281,6 +319,8 @@ function DataProvider({ children }: DataProviderProps) {
         getAvailableServiceTypes,
         createServiceAd,
         updateServiceAdImages,
+        search,
+        getServiceAdById,
       }}
     >
       {children}
