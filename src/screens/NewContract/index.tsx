@@ -27,6 +27,8 @@ export default function NewContract() {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  async function handleCreateContract() {}
+
   return (
     <AppScreenContainer>
       <AppSpacer />

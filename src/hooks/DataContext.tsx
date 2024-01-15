@@ -65,6 +65,28 @@ type ICreateServiceDTO = {
   providerId: string;
 };
 
+type ICreateContractDTO = {
+  value: number;
+  serviceId: string;
+};
+
+type IContract = {
+  id?: number;
+  contract_status: string;
+  value: number;
+  service_id: string;
+  create_date: Date;
+  user_provider_id: string;
+  user_contractor_id: string;
+  due_date: Date;
+  execution_date: Date;
+  closing_date: Date;
+  service_provided: boolean;
+  service_reviewed: boolean;
+  provider_agreed: boolean;
+  contractor_agreed: boolean;
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
@@ -78,6 +100,7 @@ interface IDataContextProps {
   updateServiceAdImages(serviceId: string, images: string[]): Promise<void>;
   search(searchText: string): Promise<IUserServiceAd[]>;
   getServiceAdById(serviceAdId: string): Promise<IUserServiceAd | undefined>;
+  createNewContract(newContract: ICreateContractDTO): Promise<IContract>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -306,6 +329,25 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function createNewContract(
+    newContract: ICreateContractDTO
+  ): Promise<IContract> {
+    const { data, error } = await supabase
+      .from("services")
+      .insert([newContract])
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while creating new contract", 500, "supabase");
+    }
+
+    return data[0];
+  }
+
+  //NEXT: create new message when creating new contract!
+  async function createNewMessage(): Promise<void> {}
+
   return (
     <DataContext.Provider
       value={{
@@ -321,6 +363,7 @@ function DataProvider({ children }: DataProviderProps) {
         updateServiceAdImages,
         search,
         getServiceAdById,
+        createNewContract,
       }}
     >
       {children}
