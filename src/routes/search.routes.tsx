@@ -1,5 +1,6 @@
 import Header from "@components/Header";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ContractDetails from "@screens/ContractDetails";
 import Home from "@screens/Home";
 import NewContract from "@screens/NewContract";
 import SearchResults from "@screens/SearchResults";
@@ -35,6 +36,13 @@ export function SearchRoutes() {
         component={NewContract}
         options={{
           headerTitle: "Contratar serviço",
+        }}
+      />
+      <Screen
+        name="ContractDetails"
+        component={ContractDetails}
+        options={{
+          headerTitle: "Contrato",
         }}
       />
       {/* <Screen name="ReviewService" component={ReviwService} /> */}

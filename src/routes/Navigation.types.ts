@@ -21,4 +21,9 @@ export type StackParamList = {
   Dashboard: {} | undefined;
   UserServiceAds: {} | undefined;
   NewServiceAd: {} | undefined;
+  ContractDetails:
+    | {
+        contractId: number;
+      }
+    | undefined;
 };
