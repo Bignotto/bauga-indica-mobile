@@ -45,9 +45,16 @@ export default function Dashboard() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <DashboardContainer>
           <DashboardItem
+            title="Serviços contratados"
+            description="os serviços que você contratou"
+            information={`${dashboardData?.servicesContractedCount} serviços`}
+            isLoading={isLoading}
+            onPress={() => navigation.navigate("UserContractedServices")}
+          />
+          <DashboardItem
             title="Anúncios"
             description="seus anúncios cadastrados"
-            information={`${dashboardData?.servicesCount} anúncios`}
+            information={`${dashboardData?.servicesAdCount} anúncios`}
             isLoading={isLoading}
             onPress={() => navigation.navigate("UserServiceAds")}
           />

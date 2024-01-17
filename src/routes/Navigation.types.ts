@@ -26,4 +26,5 @@ export type StackParamList = {
         contractId: number;
       }
     | undefined;
+  UserContractedServices: {} | undefined;
 };

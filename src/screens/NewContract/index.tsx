@@ -35,18 +35,20 @@ export default function NewContract() {
   async function handleCreateContract() {
     //navegar para a próxima página -> contract details
     setIsLoading(true);
+    console.log(`${service.id}`);
     try {
       const createdContract = await createNewContract({
-        service_id: `${service.id}`,
+        service_id: service.id!,
         value: service.value,
+        user_contractor_id: userProfile?.id!,
+        user_provider_id: service.providerId?.id!,
       });
 
       const createdMessage = await createNewMessage({
-        contractId: createdContract.id!,
-        messageRead: false,
+        contract_id: createdContract.id!,
+        message_read: false,
         text: message,
-        userFromId: userProfile?.id!,
-        messageDate: new Date(),
+        user_from_id: userProfile?.id!,
       });
 
       navigation.navigate("ContractDetails", {

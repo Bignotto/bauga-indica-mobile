@@ -22,7 +22,8 @@ type IServiceType = {
 };
 
 type IDashboardData = {
-  servicesCount: number;
+  servicesAdCount: number;
+  servicesContractedCount: number;
   contractsCount: number;
   visualisationsCount: number;
   reviewsCount: number;
@@ -65,10 +66,11 @@ type ICreateServiceDTO = {
   providerId: string;
 };
 
-//NEXT: Fix error while creating new contract
 type ICreateContractDTO = {
   value: number;
   service_id: string;
+  user_provider_id: string;
+  user_contractor_id: string;
 };
 
 type IContract = {
@@ -89,11 +91,11 @@ type IContract = {
 };
 
 type IMessageDTO = {
-  messageDate?: Date;
+  message_date?: Date;
   text: string;
-  messageRead: boolean;
-  contractId: number;
-  userFromId: string;
+  message_read: boolean;
+  contract_id: number;
+  user_from_id: string;
 };
 
 interface IDataContextProps {
@@ -211,9 +213,20 @@ function DataProvider({ children }: DataProviderProps) {
       throw new AppError("ERROR on dashboard data loading", 500, "supabase");
     }
 
+    const { data: servicesContractedData, error: servicesContractedError } =
+      await supabase
+        .from("contracts")
+        .select("id")
+        .eq("user_contractor_id", userProfile?.id);
+    if (servicesContractedError) {
+      console.log(JSON.stringify(contractsError, null, 2));
+      throw new AppError("ERROR on dashboard data loading", 500, "supabase");
+    }
+
     const dashboardData: IDashboardData = {
       contractsCount: contractsData.length,
-      servicesCount: servicesData.length,
+      servicesAdCount: servicesData.length,
+      servicesContractedCount: servicesContractedData.length,
       visualisationsCount: 0,
       reviewsCount: 0,
     };
@@ -342,8 +355,9 @@ function DataProvider({ children }: DataProviderProps) {
   async function createNewContract(
     newContract: ICreateContractDTO
   ): Promise<IContract> {
+    console.log({ newContract });
     const { data, error } = await supabase
-      .from("services")
+      .from("contracts")
       .insert([newContract])
       .select();
 
