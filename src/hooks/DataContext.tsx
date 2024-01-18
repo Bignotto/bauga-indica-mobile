@@ -77,10 +77,18 @@ type IContract = {
   id?: number;
   contract_status: string;
   value: number;
-  service_id: string;
+  service_id: IUserServiceAd;
   create_date: Date;
-  user_provider_id: string;
-  user_contractor_id: string;
+  user_provider_id: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  user_contractor_id: {
+    id: string;
+    name: string;
+    image: string;
+  };
   due_date: Date;
   execution_date: Date;
   closing_date: Date;
@@ -88,9 +96,10 @@ type IContract = {
   service_reviewed: boolean;
   provider_agreed: boolean;
   contractor_agreed: boolean;
+  messages?: IContractMessage[];
 };
 
-type IMessageDTO = {
+type IContractMessage = {
   message_date?: Date;
   text: string;
   message_read: boolean;
@@ -112,7 +121,8 @@ interface IDataContextProps {
   search(searchText: string): Promise<IUserServiceAd[]>;
   getServiceAdById(serviceAdId: string): Promise<IUserServiceAd | undefined>;
   createNewContract(newContract: ICreateContractDTO): Promise<IContract>;
-  createNewMessage(newMessage: IMessageDTO): Promise<IMessageDTO>;
+  createNewMessage(newMessage: IContractMessage): Promise<IContractMessage>;
+  getUserContractedServices(): Promise<IContract[]>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -370,8 +380,8 @@ function DataProvider({ children }: DataProviderProps) {
   }
 
   async function createNewMessage(
-    newMessage: IMessageDTO
-  ): Promise<IMessageDTO> {
+    newMessage: IContractMessage
+  ): Promise<IContractMessage> {
     const { data, error } = await supabase
       .from("messages")
       .insert([newMessage])
@@ -382,6 +392,19 @@ function DataProvider({ children }: DataProviderProps) {
     }
 
     return data[0];
+  }
+
+  async function getUserContractedServices(): Promise<IContract[]> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .select("*,service_id(*),user_provider_id(*),messages(*)")
+      .eq("user_contractor_id", userProfile?.id);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while creating new message", 500, "supabase");
+    }
+    if (data) return data;
+    return [];
   }
 
   return (
@@ -401,6 +424,7 @@ function DataProvider({ children }: DataProviderProps) {
         getServiceAdById,
         createNewContract,
         createNewMessage,
+        getUserContractedServices,
       }}
     >
       {children}
@@ -414,6 +438,8 @@ function useData() {
 
 export {
   DataProvider,
+  IContract,
+  IContractMessage,
   IDashboardData,
   IServiceType,
   IUserDTO,
