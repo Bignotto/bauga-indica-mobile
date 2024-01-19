@@ -397,7 +397,9 @@ function DataProvider({ children }: DataProviderProps) {
   async function getUserContractedServices(): Promise<IContract[]> {
     const { data, error } = await supabase
       .from("contracts")
-      .select("*,service_id(*),user_provider_id(*),messages(*)")
+      .select(
+        "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
+      )
       .eq("user_contractor_id", userProfile?.id);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
