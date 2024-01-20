@@ -15,6 +15,7 @@ import {
   ContractTitle,
   IconWrapper,
   ImageWrapper,
+  ProviderInfoWrapper,
 } from "./styles";
 
 export default function UserContractedServices() {
@@ -74,16 +75,23 @@ export default function UserContractedServices() {
                   )}
                 </ImageWrapper>
                 <ContractInformationWrapper>
+                  <ProviderInfoWrapper>
+                    <AppAvatar
+                      size={24}
+                      imagePath={contract.user_provider_id.image}
+                    />
+                    <AppText bold size="sm">
+                      {contract.user_provider_id.name}
+                    </AppText>
+                  </ProviderInfoWrapper>
+                  <AppSpacer />
                   <ContractTitle>
                     <AppText bold>{contract.service_id.title}</AppText>
+                    <AppSpacer verticalSpace="sm" />
                     <AppText bold size="md" color={theme.colors.primary_dark}>
                       {`R$ ${contract.value.toFixed(2)}`}
                     </AppText>
                     <AppSpacer verticalSpace="sm" />
-                    <AppAvatar
-                      size={28}
-                      imagePath={contract.user_provider_id.image}
-                    />
                   </ContractTitle>
                 </ContractInformationWrapper>
                 <IconWrapper>
