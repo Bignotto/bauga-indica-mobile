@@ -75,7 +75,7 @@ type ICreateContractDTO = {
 
 type IContract = {
   id?: number;
-  contract_status: string;
+  contract_status: "open" | "executing" | "canceled" | "closed";
   value: number;
   service_id: IUserServiceAd;
   create_date: Date;

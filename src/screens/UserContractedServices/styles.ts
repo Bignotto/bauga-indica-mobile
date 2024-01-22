@@ -19,11 +19,7 @@ export const ContractTitle = styled.View`
   padding-left: 8px;
 `;
 
-export const IconWrapper = styled.View`
-  padding: 8px;
-  align-items: center;
-  justify-content: center;
-`;
+export const IconWrapper = styled.View``;
 
 export const ImageWrapper = styled.View`
   height: 160px;
@@ -38,4 +34,16 @@ export const ProviderInfoWrapper = styled.View`
   align-items: center;
   gap: 8px;
   padding-left: 8px;
+`;
+
+export const ContractStatusWrapper = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: flex-end;
+  padding-left: 8px;
+  gap: 12px;
+`;
+
+export const DateWrapper = styled.View`
+  justify-content: end;
 `;
