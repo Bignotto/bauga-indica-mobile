@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ContractDetails from "@screens/ContractDetails";
 import Dashboard from "@screens/Dashboard";
 import NewServiceAd from "@screens/NewServiceAd";
 import UserContractedServices from "@screens/UserContractedServices";
@@ -40,6 +41,13 @@ export function DashboardRoutes() {
         component={NewServiceAd}
         options={{
           title: "Novo anúncio de serviço",
+        }}
+      />
+      <Screen
+        name="ContractDetails"
+        component={ContractDetails}
+        options={{
+          title: "Detalhes do contrato",
         }}
       />
     </Navigator>

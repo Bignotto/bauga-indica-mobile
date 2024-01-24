@@ -400,7 +400,10 @@ function DataProvider({ children }: DataProviderProps) {
       .select(
         "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
       )
-      .eq("user_contractor_id", userProfile?.id);
+      .eq("user_contractor_id", userProfile?.id)
+      .order("create_date", {
+        ascending: false,
+      });
     if (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError("ERROR while creating new message", 500, "supabase");

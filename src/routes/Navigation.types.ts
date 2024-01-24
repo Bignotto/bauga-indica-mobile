@@ -23,7 +23,7 @@ export type StackParamList = {
   NewServiceAd: {} | undefined;
   ContractDetails:
     | {
-        contractId: number;
+        contractId: string;
       }
     | undefined;
   UserContractedServices: {} | undefined;
