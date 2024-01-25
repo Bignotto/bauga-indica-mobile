@@ -123,6 +123,7 @@ interface IDataContextProps {
   createNewContract(newContract: ICreateContractDTO): Promise<IContract>;
   createNewMessage(newMessage: IContractMessage): Promise<IContractMessage>;
   getUserContractedServices(): Promise<IContract[]>;
+  getContractById(contractId: string): Promise<IContract>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -412,6 +413,26 @@ function DataProvider({ children }: DataProviderProps) {
     return [];
   }
 
+  async function getContractById(contractId: string): Promise<IContract> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .select(
+        "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
+      )
+      .eq("id", contractId);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while loading contract details",
+        500,
+        "supabase"
+      );
+    }
+    if (data.length > 0) return data[0];
+
+    throw new AppError("Contract id not found", 404, "supabase");
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -430,6 +451,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewContract,
         createNewMessage,
         getUserContractedServices,
+        getContractById,
       }}
     >
       {children}
