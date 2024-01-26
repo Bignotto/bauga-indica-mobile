@@ -4,7 +4,11 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
 import { IContract, useData } from "@hooks/DataContext";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { useRoute } from "@react-navigation/native";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable } from "react-native";
 import { NegotiationWrapper, TopWrapper } from "./styles";
@@ -17,9 +21,13 @@ export default function ContractDetails() {
   const route = useRoute();
   const { contractId } = route.params as Params;
 
-  const { getContractById } = useData();
+  const { getContractById, userProfile } = useData();
 
   const [contract, setContract] = useState<IContract>({} as IContract);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [actualDate, setActualDate] = useState<Date>();
+  const [actualValue, setActualValue] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
 
   async function loadContractDetails() {
@@ -27,6 +35,8 @@ export default function ContractDetails() {
     try {
       const response = await getContractById(contractId);
       setContract(response);
+      setActualDate(new Date(response.due_date));
+      setActualValue(response.value);
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
@@ -42,6 +52,14 @@ export default function ContractDetails() {
     loadContractDetails();
   }, []);
 
+  function onChangeDate(
+    event: DateTimePickerEvent,
+    selectedDate: Date | undefined
+  ) {
+    setShowDatePicker(false);
+    setActualDate(selectedDate);
+  }
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
@@ -54,13 +72,28 @@ export default function ContractDetails() {
       </TopWrapper>
       <NegotiationWrapper>
         <AppText>O serviço será executado em:</AppText>
-        <Pressable onPress={() => console.log("pressou!")}>
-          <AppInput editable={false} />
+        <Pressable
+          onPress={() => setShowDatePicker(true)}
+          disabled={userProfile?.id !== contract.user_provider_id.id}
+        >
+          <AppInput
+            editable={false}
+            value={`${moment(actualDate ?? new Date()).format("DD/MM/yyyy")}`}
+          />
         </Pressable>
+        {showDatePicker && (
+          <DateTimePicker value={actualDate!} onChange={onChangeDate} />
+        )}
         <AppText>Valor total do serviço</AppText>
-        <AppInput />
+        <AppInput
+          value={String(actualValue)}
+          editable={userProfile?.id === contract.user_provider_id.id}
+        />
 
-        <AppButton title="Salvar" />
+        <AppButton
+          title="Salvar"
+          enabled={userProfile?.id === contract.user_provider_id.id}
+        />
       </NegotiationWrapper>
     </AppScreenContainer>
   );
