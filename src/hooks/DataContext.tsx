@@ -124,6 +124,7 @@ interface IDataContextProps {
   createNewMessage(newMessage: IContractMessage): Promise<IContractMessage>;
   getUserContractedServices(): Promise<IContract[]>;
   getContractById(contractId: string): Promise<IContract>;
+  getUserProvidedServices(): Promise<IContract[]>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -407,7 +408,7 @@ function DataProvider({ children }: DataProviderProps) {
       });
     if (error) {
       console.log(JSON.stringify(error, null, 2));
-      throw new AppError("ERROR while creating new message", 500, "supabase");
+      throw new AppError("ERROR while listing contracts", 500, "supabase");
     }
     if (data) return data;
     return [];
@@ -433,6 +434,24 @@ function DataProvider({ children }: DataProviderProps) {
     throw new AppError("Contract id not found", 404, "supabase");
   }
 
+  async function getUserProvidedServices(): Promise<IContract[]> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .select(
+        "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
+      )
+      .eq("user_provider_id", userProfile?.id)
+      .order("create_date", {
+        ascending: false,
+      });
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while listing contracts", 500, "supabase");
+    }
+    if (data) return data;
+    return [];
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -452,6 +471,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewMessage,
         getUserContractedServices,
         getContractById,
+        getUserProvidedServices,
       }}
     >
       {children}

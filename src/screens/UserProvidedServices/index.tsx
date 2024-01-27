@@ -6,13 +6,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { ActivityIndicator, Alert, Pressable, ScrollView } from "react-native";
 import { useTheme } from "styled-components";
 import { ContractListContainer } from "./styles";
 
-export default function UserContractedServices() {
-  const { getUserContractedServices } = useData();
+export default function UserProvidedServices() {
+  const { getUserProvidedServices } = useData();
   const theme = useTheme();
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -24,7 +23,7 @@ export default function UserContractedServices() {
     setIsLoading(true);
 
     try {
-      const response = await getUserContractedServices();
+      const response = await getUserProvidedServices();
 
       if (response) setContractsList(response);
       setIsLoading(false);

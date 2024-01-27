@@ -52,6 +52,13 @@ export default function Dashboard() {
             onPress={() => navigation.navigate("UserContractedServices")}
           />
           <DashboardItem
+            title="Contratos"
+            description="seus serviços prestados"
+            information={`${dashboardData?.contractsCount} contratos`}
+            isLoading={isLoading}
+            onPress={() => navigation.navigate("UserProvidedServices")}
+          />
+          <DashboardItem
             title="Anúncios"
             description="seus anúncios cadastrados"
             information={`${dashboardData?.servicesAdCount} anúncios`}
@@ -62,12 +69,6 @@ export default function Dashboard() {
             title="Visualizações"
             description="visualizações em seus anúncios"
             information={`${dashboardData?.visualisationsCount} visualizações`}
-            isLoading={isLoading}
-          />
-          <DashboardItem
-            title="Contratos"
-            description="seus serviços prestados"
-            information={`${dashboardData?.contractsCount} contratos`}
             isLoading={isLoading}
           />
           <DashboardItem

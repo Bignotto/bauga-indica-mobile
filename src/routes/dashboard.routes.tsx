@@ -3,6 +3,7 @@ import ContractDetails from "@screens/ContractDetails";
 import Dashboard from "@screens/Dashboard";
 import NewServiceAd from "@screens/NewServiceAd";
 import UserContractedServices from "@screens/UserContractedServices";
+import UserProvidedServices from "@screens/UserProvidedServices";
 import UserServiceAds from "@screens/UserServiceAds";
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -35,6 +36,13 @@ export function DashboardRoutes() {
           title: "Meus serviços contratados",
         }}
         component={UserContractedServices}
+      />
+      <Screen
+        name="UserProvidedServices"
+        options={{
+          title: "Serviços prestados",
+        }}
+        component={UserProvidedServices}
       />
       <Screen
         name="NewServiceAd"
