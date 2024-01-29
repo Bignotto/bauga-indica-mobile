@@ -51,10 +51,7 @@ export default function NewContract() {
         user_from_id: userProfile?.id!,
       });
 
-      //TODO: create a confirmation screen
-      // navigation.navigate("ContractDetails", {
-      //   contractId: createdContract.id!,
-      // });
+      navigation.navigate("ContractCreated");
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) return Alert.alert(error.message);
