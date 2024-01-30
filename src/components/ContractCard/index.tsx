@@ -31,6 +31,11 @@ export default function ContractCard({ contract }: ContractCardProps) {
       : contract.provider_agreed && contract.contractor_agreed
       ? "Combinado"
       : "Aberto";
+
+  console.log({
+    contractor: contract.user_contractor_id,
+    provider: contract.user_provider_id,
+  });
   return (
     <ContractItemContainer>
       <ImageWrapper>
@@ -52,10 +57,11 @@ export default function ContractCard({ contract }: ContractCardProps) {
         )}
       </ImageWrapper>
       <ContractInformationWrapper>
+        {/* TODO: fix which to choose, contractor info or provider info */}
         <ProviderInfoWrapper>
-          <AppAvatar size={24} imagePath={contract.user_provider_id.image} />
+          <AppAvatar size={24} imagePath={contract.user_contractor_id.image} />
           <AppText bold size="sm">
-            {contract.user_provider_id.name}
+            {contract.user_contractor_id.name}
           </AppText>
         </ProviderInfoWrapper>
         <AppSpacer />

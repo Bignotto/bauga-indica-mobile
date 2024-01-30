@@ -400,7 +400,7 @@ function DataProvider({ children }: DataProviderProps) {
     const { data, error } = await supabase
       .from("contracts")
       .select(
-        "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
+        "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
       )
       .eq("user_contractor_id", userProfile?.id)
       .order("create_date", {
@@ -418,7 +418,7 @@ function DataProvider({ children }: DataProviderProps) {
     const { data, error } = await supabase
       .from("contracts")
       .select(
-        "*,service_id(*,service_images(*)),user_provider_id(*),messages(*)"
+        "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
       )
       .eq("id", contractId);
     if (error) {
