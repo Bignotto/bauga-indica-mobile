@@ -34,11 +34,6 @@ export default function ContractCard({ contract }: ContractCardProps) {
       ? "Combinado"
       : "Aberto";
 
-  console.log({
-    contractor: contract.user_contractor_id,
-    provider: contract.user_provider_id,
-  });
-
   return (
     <ContractItemContainer>
       <ImageWrapper>

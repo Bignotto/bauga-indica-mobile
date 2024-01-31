@@ -12,6 +12,7 @@ interface AppDateInputProps extends TextInputProps {
   label?: string;
   error?: string | undefined;
   dateValue?: Date;
+  disabled?: boolean;
   onChangeDate(date: Date | undefined): void;
 }
 
@@ -19,6 +20,7 @@ export default function AppDateInput({
   label,
   error,
   dateValue,
+  disabled = false,
   onChangeDate,
   ...rest
 }: AppDateInputProps) {
@@ -47,7 +49,7 @@ export default function AppDateInput({
           {label}
         </AppText>
       )}
-      <Pressable onPress={() => setShowDatePicker(true)}>
+      <Pressable onPress={() => setShowDatePicker(true)} disabled={disabled}>
         <Wrapper error={error}>
           <InputComponent editable={false} {...rest} />
           <FontAwesome5

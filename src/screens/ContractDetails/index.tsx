@@ -1,21 +1,30 @@
 import AppButton from "@components/AppButton";
+import AppDateInput from "@components/AppDateInput";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { IContract, useData } from "@hooks/DataContext";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable } from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { ActivityIndicator, Alert } from "react-native";
+import * as yup from "yup";
 import { NegotiationWrapper, TopWrapper } from "./styles";
 
 type Params = {
   contractId: string;
 };
+
+const validationSchema = yup.object({
+  actualValue: yup
+    .number()
+    .required()
+    .typeError("Valor inválido.")
+    .positive("Valor inválido."),
+});
 
 export default function ContractDetails() {
   const route = useRoute();
@@ -23,11 +32,17 @@ export default function ContractDetails() {
 
   const { getContractById, userProfile } = useData();
 
-  const [contract, setContract] = useState<IContract>({} as IContract);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
+  const [contract, setContract] = useState<IContract>({} as IContract);
   const [actualDate, setActualDate] = useState<Date>();
-  const [actualValue, setActualValue] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
 
   async function loadContractDetails() {
@@ -36,7 +51,7 @@ export default function ContractDetails() {
       const response = await getContractById(contractId);
       setContract(response);
       setActualDate(new Date(response.due_date));
-      setActualValue(response.value);
+      setValue("actualValue", response.value);
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
@@ -52,12 +67,17 @@ export default function ContractDetails() {
     loadContractDetails();
   }, []);
 
-  function onChangeDate(
-    event: DateTimePickerEvent,
-    selectedDate: Date | undefined
-  ) {
-    setShowDatePicker(false);
-    setActualDate(selectedDate);
+  function setDateValue(dateValue: Date | undefined) {
+    if (dateValue) setActualDate(dateValue);
+  }
+
+  function handleSave({ actualValue }: any) {
+    const yesterday = moment(new Date()).add(-1, "days").toDate().getTime();
+
+    if (actualDate && actualDate.getTime() < yesterday)
+      return Alert.alert("A data não pode ser no passado.");
+
+    console.log("Salvou!! ---------------------------");
   }
 
   return isLoading ? (
@@ -72,27 +92,31 @@ export default function ContractDetails() {
       </TopWrapper>
       <NegotiationWrapper>
         <AppText>O serviço será executado em:</AppText>
-        <Pressable
-          onPress={() => setShowDatePicker(true)}
+        <AppDateInput
+          value={`${moment(actualDate).format("DD/MM/yyyy")}`}
+          onChangeDate={setDateValue}
           disabled={userProfile?.id !== contract.user_provider_id.id}
-        >
-          <AppInput
-            editable={false}
-            value={`${moment(actualDate ?? new Date()).format("DD/MM/yyyy")}`}
-          />
-        </Pressable>
-        {showDatePicker && (
-          <DateTimePicker value={actualDate!} onChange={onChangeDate} />
-        )}
+        />
         <AppText>Valor total do serviço</AppText>
-        <AppInput
-          value={String(actualValue)}
-          editable={userProfile?.id === contract.user_provider_id.id}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <AppInput
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={`${value}`}
+              keyboardType="decimal-pad"
+              error={errors.actualValue?.message}
+              editable={userProfile?.id === contract.user_provider_id.id}
+            />
+          )}
+          name="actualValue"
         />
 
         <AppButton
           title="Salvar"
           enabled={userProfile?.id === contract.user_provider_id.id}
+          onPress={() => handleSubmit(handleSave)()}
         />
       </NegotiationWrapper>
     </AppScreenContainer>
