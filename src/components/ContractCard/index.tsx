@@ -3,7 +3,7 @@ import AppSpacer from "@components/AppSpacer";
 import AppTag from "@components/AppTag";
 import AppText from "@components/AppText";
 import { AntDesign, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import { IContract } from "@hooks/DataContext";
+import { IContract, useData } from "@hooks/DataContext";
 import moment from "moment";
 import React from "react";
 import { Image, View } from "react-native";
@@ -25,6 +25,8 @@ interface ContractCardProps {
 
 export default function ContractCard({ contract }: ContractCardProps) {
   const theme = useTheme();
+  const { userProfile } = useData();
+
   const statusTagText =
     contract.provider_agreed || contract.contractor_agreed
       ? "Aguardando"
@@ -36,6 +38,7 @@ export default function ContractCard({ contract }: ContractCardProps) {
     contractor: contract.user_contractor_id,
     provider: contract.user_provider_id,
   });
+
   return (
     <ContractItemContainer>
       <ImageWrapper>
@@ -57,11 +60,19 @@ export default function ContractCard({ contract }: ContractCardProps) {
         )}
       </ImageWrapper>
       <ContractInformationWrapper>
-        {/* TODO: fix which to choose, contractor info or provider info */}
         <ProviderInfoWrapper>
-          <AppAvatar size={24} imagePath={contract.user_contractor_id.image} />
+          <AppAvatar
+            size={24}
+            imagePath={
+              contract.user_provider_id.id === userProfile!.id
+                ? contract.user_contractor_id.image
+                : contract.user_provider_id.image
+            }
+          />
           <AppText bold size="sm">
-            {contract.user_contractor_id.name}
+            {contract.user_provider_id.id === userProfile!.id
+              ? contract.user_contractor_id.name
+              : contract.user_provider_id.name}
           </AppText>
         </ProviderInfoWrapper>
         <AppSpacer />
