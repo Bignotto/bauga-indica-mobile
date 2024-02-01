@@ -10,7 +10,7 @@ import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import * as yup from "yup";
 import { NegotiationWrapper, TopWrapper } from "./styles";
 
@@ -45,6 +45,8 @@ export default function ContractDetails() {
   const [actualDate, setActualDate] = useState<Date>();
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isSaving, setIsSaving] = useState(false);
+
   async function loadContractDetails() {
     setIsLoading(true);
     try {
@@ -68,7 +70,9 @@ export default function ContractDetails() {
   }, []);
 
   function setDateValue(dateValue: Date | undefined) {
-    if (dateValue) setActualDate(dateValue);
+    if (dateValue) {
+      setActualDate(dateValue);
+    }
   }
 
   function handleSave({ actualValue }: any) {
@@ -77,7 +81,14 @@ export default function ContractDetails() {
     if (actualDate && actualDate.getTime() < yesterday)
       return Alert.alert("A data não pode ser no passado.");
 
-    console.log("Salvou!! ---------------------------");
+    if (
+      actualDate?.getTime() === new Date(contract.due_date).getTime() ||
+      actualValue === contract.value
+    ) {
+      return;
+    }
+
+    //NEXT:update contract info!
   }
 
   return isLoading ? (
@@ -91,33 +102,42 @@ export default function ContractDetails() {
         <AppText>{contract.service_id.description}</AppText>
       </TopWrapper>
       <NegotiationWrapper>
-        <AppText>O serviço será executado em:</AppText>
         <AppDateInput
+          label="Em:"
           value={`${moment(actualDate).format("DD/MM/yyyy")}`}
           onChangeDate={setDateValue}
           disabled={userProfile?.id !== contract.user_provider_id.id}
         />
-        <AppText>Valor total do serviço</AppText>
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <AppInput
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={`${value}`}
-              keyboardType="decimal-pad"
-              error={errors.actualValue?.message}
-              editable={userProfile?.id === contract.user_provider_id.id}
-            />
-          )}
-          name="actualValue"
-        />
 
-        <AppButton
-          title="Salvar"
-          enabled={userProfile?.id === contract.user_provider_id.id}
-          onPress={() => handleSubmit(handleSave)()}
-        />
+        <View style={{ flex: 1 }}>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                label="Por:"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={`${value}`}
+                keyboardType="decimal-pad"
+                error={errors.actualValue?.message}
+                editable={userProfile?.id === contract.user_provider_id.id}
+              />
+            )}
+            name="actualValue"
+          />
+        </View>
+        <View
+          style={{
+            marginTop: 8,
+            justifyContent: "center",
+          }}
+        >
+          <AppButton
+            title="Salvar"
+            enabled={userProfile?.id === contract.user_provider_id.id}
+            onPress={() => handleSubmit(handleSave)()}
+          />
+        </View>
       </NegotiationWrapper>
     </AppScreenContainer>
   );

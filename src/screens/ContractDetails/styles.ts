@@ -7,5 +7,7 @@ export const TopWrapper = styled.View`
 `;
 
 export const NegotiationWrapper = styled.View`
+  flex-direction: row;
   margin-top: 12px;
+  gap: 8px;
 `;

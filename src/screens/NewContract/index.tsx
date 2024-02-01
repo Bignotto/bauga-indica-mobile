@@ -49,6 +49,7 @@ export default function NewContract() {
         value: service.value,
         user_contractor_id: userProfile?.id!,
         user_provider_id: service.providerId?.id!,
+        due_date: dueDate,
       });
 
       const createdMessage = await createNewMessage({

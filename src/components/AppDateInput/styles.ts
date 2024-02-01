@@ -11,7 +11,7 @@ export const Container = styled.View``;
 export const Wrapper = styled.View<WrapperProps>`
   flex-direction: row;
   align-items: center;
-  max-width: 50%;
+  min-width: 130px;
   justify-content: space-between;
   background-color: ${({ theme }) => "#F9F9F9"};
   border-radius: 5px;

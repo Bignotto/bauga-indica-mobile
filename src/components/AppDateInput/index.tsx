@@ -27,14 +27,14 @@ export default function AppDateInput({
   const theme = useTheme();
 
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [theDate, setTheDate] = useState<Date>();
 
   function onChangeDateValue(
     event: DateTimePickerEvent,
     selectedDate: Date | undefined
   ) {
     setShowDatePicker(false);
-    onChangeDate(selectedDate);
+    if (event.type === "dismissed") return;
+    if (selectedDate) onChangeDate(selectedDate);
   }
 
   return (

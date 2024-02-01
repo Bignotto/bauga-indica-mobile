@@ -71,6 +71,7 @@ type ICreateContractDTO = {
   service_id: string;
   user_provider_id: string;
   user_contractor_id: string;
+  due_date: Date;
 };
 
 type IContract = {
