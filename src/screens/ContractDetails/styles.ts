@@ -11,3 +11,5 @@ export const NegotiationWrapper = styled.View`
   margin-top: 12px;
   gap: 8px;
 `;
+
+export const MessagesWrapper = styled.View``;

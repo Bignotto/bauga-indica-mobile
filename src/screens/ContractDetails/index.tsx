@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, View } from "react-native";
 import * as yup from "yup";
-import { NegotiationWrapper, TopWrapper } from "./styles";
+import { MessagesWrapper, NegotiationWrapper, TopWrapper } from "./styles";
 
 type Params = {
   contractId: string;
@@ -30,7 +30,7 @@ export default function ContractDetails() {
   const route = useRoute();
   const { contractId } = route.params as Params;
 
-  const { getContractById, userProfile } = useData();
+  const { getContractById, updateContract, userProfile } = useData();
 
   const {
     control,
@@ -45,6 +45,7 @@ export default function ContractDetails() {
   const [actualDate, setActualDate] = useState<Date>();
   const [isLoading, setIsLoading] = useState(true);
 
+  const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   async function loadContractDetails() {
@@ -72,23 +73,36 @@ export default function ContractDetails() {
   function setDateValue(dateValue: Date | undefined) {
     if (dateValue) {
       setActualDate(dateValue);
+      setHasChanges(true);
     }
   }
 
-  function handleSave({ actualValue }: any) {
+  async function handleSave({ actualValue }: any) {
     const yesterday = moment(new Date()).add(-1, "days").toDate().getTime();
 
     if (actualDate && actualDate.getTime() < yesterday)
       return Alert.alert("A data não pode ser no passado.");
 
-    if (
-      actualDate?.getTime() === new Date(contract.due_date).getTime() ||
-      actualValue === contract.value
-    ) {
-      return;
-    }
+    if (!hasChanges) return;
 
-    //NEXT:update contract info!
+    setIsSaving(true);
+    try {
+      const response = await updateContract({
+        id: `${contract.id}`,
+        due_date: actualDate,
+        value: actualValue,
+      });
+
+      setHasChanges(false);
+      if (response) setContract(response);
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return isLoading ? (
@@ -116,7 +130,10 @@ export default function ContractDetails() {
               <AppInput
                 label="Por:"
                 onBlur={onBlur}
-                onChangeText={onChange}
+                onChangeText={(t) => {
+                  setHasChanges(true);
+                  onChange(t);
+                }}
                 value={`${value}`}
                 keyboardType="decimal-pad"
                 error={errors.actualValue?.message}
@@ -136,9 +153,11 @@ export default function ContractDetails() {
             title="Salvar"
             enabled={userProfile?.id === contract.user_provider_id.id}
             onPress={() => handleSubmit(handleSave)()}
+            isLoading={isSaving}
           />
         </View>
       </NegotiationWrapper>
+      <MessagesWrapper></MessagesWrapper>
     </AppScreenContainer>
   );
 }

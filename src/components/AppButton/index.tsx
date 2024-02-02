@@ -40,27 +40,23 @@ export default function AppButton({
   return (
     <ButtonWrapper outline={outline} color={buttonColor}>
       <ButtonContainer enabled={enabled} {...rest}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <>
-            {leftIcon && <>{leftIcon}</>}
-            {title && (
-              <AppText
-                bold
-                color={enabled ? textColor : theme.colors.text_disabled}
-                size={size}
-                style={{
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                }}
-              >
-                {title}
-              </AppText>
-            )}
-            {rightIcon && <View style={{ marginRight: 8 }}>{rightIcon}</View>}
-          </>
-        )}
+        <>
+          {leftIcon && <>{leftIcon}</>}
+          {title && (
+            <AppText
+              bold
+              color={enabled ? textColor : theme.colors.text_disabled}
+              size={size}
+              style={{
+                paddingLeft: 16,
+                paddingRight: 16,
+              }}
+            >
+              {isLoading ? <ActivityIndicator /> : title}
+            </AppText>
+          )}
+          {rightIcon && <View style={{ marginRight: 8 }}>{rightIcon}</View>}
+        </>
       </ButtonContainer>
     </ButtonWrapper>
   );

@@ -74,8 +74,14 @@ type ICreateContractDTO = {
   due_date: Date;
 };
 
+type IUpdateContractDTO = {
+  id: string;
+  due_date?: Date;
+  value?: number;
+};
+
 type IContract = {
-  id?: number;
+  id?: string;
   contract_status: "open" | "executing" | "canceled" | "closed";
   value: number;
   service_id: IUserServiceAd;
@@ -104,7 +110,7 @@ type IContractMessage = {
   message_date?: Date;
   text: string;
   message_read: boolean;
-  contract_id: number;
+  contract_id: string;
   user_from_id: string;
 };
 
@@ -126,6 +132,7 @@ interface IDataContextProps {
   getUserContractedServices(): Promise<IContract[]>;
   getContractById(contractId: string): Promise<IContract>;
   getUserProvidedServices(): Promise<IContract[]>;
+  updateContract(newInfo: IUpdateContractDTO): Promise<IContract | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -453,6 +460,27 @@ function DataProvider({ children }: DataProviderProps) {
     return [];
   }
 
+  async function updateContract({
+    id,
+    due_date,
+    value,
+  }: IUpdateContractDTO): Promise<IContract | undefined> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .update({ due_date, value })
+      .eq("id", id)
+      .select(
+        "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
+      );
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while updating contract", 500, "supabase");
+    }
+
+    if (data) return data[0];
+    return undefined;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -473,6 +501,7 @@ function DataProvider({ children }: DataProviderProps) {
         getUserContractedServices,
         getContractById,
         getUserProvidedServices,
+        updateContract,
       }}
     >
       {children}
@@ -490,6 +519,7 @@ export {
   IContractMessage,
   IDashboardData,
   IServiceType,
+  IUpdateContractDTO,
   IUserDTO,
   IUserServiceAd,
   useData,
