@@ -34,3 +34,8 @@ export const MessageItem = styled.View`
   padding: 8px;
   margin-bottom: 4px;
 `;
+
+export const MessageInputContainer = styled.View`
+  flex-direction: row;
+  gap: 4px;
+`;

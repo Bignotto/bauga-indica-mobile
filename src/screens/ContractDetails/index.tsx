@@ -2,8 +2,10 @@ import AppButton from "@components/AppButton";
 import AppDateInput from "@components/AppDateInput";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
+import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
+import { FontAwesome } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IContract, IContractMessage, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
@@ -12,8 +14,10 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useTheme } from "styled-components";
 import * as yup from "yup";
 import {
+  MessageInputContainer,
   MessageItem,
   MessageWrapper,
   MessagesList,
@@ -37,7 +41,9 @@ export default function ContractDetails() {
   const route = useRoute();
   const { contractId } = route.params as Params;
 
-  const { getContractById, updateContract, userProfile } = useData();
+  const { getContractById, updateContract, createNewMessage, userProfile } =
+    useData();
+  const theme = useTheme();
 
   const {
     control,
@@ -115,11 +121,25 @@ export default function ContractDetails() {
     }
   }
 
+  async function handleSendMessage() {
+    try {
+      const newMessage = {
+        contract_id: `${contract.id}`,
+        user_from_id: `${userProfile!.id}`,
+        message_date: new Date(),
+        message_read: false,
+        text: "new message",
+      };
+      const response = await createNewMessage(newMessage);
+      setMessages((m) => m.concat(newMessage));
+    } catch (error) {}
+  }
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
     <AppScreenContainer>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <TopWrapper>
           <AppText size="lg" bold>
             {contract.service_id.title}
@@ -182,7 +202,29 @@ export default function ContractDetails() {
                 </MessageWrapper>
               ))}
           </ScrollView>
+          <MessageInputContainer>
+            <View style={{ minWidth: "80%" }}>
+              <AppInput />
+            </View>
+            <View style={{ flex: 1 }}>
+              <AppButton
+                rightIcon={
+                  <FontAwesome
+                    name="send"
+                    size={24}
+                    color={theme.colors.white}
+                  />
+                }
+                onPress={handleSendMessage}
+              />
+            </View>
+          </MessageInputContainer>
         </MessagesList>
+        <AppSpacer />
+        <AppButton title="Concordar" variant="positive" />
+        <AppSpacer />
+        <AppButton title="Cancelar contrato" outline variant="negative" />
+        <AppSpacer />
       </ScrollView>
     </AppScreenContainer>
   );
