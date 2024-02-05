@@ -107,6 +107,7 @@ type IContract = {
 };
 
 type IContractMessage = {
+  id?: number;
   message_date?: Date;
   text: string;
   message_read: boolean;

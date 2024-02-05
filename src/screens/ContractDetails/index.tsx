@@ -5,14 +5,21 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { IContract, useData } from "@hooks/DataContext";
+import { IContract, IContractMessage, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import * as yup from "yup";
-import { MessagesWrapper, NegotiationWrapper, TopWrapper } from "./styles";
+import {
+  MessageItem,
+  MessageWrapper,
+  MessagesList,
+  NegotiationWrapper,
+  TopWrapper,
+} from "./styles";
 
 type Params = {
   contractId: string;
@@ -45,6 +52,8 @@ export default function ContractDetails() {
   const [actualDate, setActualDate] = useState<Date>();
   const [isLoading, setIsLoading] = useState(true);
 
+  const [messages, setMessages] = useState<IContractMessage[]>([]);
+
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -55,6 +64,7 @@ export default function ContractDetails() {
       setContract(response);
       setActualDate(new Date(response.due_date));
       setValue("actualValue", response.value);
+      setMessages(response.messages ?? []);
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
@@ -109,55 +119,71 @@ export default function ContractDetails() {
     <ActivityIndicator />
   ) : (
     <AppScreenContainer>
-      <TopWrapper>
-        <AppText size="lg" bold>
-          {contract.service_id.title}
-        </AppText>
-        <AppText>{contract.service_id.description}</AppText>
-      </TopWrapper>
-      <NegotiationWrapper>
-        <AppDateInput
-          label="Em:"
-          value={`${moment(actualDate).format("DD/MM/yyyy")}`}
-          onChangeDate={setDateValue}
-          disabled={userProfile?.id !== contract.user_provider_id.id}
-        />
+      <ScrollView>
+        <TopWrapper>
+          <AppText size="lg" bold>
+            {contract.service_id.title}
+          </AppText>
+          <AppText>{contract.service_id.description}</AppText>
+        </TopWrapper>
+        <NegotiationWrapper>
+          <AppDateInput
+            label="Em:"
+            value={`${moment(actualDate).format("DD/MM/yyyy")}`}
+            onChangeDate={setDateValue}
+            disabled={userProfile?.id !== contract.user_provider_id.id}
+          />
 
-        <View style={{ flex: 1 }}>
-          <Controller
-            control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <AppInput
-                label="Por:"
-                onBlur={onBlur}
-                onChangeText={(t) => {
-                  setHasChanges(true);
-                  onChange(t);
-                }}
-                value={`${value}`}
-                keyboardType="decimal-pad"
-                error={errors.actualValue?.message}
-                editable={userProfile?.id === contract.user_provider_id.id}
-              />
-            )}
-            name="actualValue"
-          />
-        </View>
-        <View
-          style={{
-            marginTop: 8,
-            justifyContent: "center",
-          }}
-        >
-          <AppButton
-            title="Salvar"
-            enabled={userProfile?.id === contract.user_provider_id.id}
-            onPress={() => handleSubmit(handleSave)()}
-            isLoading={isSaving}
-          />
-        </View>
-      </NegotiationWrapper>
-      <MessagesWrapper></MessagesWrapper>
+          <View style={{ flex: 1 }}>
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AppInput
+                  label="Por:"
+                  onBlur={onBlur}
+                  onChangeText={(t) => {
+                    setHasChanges(true);
+                    onChange(t);
+                  }}
+                  value={`${value}`}
+                  keyboardType="decimal-pad"
+                  error={errors.actualValue?.message}
+                  editable={userProfile?.id === contract.user_provider_id.id}
+                />
+              )}
+              name="actualValue"
+            />
+          </View>
+          <View
+            style={{
+              marginTop: 8,
+              justifyContent: "center",
+            }}
+          >
+            <AppButton
+              title="Salvar"
+              enabled={userProfile?.id === contract.user_provider_id.id}
+              onPress={() => handleSubmit(handleSave)()}
+              isLoading={isSaving}
+            />
+          </View>
+        </NegotiationWrapper>
+        <MessagesList>
+          <ScrollView>
+            {messages.length > 0 &&
+              messages.map((m) => (
+                <MessageWrapper
+                  key={m.id}
+                  isSender={m.user_from_id === userProfile?.id}
+                >
+                  <MessageItem>
+                    <AppText>{m.text}</AppText>
+                  </MessageItem>
+                </MessageWrapper>
+              ))}
+          </ScrollView>
+        </MessagesList>
+      </ScrollView>
     </AppScreenContainer>
   );
 }
