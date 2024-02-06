@@ -10,6 +10,15 @@ export const TopWrapper = styled.View`
   padding: 12px;
 `;
 
+export const ContractorProviderWrapper = styled.View`
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  background-color: ${({ theme }) => theme.colors.white};
+  padding: 12px;
+`;
+
 export const NegotiationWrapper = styled.View`
   flex-direction: row;
   margin-top: 12px;
@@ -17,7 +26,7 @@ export const NegotiationWrapper = styled.View`
 `;
 
 export const MessagesList = styled.View`
-  min-height: 400px;
+  height: 360px;
   background-color: ${({ theme }) => theme.colors.shape};
   padding: 8px;
 `;

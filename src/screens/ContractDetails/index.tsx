@@ -1,3 +1,4 @@
+import AppAvatar from "@components/AppAvatar";
 import AppButton from "@components/AppButton";
 import AppDateInput from "@components/AppDateInput";
 import AppInput from "@components/AppInput";
@@ -17,6 +18,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
 import * as yup from "yup";
 import {
+  ContractorProviderWrapper,
   MessageInputContainer,
   MessageItem,
   MessageWrapper,
@@ -59,6 +61,7 @@ export default function ContractDetails() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [messages, setMessages] = useState<IContractMessage[]>([]);
+  const [newMessageText, setNewMessageText] = useState("");
 
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -128,10 +131,11 @@ export default function ContractDetails() {
         user_from_id: `${userProfile!.id}`,
         message_date: new Date(),
         message_read: false,
-        text: "new message",
+        text: newMessageText,
       };
       const response = await createNewMessage(newMessage);
-      setMessages((m) => m.concat(newMessage));
+      setMessages((m) => m.concat(response));
+      setNewMessageText("");
     } catch (error) {}
   }
 
@@ -140,6 +144,21 @@ export default function ContractDetails() {
   ) : (
     <AppScreenContainer>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <ContractorProviderWrapper>
+          <AppAvatar
+            size={36}
+            imagePath={
+              contract.user_provider_id.id === userProfile!.id
+                ? contract.user_contractor_id.image
+                : contract.user_provider_id.image
+            }
+          />
+          <AppText bold size="lg">
+            {contract.user_provider_id.id === userProfile!.id
+              ? contract.user_contractor_id.name
+              : contract.user_provider_id.name}
+          </AppText>
+        </ContractorProviderWrapper>
         <TopWrapper>
           <AppText size="lg" bold>
             {contract.service_id.title}
@@ -204,7 +223,10 @@ export default function ContractDetails() {
           </ScrollView>
           <MessageInputContainer>
             <View style={{ minWidth: "80%" }}>
-              <AppInput />
+              <AppInput
+                value={newMessageText}
+                onChangeText={(t) => setNewMessageText(t)}
+              />
             </View>
             <View style={{ flex: 1 }}>
               <AppButton
@@ -221,9 +243,30 @@ export default function ContractDetails() {
           </MessageInputContainer>
         </MessagesList>
         <AppSpacer />
-        <AppButton title="Concordar" variant="positive" />
+        <AppButton
+          title="Concordar"
+          variant="positive"
+          leftIcon={
+            <FontAwesome
+              name="handshake-o"
+              size={24}
+              color={theme.colors.white}
+            />
+          }
+        />
         <AppSpacer />
-        <AppButton title="Cancelar contrato" outline variant="negative" />
+        <AppButton
+          title="Cancelar contrato"
+          outline
+          variant="negative"
+          leftIcon={
+            <FontAwesome
+              name="thumbs-o-down"
+              size={24}
+              color={theme.colors.negative}
+            />
+          }
+        />
         <AppSpacer />
       </ScrollView>
     </AppScreenContainer>
