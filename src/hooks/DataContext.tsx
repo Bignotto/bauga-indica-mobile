@@ -134,6 +134,11 @@ interface IDataContextProps {
   getContractById(contractId: string): Promise<IContract>;
   getUserProvidedServices(): Promise<IContract[]>;
   updateContract(newInfo: IUpdateContractDTO): Promise<IContract | undefined>;
+  contractAgreement(
+    contractId: string,
+    userAgreeing: "contractor" | "provider",
+    newStatus?: string
+  ): Promise<IContract>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -482,6 +487,66 @@ function DataProvider({ children }: DataProviderProps) {
     return undefined;
   }
 
+  async function updateContractStatus(
+    contractId: string,
+    newStatus: string
+  ): Promise<void> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .update({ contract_status: newStatus })
+      .eq("id", contractId)
+      .select(
+        "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
+      );
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while updating contract", 500, "supabase");
+    }
+  }
+
+  async function contractAgreement(
+    contractId: string,
+    userAgreeing: "contractor" | "provider",
+    newStatus?: string
+  ): Promise<IContract> {
+    if (userAgreeing === "provider") {
+      const { data, error } = await supabase
+        .from("contracts")
+        .update({
+          provider_agreed: true,
+          contract_status: newStatus ?? undefined,
+        })
+        .eq("id", contractId)
+        .select(
+          "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
+        );
+      if (error) {
+        console.log(JSON.stringify(error, null, 2));
+        throw new AppError("ERROR while updating contract", 500, "supabase");
+      }
+      if (data) return data[0];
+    }
+    if (userAgreeing === "contractor") {
+      const { data, error } = await supabase
+        .from("contracts")
+        .update({
+          contractor_agreed: true,
+          contract_status: newStatus ?? undefined,
+        })
+        .eq("id", contractId)
+        .select(
+          "*,service_id(*,service_images(*)),user_provider_id(*),user_contractor_id(*),messages(*)"
+        );
+      if (error) {
+        console.log(JSON.stringify(error, null, 2));
+        throw new AppError("ERROR while updating contract", 500, "supabase");
+      }
+      if (data) return data[0];
+    }
+
+    throw new AppError("ERROR while updating contract", 500, "supabase");
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -503,6 +568,7 @@ function DataProvider({ children }: DataProviderProps) {
         getContractById,
         getUserProvidedServices,
         updateContract,
+        contractAgreement,
       }}
     >
       {children}

@@ -43,8 +43,13 @@ export default function ContractDetails() {
   const route = useRoute();
   const { contractId } = route.params as Params;
 
-  const { getContractById, updateContract, createNewMessage, userProfile } =
-    useData();
+  const {
+    getContractById,
+    updateContract,
+    createNewMessage,
+    userProfile,
+    contractAgreement,
+  } = useData();
   const theme = useTheme();
 
   const {
@@ -139,6 +144,28 @@ export default function ContractDetails() {
     } catch (error) {}
   }
 
+  async function handleAgree() {
+    if (contract.user_provider_id.id === userProfile!.id) {
+      //user is provider
+      const response = await contractAgreement(
+        `${contract.id}`,
+        "provider",
+        contract.contractor_agreed === true ? "executing" : undefined
+      );
+      setContract(response);
+    }
+
+    if (contract.user_contractor_id.id === userProfile!.id) {
+      //user is contractor
+      const response = await contractAgreement(
+        `${contract.id}`,
+        "contractor",
+        contract.provider_agreed === true ? "executing" : undefined
+      );
+      setContract(response);
+    }
+  }
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
@@ -218,6 +245,10 @@ export default function ContractDetails() {
                   <MessageItem>
                     <AppText>{m.text}</AppText>
                   </MessageItem>
+                  <AppText size="xsm">
+                    {moment(m.message_date).format("DD/MM/yyyy - HH:mm")}
+                  </AppText>
+                  <AppSpacer verticalSpace="sm" />
                 </MessageWrapper>
               ))}
           </ScrollView>
@@ -246,6 +277,7 @@ export default function ContractDetails() {
         <AppButton
           title="Concordar"
           variant="positive"
+          onPress={handleAgree}
           leftIcon={
             <FontAwesome
               name="handshake-o"
