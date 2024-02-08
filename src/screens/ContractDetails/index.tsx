@@ -70,6 +70,10 @@ export default function ContractDetails() {
 
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isAgreeing, setIsAgreeing] = useState(false);
+
+  const [userIs, setUserIs] = useState<"provider" | "contractor">("contractor");
 
   async function loadContractDetails() {
     setIsLoading(true);
@@ -79,6 +83,12 @@ export default function ContractDetails() {
       setActualDate(new Date(response.due_date));
       setValue("actualValue", response.value);
       setMessages(response.messages ?? []);
+
+      setUserIs(
+        userProfile?.id === response.user_contractor_id.id
+          ? "contractor"
+          : "provider"
+      );
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       if (error instanceof AppError) {
@@ -130,6 +140,7 @@ export default function ContractDetails() {
   }
 
   async function handleSendMessage() {
+    setIsSendingMessage(true);
     try {
       const newMessage = {
         contract_id: `${contract.id}`,
@@ -141,29 +152,65 @@ export default function ContractDetails() {
       const response = await createNewMessage(newMessage);
       setMessages((m) => m.concat(response));
       setNewMessageText("");
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    } finally {
+      setIsSendingMessage(false);
+    }
   }
 
   async function handleAgree() {
-    if (contract.user_provider_id.id === userProfile!.id) {
-      //user is provider
-      const response = await contractAgreement(
-        `${contract.id}`,
-        "provider",
-        contract.contractor_agreed === true ? "executing" : undefined
-      );
-      setContract(response);
-    }
+    setIsAgreeing(true);
 
-    if (contract.user_contractor_id.id === userProfile!.id) {
-      //user is contractor
-      const response = await contractAgreement(
-        `${contract.id}`,
-        "contractor",
-        contract.provider_agreed === true ? "executing" : undefined
-      );
-      setContract(response);
+    try {
+      if (contract.user_provider_id.id === userProfile!.id) {
+        //user is provider
+        const response = await contractAgreement(
+          `${contract.id}`,
+          "provider",
+          contract.contractor_agreed === true ? "executing" : undefined
+        );
+        setContract(response);
+      }
+
+      if (contract.user_contractor_id.id === userProfile!.id) {
+        //user is contractor
+        const response = await contractAgreement(
+          `${contract.id}`,
+          "contractor",
+          contract.provider_agreed === true ? "executing" : undefined
+        );
+        setContract(response);
+      }
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    } finally {
+      setIsAgreeing(false);
     }
+  }
+
+  async function confirmAgreement() {
+    return Alert.alert(
+      `Você concorda com os termos?`,
+      `Execução em ${moment(actualDate).format("DD/MM/yyyy")} por R$ ${
+        contract.value
+      }`,
+      [
+        {
+          text: "Sim",
+          onPress: handleAgree,
+        },
+        {
+          text: "Não",
+        },
+      ]
+    );
   }
 
   return isLoading ? (
@@ -214,7 +261,10 @@ export default function ContractDetails() {
                   value={`${value}`}
                   keyboardType="decimal-pad"
                   error={errors.actualValue?.message}
-                  editable={userProfile?.id === contract.user_provider_id.id}
+                  editable={
+                    userProfile?.id === contract.user_provider_id.id &&
+                    contract.contract_status !== "open"
+                  }
                 />
               )}
               name="actualValue"
@@ -262,11 +312,15 @@ export default function ContractDetails() {
             <View style={{ flex: 1 }}>
               <AppButton
                 rightIcon={
-                  <FontAwesome
-                    name="send"
-                    size={24}
-                    color={theme.colors.white}
-                  />
+                  isSendingMessage ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <FontAwesome
+                      name="send"
+                      size={24}
+                      color={theme.colors.white}
+                    />
+                  )
                 }
                 onPress={handleSendMessage}
               />
@@ -275,15 +329,29 @@ export default function ContractDetails() {
         </MessagesList>
         <AppSpacer />
         <AppButton
-          title="Concordar"
+          title={
+            isAgreeing
+              ? undefined
+              : userIs === "contractor"
+              ? contract.contractor_agreed
+                ? "Você concordou!"
+                : "Concordar"
+              : contract.provider_agreed
+              ? "Você concordou!"
+              : "Concordar"
+          }
           variant="positive"
-          onPress={handleAgree}
+          onPress={confirmAgreement}
           leftIcon={
-            <FontAwesome
-              name="handshake-o"
-              size={24}
-              color={theme.colors.white}
-            />
+            isAgreeing ? (
+              <ActivityIndicator />
+            ) : (
+              <FontAwesome
+                name="handshake-o"
+                size={24}
+                color={theme.colors.white}
+              />
+            )
           }
         />
         <AppSpacer />
