@@ -213,6 +213,8 @@ export default function ContractDetails() {
     );
   }
 
+  // const agreementStatus: 'none' | 'only_contractor' | 'only_provider' | 'both' = contract.provider_agreed
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
@@ -340,33 +342,20 @@ export default function ContractDetails() {
               ? "Você concordou!"
               : "Concordar"
           }
+          enabled={
+            userIs === "contractor"
+              ? contract.contractor_agreed
+                ? false
+                : true
+              : contract.provider_agreed
+              ? false
+              : true
+          }
           variant="positive"
           onPress={confirmAgreement}
-          leftIcon={
-            isAgreeing ? (
-              <ActivityIndicator />
-            ) : (
-              <FontAwesome
-                name="handshake-o"
-                size={24}
-                color={theme.colors.white}
-              />
-            )
-          }
         />
         <AppSpacer />
-        <AppButton
-          title="Cancelar contrato"
-          outline
-          variant="negative"
-          leftIcon={
-            <FontAwesome
-              name="thumbs-o-down"
-              size={24}
-              color={theme.colors.negative}
-            />
-          }
-        />
+        <AppButton title="Cancelar contrato" outline variant="negative" />
         <AppSpacer />
       </ScrollView>
     </AppScreenContainer>
