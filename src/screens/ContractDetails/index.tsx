@@ -9,7 +9,7 @@ import { AppError } from "@errors/AppError";
 import { FontAwesome } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IContract, IContractMessage, useData } from "@hooks/DataContext";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -42,6 +42,7 @@ const validationSchema = yup.object({
 export default function ContractDetails() {
   const route = useRoute();
   const { contractId } = route.params as Params;
+  const navigation = useNavigation();
 
   const {
     getContractById,
@@ -49,6 +50,7 @@ export default function ContractDetails() {
     createNewMessage,
     userProfile,
     contractAgreement,
+    contractCancel,
   } = useData();
   const theme = useTheme();
 
@@ -213,6 +215,35 @@ export default function ContractDetails() {
     );
   }
 
+  async function handleCancel() {
+    try {
+      const response = await contractCancel(`${contract.id}`);
+
+      navigation.goBack();
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
+  }
+
+  async function confirmCancel() {
+    return Alert.alert(
+      `Cancelar o contrato?`,
+      `Tem certeza que quer cancelar o serviço ${contract.service_id.title}?`,
+      [
+        {
+          text: "Sim",
+          onPress: handleCancel,
+        },
+        {
+          text: "Não",
+        },
+      ]
+    );
+  }
+
   // const agreementStatus: 'none' | 'only_contractor' | 'only_provider' | 'both' = contract.provider_agreed
 
   return isLoading ? (
@@ -330,6 +361,16 @@ export default function ContractDetails() {
           </MessageInputContainer>
         </MessagesList>
         <AppSpacer />
+        <AppText size="sm" bold>
+          {userIs === "contractor"
+            ? contract.provider_agreed
+              ? `${contract.user_provider_id.name} concordou com os termos. Aguarde a execução do serviço.`
+              : `Aguarde até que ${contract.user_provider_id.name} concorde com o valor e a data.`
+            : contract.contractor_agreed
+            ? `${contract.user_contractor_id.name} concordou com os termos. Você já pode executar o serviço.`
+            : `Aguarde até que ${contract.user_contractor_id.name} concorde com o valor e a data.`}
+        </AppText>
+        <AppSpacer />
         <AppButton
           title={
             isAgreeing
@@ -355,7 +396,13 @@ export default function ContractDetails() {
           onPress={confirmAgreement}
         />
         <AppSpacer />
-        <AppButton title="Cancelar contrato" outline variant="negative" />
+        <AppButton
+          title="Cancelar contrato"
+          outline
+          variant="negative"
+          enabled={!contract.service_provided}
+          onPress={confirmCancel}
+        />
         <AppSpacer />
       </ScrollView>
     </AppScreenContainer>

@@ -139,6 +139,7 @@ interface IDataContextProps {
     userAgreeing: "contractor" | "provider",
     newStatus?: string
   ): Promise<IContract>;
+  contractCancel(contractId: string): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -547,6 +548,19 @@ function DataProvider({ children }: DataProviderProps) {
     throw new AppError("ERROR while updating contract", 500, "supabase");
   }
 
+  async function contractCancel(contractId: string): Promise<void> {
+    const { data, error } = await supabase
+      .from("contracts")
+      .update({
+        contract_status: "canceled",
+      })
+      .eq("id", contractId);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while canceling contract", 500, "supabase");
+    }
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -569,6 +583,7 @@ function DataProvider({ children }: DataProviderProps) {
         getUserProvidedServices,
         updateContract,
         contractAgreement,
+        contractCancel,
       }}
     >
       {children}
