@@ -77,6 +77,16 @@ export default function ContractDetails() {
 
   const [userIs, setUserIs] = useState<"provider" | "contractor">("contractor");
 
+  const yesterday = moment(new Date()).add(-1, "days").toDate().getTime();
+  const agreementStatus =
+    contract.provider_agreed && contract.contractor_agreed
+      ? "both"
+      : contract.contractor_agreed
+      ? "only_contractor"
+      : contract.provider_agreed
+      ? "only_provider"
+      : "none";
+
   async function loadContractDetails() {
     setIsLoading(true);
     try {
@@ -114,8 +124,6 @@ export default function ContractDetails() {
   }
 
   async function handleSave({ actualValue }: any) {
-    const yesterday = moment(new Date()).add(-1, "days").toDate().getTime();
-
     if (actualDate && actualDate.getTime() < yesterday)
       return Alert.alert("A data não pode ser no passado.");
 
@@ -229,6 +237,11 @@ export default function ContractDetails() {
   }
 
   async function confirmCancel() {
+    if (actualDate && actualDate.getTime() < yesterday)
+      return Alert.alert(
+        "Desculpe, você só pode cancelar o contrato até um dia antes da data de execução."
+      );
+
     return Alert.alert(
       `Cancelar o contrato?`,
       `Tem certeza que quer cancelar o serviço ${contract.service_id.title}?`,
@@ -243,8 +256,6 @@ export default function ContractDetails() {
       ]
     );
   }
-
-  // const agreementStatus: 'none' | 'only_contractor' | 'only_provider' | 'both' = contract.provider_agreed
 
   return isLoading ? (
     <ActivityIndicator />
@@ -371,30 +382,37 @@ export default function ContractDetails() {
             : `Aguarde até que ${contract.user_contractor_id.name} concorde com o valor e a data.`}
         </AppText>
         <AppSpacer />
-        <AppButton
-          title={
-            isAgreeing
-              ? undefined
-              : userIs === "contractor"
-              ? contract.contractor_agreed
+        {userIs === "provider" &&
+        agreementStatus === "both" &&
+        contract.contract_status !== "canceled" ? (
+          <AppButton title="Executar!" />
+        ) : (
+          <AppButton
+            title={
+              isAgreeing
+                ? undefined
+                : userIs === "contractor"
+                ? contract.contractor_agreed
+                  ? "Você concordou!"
+                  : "Concordar"
+                : contract.provider_agreed
                 ? "Você concordou!"
                 : "Concordar"
-              : contract.provider_agreed
-              ? "Você concordou!"
-              : "Concordar"
-          }
-          enabled={
-            userIs === "contractor"
-              ? contract.contractor_agreed
+            }
+            enabled={
+              userIs === "contractor"
+                ? contract.contractor_agreed
+                  ? false
+                  : true
+                : contract.provider_agreed
                 ? false
                 : true
-              : contract.provider_agreed
-              ? false
-              : true
-          }
-          variant="positive"
-          onPress={confirmAgreement}
-        />
+            }
+            variant="positive"
+            onPress={confirmAgreement}
+          />
+        )}
+
         <AppSpacer />
         <AppButton
           title="Cancelar contrato"
