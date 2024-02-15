@@ -566,7 +566,7 @@ function DataProvider({ children }: DataProviderProps) {
     const { data, error } = await supabase
       .from("contracts")
       .update({
-        contract_status: "executed",
+        contract_status: "closed",
       })
       .eq("id", contractId);
     if (error) {

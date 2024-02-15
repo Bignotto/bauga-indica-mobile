@@ -51,6 +51,7 @@ export default function ContractDetails() {
     userProfile,
     contractAgreement,
     contractCancel,
+    contractExecuted,
   } = useData();
   const theme = useTheme();
 
@@ -257,6 +258,40 @@ export default function ContractDetails() {
     );
   }
 
+  async function handleExecute() {
+    try {
+      const response = await contractExecuted(`${contract.id}`);
+
+      navigation.goBack();
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
+  }
+
+  async function confirmExecute() {
+    if (actualDate && actualDate.getTime() < yesterday)
+      return Alert.alert(
+        "Desculpe, você só pode cancelar o contrato até um dia antes da data de execução."
+      );
+
+    return Alert.alert(
+      `Executar o contrato?`,
+      `Confirma que executou e recebeu pelo serviço?`,
+      [
+        {
+          text: "Sim",
+          onPress: handleExecute,
+        },
+        {
+          text: "Não",
+        },
+      ]
+    );
+  }
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
@@ -385,7 +420,7 @@ export default function ContractDetails() {
         {userIs === "provider" &&
         agreementStatus === "both" &&
         contract.contract_status !== "canceled" ? (
-          <AppButton title="Executar!" />
+          <AppButton title="Executar!" onPress={confirmExecute} />
         ) : (
           <AppButton
             title={
