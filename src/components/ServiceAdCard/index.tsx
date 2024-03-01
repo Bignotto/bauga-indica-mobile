@@ -45,7 +45,9 @@ export default function ServiceAdCard({
   }
 
   async function handleContactProvider() {
-    navigation.navigate("NewContract", { service: item });
+    userProfile
+      ? navigation.navigate("NewContract", { service: item })
+      : navigation.navigate("SignIn");
   }
   return (
     <ResultItem>

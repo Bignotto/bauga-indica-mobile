@@ -36,7 +36,7 @@ export default function ServiceDetails() {
   const { serviceId } = route.params as Params;
   const navigation = useNavigation();
 
-  const { getServiceAdById } = useData();
+  const { getServiceAdById, userProfile } = useData();
 
   const [isLoading, setIsLoading] = useState(true);
 

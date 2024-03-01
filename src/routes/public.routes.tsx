@@ -2,6 +2,7 @@ import Header from "@components/Header";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@screens/Home";
 import SearchResults from "@screens/SearchResults";
+import ServiceDetails from "@screens/ServiceDetails";
 import SignIn from "@screens/SignIn";
 import SignUp from "@screens/SignUp";
 import CreateAccount from "@screens/SignUp/CreateAccount";
@@ -33,6 +34,7 @@ export function PublicRoutes() {
         }}
       />
       <Screen name="CreateAccount" component={CreateAccount} />
+      <Screen name="ServiceDetails" component={ServiceDetails} />
     </Navigator>
   );
 }
