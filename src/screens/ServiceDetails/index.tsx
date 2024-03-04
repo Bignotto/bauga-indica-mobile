@@ -1,4 +1,5 @@
 import AppScreenContainer from "@components/AppScreenContainer";
+import ReviewCard from "@components/ReviewCard";
 import ServiceAdCard from "@components/ServiceAdCard";
 import { AppError } from "@errors/AppError";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
@@ -96,7 +97,10 @@ export default function ServiceDetails() {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <ServiceAdCard item={service!} buttonType="contact" />
+          <>
+            <ServiceAdCard item={service!} buttonType="contact" />
+            <ReviewCard />
+          </>
         )}
       </ScrollView>
     </AppScreenContainer>
