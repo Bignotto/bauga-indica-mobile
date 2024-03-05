@@ -2,7 +2,7 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import ReviewCard from "@components/ReviewCard";
 import ServiceAdCard from "@components/ServiceAdCard";
 import { AppError } from "@errors/AppError";
-import { IServiceReview, IUserServiceAd, useData } from "@hooks/DataContext";
+import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
@@ -14,6 +14,7 @@ import {
   ViewToken,
 } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
+import ReviewScoreCard from "./ReviewScoreCard";
 
 type Params = {
   serviceId: string;
@@ -42,7 +43,7 @@ export default function ServiceDetails() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [service, setService] = useState<IUserServiceAd>();
-  const [reviews, setReviews] = useState<IServiceReview[]>();
+  // const [reviews, setReviews] = useState<IServiceReview[]>();
 
   useEffect(() => {
     async function loadService() {
@@ -50,7 +51,7 @@ export default function ServiceDetails() {
       try {
         const response = await getServiceAdById(serviceId);
         setService(response);
-        setReviews(response?.reviews);
+        // setReviews(response?.reviews);
         navigation.setOptions({ headerTitle: response?.title });
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
@@ -61,6 +62,10 @@ export default function ServiceDetails() {
     }
     loadService();
   }, []);
+
+  const reviews = service?.reviews;
+
+  const serviceScore = reviews?.reduce((acc, review) => acc + review.score, 0);
 
   const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
     return (
@@ -76,9 +81,9 @@ export default function ServiceDetails() {
   };
 
   return (
-    <AppScreenContainer
-      header={
-        isLoading ? (
+    <AppScreenContainer>
+      <ScrollView>
+        {isLoading ? (
           <ActivityIndicator />
         ) : (
           <FlatList
@@ -92,14 +97,15 @@ export default function ServiceDetails() {
             keyExtractor={(item) => `${item.id}`}
             renderItem={renderItem}
           />
-        )
-      }
-    >
-      <ScrollView>
+        )}
         {isLoading ? (
           <ActivityIndicator />
         ) : (
           <>
+            <ReviewScoreCard
+              score={serviceScore!}
+              reviewCount={reviews?.length!}
+            />
             <ServiceAdCard item={service!} buttonType="contact" />
             {reviews &&
               reviews.map((review) => (
