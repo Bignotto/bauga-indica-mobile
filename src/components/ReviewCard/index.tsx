@@ -1,24 +1,26 @@
 import AppAvatar from "@components/AppAvatar";
 import AppText from "@components/AppText";
+import { IServiceReview } from "@hooks/DataContext";
+import moment from "moment";
 import React from "react";
 import { Container } from "./styles";
 
-export default function ReviewCard() {
+interface CardReviewProps {
+  review: IServiceReview;
+}
+
+export default function ReviewCard({ review }: CardReviewProps) {
   return (
     <Container>
-      <AppAvatar
-        imagePath="https://qewywwsoggiorjqjupal.supabase.co/storage/v1/object/public/images_avatars/Screenshot%20from%202023-06-24%2006-48-25.png"
-        size={28}
-      />
+      <AppAvatar imagePath={review.reviewer_id.image} size={28} />
       <AppText bold size="md">
-        Reviewer Name
+        {review.reviewer_id.name}
       </AppText>
-      <AppText>Review Title</AppText>
-      <AppText size="sm">25/03/2023</AppText>
-      <AppText>
-        Review very long text. With multiple lines. And maybe a picture? How
-        many lines did we get? Must write a few more words...
+      <AppText>{review.title}</AppText>
+      <AppText size="sm">
+        {moment(review.review_date).format("DD/MM/yyyy")}
       </AppText>
+      <AppText>{review.text}</AppText>
     </Container>
   );
 }

@@ -2,7 +2,7 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import ReviewCard from "@components/ReviewCard";
 import ServiceAdCard from "@components/ServiceAdCard";
 import { AppError } from "@errors/AppError";
-import { IUserServiceAd, useData } from "@hooks/DataContext";
+import { IServiceReview, IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
@@ -42,6 +42,7 @@ export default function ServiceDetails() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [service, setService] = useState<IUserServiceAd>();
+  const [reviews, setReviews] = useState<IServiceReview[]>();
 
   useEffect(() => {
     async function loadService() {
@@ -49,6 +50,7 @@ export default function ServiceDetails() {
       try {
         const response = await getServiceAdById(serviceId);
         setService(response);
+        setReviews(response?.reviews);
         navigation.setOptions({ headerTitle: response?.title });
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
@@ -99,7 +101,10 @@ export default function ServiceDetails() {
         ) : (
           <>
             <ServiceAdCard item={service!} buttonType="contact" />
-            <ReviewCard />
+            {reviews &&
+              reviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
           </>
         )}
       </ScrollView>
