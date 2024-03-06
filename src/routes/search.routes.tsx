@@ -30,7 +30,13 @@ export function SearchRoutes() {
           headerTitle: "Encontrar serviço",
         }}
       />
-      <Screen name="ServiceDetails" component={ServiceDetails} />
+      <Screen
+        name="ServiceDetails"
+        component={ServiceDetails}
+        options={{
+          headerTitle: "Detalhes do serviço",
+        }}
+      />
       <Screen
         name="NewContract"
         component={NewContract}

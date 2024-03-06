@@ -11,7 +11,6 @@ import {
   Dimensions,
   Image,
   ListRenderItem,
-  ViewToken,
 } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import ReviewScoreCard from "./ReviewScoreCard";
@@ -20,39 +19,36 @@ type Params = {
   serviceId: string;
 };
 
-type HandleScrollProps = {
-  viewableItems: Array<ViewToken>;
-};
+// type HandleScrollProps = {
+//   viewableItems: Array<ViewToken>;
+// };
 
 type ImageItem = {
   id: number;
   imagePath: string;
 };
 
-type RenderProps = {
-  img: ImageItem;
-};
+// type RenderProps = {
+//   img: ImageItem;
+// };
 
 export default function ServiceDetails() {
   const route = useRoute();
   const { serviceId } = route.params as Params;
   const navigation = useNavigation();
 
-  const { getServiceAdById, userProfile } = useData();
-
+  const { getServiceAdById } = useData();
   const [isLoading, setIsLoading] = useState(true);
-
   const [service, setService] = useState<IUserServiceAd>();
-  // const [reviews, setReviews] = useState<IServiceReview[]>();
 
   useEffect(() => {
     async function loadService() {
       setIsLoading(true);
+
       try {
         const response = await getServiceAdById(serviceId);
         setService(response);
-        // setReviews(response?.reviews);
-        navigation.setOptions({ headerTitle: response?.title });
+        //navigation.setOptions({ headerTitle: response?.title });
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
         return Alert.alert("erro desconhecido");
@@ -60,10 +56,11 @@ export default function ServiceDetails() {
         setIsLoading(false);
       }
     }
+
     loadService();
   }, []);
 
-  const reviews = service?.reviews;
+  const reviews = service && service.reviews;
 
   const serviceScore = reviews?.reduce((acc, review) => acc + review.score, 0);
 
@@ -101,17 +98,19 @@ export default function ServiceDetails() {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <>
-            <ReviewScoreCard
-              score={serviceScore!}
-              reviewCount={reviews?.length!}
-            />
-            <ServiceAdCard item={service!} buttonType="contact" />
-            {reviews &&
-              reviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
-              ))}
-          </>
+          reviews && (
+            <>
+              <ReviewScoreCard
+                score={serviceScore ?? 0}
+                reviewCount={reviews?.length ?? 0}
+              />
+              <ServiceAdCard item={service!} buttonType="contact" />
+              {reviews &&
+                reviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} />
+                ))}
+            </>
+          )
         )}
       </ScrollView>
     </AppScreenContainer>
