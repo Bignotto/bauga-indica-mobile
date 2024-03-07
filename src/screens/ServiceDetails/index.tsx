@@ -1,9 +1,14 @@
+import AppButton from "@components/AppButton";
 import AppScreenContainer from "@components/AppScreenContainer";
+import AppSpacer from "@components/AppSpacer";
+import AppTag from "@components/AppTag";
+import AppText from "@components/AppText";
 import ReviewCard from "@components/ReviewCard";
-import ServiceAdCard from "@components/ServiceAdCard";
 import { AppError } from "@errors/AppError";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -35,9 +40,9 @@ type ImageItem = {
 export default function ServiceDetails() {
   const route = useRoute();
   const { serviceId } = route.params as Params;
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { getServiceAdById } = useData();
+  const { getServiceAdById, userProfile } = useData();
   const [isLoading, setIsLoading] = useState(true);
   const [service, setService] = useState<IUserServiceAd>();
 
@@ -64,6 +69,12 @@ export default function ServiceDetails() {
 
   const serviceScore = reviews?.reduce((acc, review) => acc + review.score, 0);
 
+  function handleContact() {
+    userProfile && service
+      ? navigation.navigate("NewContract", { service })
+      : navigation.navigate("SignIn");
+  }
+
   const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
     return (
       <Image
@@ -83,32 +94,58 @@ export default function ServiceDetails() {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <FlatList
-            horizontal
-            decelerationRate={"fast"}
-            snapToInterval={Dimensions.get("window").width}
-            // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
-            //   console.log({ viewableItems })
-            // }
-            data={service?.service_images}
-            keyExtractor={(item) => `${item.id}`}
-            renderItem={renderItem}
-          />
+          <>
+            <AppTag>{service?.serviceTypeId?.name}</AppTag>
+            <AppText bold size="xlg">
+              {service?.title}
+            </AppText>
+            <ReviewScoreCard
+              score={serviceScore ?? 0}
+              reviewCount={reviews?.length ?? 0}
+            />
+            <AppText>{service?.description}</AppText>
+            <AppSpacer verticalSpace="lg" />
+            <FlatList
+              horizontal
+              decelerationRate={"fast"}
+              snapToInterval={Dimensions.get("window").width}
+              // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
+              //   console.log({ viewableItems })
+              // }
+              data={service?.service_images}
+              keyExtractor={(item) => `${item.id}`}
+              renderItem={renderItem}
+            />
+          </>
         )}
         {isLoading ? (
           <ActivityIndicator />
         ) : (
           reviews && (
             <>
-              <ReviewScoreCard
-                score={serviceScore ?? 0}
-                reviewCount={reviews?.length ?? 0}
-              />
-              <ServiceAdCard item={service!} buttonType="contact" />
-              {reviews &&
+              <AppSpacer />
+              <AppText bold size="lg">
+                Avaliações
+              </AppText>
+              <AppSpacer />
+              {reviews.length === 0 ? (
+                <>
+                  <AppText size="sm">
+                    Este serviço ainda não foi avaliado.
+                  </AppText>
+                  <AppSpacer />
+                </>
+              ) : (
                 reviews.map((review) => (
                   <ReviewCard key={review.id} review={review} />
-                ))}
+                ))
+              )}
+              <AppButton
+                title="Entrar em contato!"
+                variant="positive"
+                onPress={handleContact}
+              />
+              <AppSpacer />
             </>
           )
         )}

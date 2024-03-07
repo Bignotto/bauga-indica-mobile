@@ -7,8 +7,16 @@ export const Container = styled.View`
   margin-bottom: 8px;
 `;
 
-export const CardHeader = styled.View`
+export const ReviewerContainer = styled.View`
   flex-direction: row;
   gap: 8px;
+  align-items: center;
+`;
+
+export const CardContent = styled.View``;
+
+export const CardHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
 `;

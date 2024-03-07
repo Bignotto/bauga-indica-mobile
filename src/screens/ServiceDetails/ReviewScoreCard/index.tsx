@@ -16,7 +16,7 @@ export default function ReviewScoreCard({
     <Container>
       <AppStarsScore reviewCount={reviewCount} score={score} />
       <AppText size="sm" bold>
-        Nota: {score / reviewCount}
+        Nota: {isNaN(score / reviewCount) ? 0 : score / reviewCount}
       </AppText>
     </Container>
   );
