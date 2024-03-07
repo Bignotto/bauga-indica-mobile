@@ -5,10 +5,12 @@ import AppTag from "@components/AppTag";
 import AppText from "@components/AppText";
 import ReviewCard from "@components/ReviewCard";
 import { AppError } from "@errors/AppError";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
+import * as Linking from "expo-linking";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -142,8 +144,22 @@ export default function ServiceDetails() {
               )}
               <AppButton
                 title="Entrar em contato!"
-                variant="positive"
+                variant="solid"
+                outline
                 onPress={handleContact}
+              />
+              <AppSpacer />
+              <AppButton
+                title="WhatsApp"
+                variant="positive"
+                leftIcon={
+                  <FontAwesome5 name="whatsapp" size={24} color="white" />
+                }
+                onPress={() =>
+                  Linking.openURL(
+                    `whatsapp://send?text=Teste de mensagem no whatsapp!&phone=+5519999909400`
+                  )
+                }
               />
               <AppSpacer />
             </>
