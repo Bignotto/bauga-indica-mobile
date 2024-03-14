@@ -143,7 +143,7 @@ export default function ServiceDetails() {
                 ))
               )}
               <AppButton
-                title="Entrar em contato!"
+                title="Combinar"
                 variant="solid"
                 outline
                 onPress={handleContact}
