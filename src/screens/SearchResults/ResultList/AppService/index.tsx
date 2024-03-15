@@ -37,9 +37,9 @@ export default function AppService({
     navigation.navigate("ServiceDetails", { serviceId });
   }
 
-  async function handleContactProvider() {
+  async function handleContactProvider(serviceId: string) {
     //TODO: reimplement
-    //navigation.navigate("NewContract", { serviceData: item });
+    navigation.navigate("ServiceDetails", { serviceId });
   }
   return (
     <ResultItem>
@@ -80,7 +80,7 @@ export default function AppService({
         {showButton && buttonType === "contact" && (
           <AppButton
             title="Entrar em contato!"
-            onPress={handleContactProvider}
+            onPress={() => handleContactProvider(item.id!)}
           />
         )}
       </ContentWrapper>

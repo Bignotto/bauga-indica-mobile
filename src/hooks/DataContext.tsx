@@ -53,6 +53,7 @@ type IUserServiceAd = {
     id: number;
     imagePath: string;
   }[];
+  reviews?: IServiceReview[];
 };
 
 type ICreateServiceDTO = {
@@ -113,6 +114,21 @@ type IContractMessage = {
   message_read: boolean;
   contract_id: string;
   user_from_id: string;
+};
+
+type IServiceReview = {
+  id: string;
+  title: string;
+  text: string;
+  review_date: Date;
+  score: number;
+  contract_id: string;
+  service_id: string;
+  reviewer_id: {
+    id: string;
+    name: string;
+    image: string;
+  };
 };
 
 interface IDataContextProps {
@@ -368,7 +384,9 @@ function DataProvider({ children }: DataProviderProps) {
   ): Promise<IUserServiceAd | undefined> {
     const { data, error } = await supabase
       .from("services")
-      .select("*,serviceTypeId(*),providerId(*),service_images(id,imagePath)")
+      .select(
+        "*,serviceTypeId(*),providerId(*),service_images(id,imagePath),reviews(*,reviewer_id(*))"
+      )
       .eq("id", serviceAdId);
     if (error) {
       console.log(JSON.stringify(error, null, 2));
@@ -615,6 +633,7 @@ export {
   IContract,
   IContractMessage,
   IDashboardData,
+  IServiceReview,
   IServiceType,
   IUpdateContractDTO,
   IUserDTO,
