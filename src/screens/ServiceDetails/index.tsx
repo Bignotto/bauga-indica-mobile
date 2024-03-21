@@ -71,11 +71,12 @@ export default function ServiceDetails() {
 
   const serviceScore = reviews?.reduce((acc, review) => acc + review.score, 0);
 
-  function handleContact() {
-    userProfile && service
-      ? navigation.navigate("NewContract", { service })
-      : navigation.navigate("SignIn");
-  }
+  // commented to deal with contracts in later versions
+  // function handleContact() {
+  //   userProfile && service
+  //     ? navigation.navigate("NewContract", { service })
+  //     : navigation.navigate("SignIn");
+  // }
 
   const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
     return (
@@ -142,15 +143,9 @@ export default function ServiceDetails() {
                   <ReviewCard key={review.id} review={review} />
                 ))
               )}
-              <AppButton
-                title="Combinar"
-                variant="solid"
-                outline
-                onPress={handleContact}
-              />
               <AppSpacer />
               <AppButton
-                title="WhatsApp"
+                title="Entrar em contato"
                 variant="positive"
                 leftIcon={
                   <FontAwesome5 name="whatsapp" size={24} color="white" />
