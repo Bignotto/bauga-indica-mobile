@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "@screens/Home";
 import NewContract from "@screens/NewContract";
 import ContractCreated from "@screens/NewContract/ContractCreated";
+import NewReview from "@screens/NewReview";
 import SearchResults from "@screens/SearchResults";
 import ServiceDetails from "@screens/ServiceDetails";
 
@@ -51,7 +52,7 @@ export function SearchRoutes() {
           headerShown: false,
         }}
       />
-      {/* <Screen name="ReviewService" component={ReviwService} /> */}
+      <Screen name="NewReview" component={NewReview} />
     </Navigator>
   );
 }

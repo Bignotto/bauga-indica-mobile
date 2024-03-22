@@ -78,6 +78,12 @@ export default function ServiceDetails() {
   //     : navigation.navigate("SignIn");
   // }
 
+  function handleReview() {
+    userProfile && service
+      ? navigation.navigate("NewReview")
+      : navigation.navigate("SignIn");
+  }
+
   const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
     return (
       <Image
@@ -157,6 +163,14 @@ export default function ServiceDetails() {
                 }
               />
               <AppSpacer />
+              <AppButton
+                title="Escrever uma avaliação"
+                variant="positive"
+                leftIcon={
+                  <FontAwesome5 name="whatsapp" size={24} color="white" />
+                }
+                onPress={handleReview}
+              />
             </>
           )
         )}

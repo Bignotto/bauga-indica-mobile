@@ -29,4 +29,5 @@ export type StackParamList = {
   UserContractedServices: {} | undefined;
   UserProvidedServices: {} | undefined;
   ContractCreated: {} | undefined;
+  NewReview: {} | undefined;
 };
