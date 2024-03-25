@@ -80,7 +80,7 @@ export default function ServiceDetails() {
 
   function handleReview() {
     userProfile && service
-      ? navigation.navigate("NewReview")
+      ? navigation.navigate("NewReview", { service })
       : navigation.navigate("SignIn");
   }
 
