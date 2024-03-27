@@ -1,5 +1,13 @@
 import styled from "styled-components/native";
 
-export const Container = styled.View`
-  flex: 1;
+export const ProviderInfoContainer = styled.View`
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+`;
+
+export const StarsContainer = styled.View`
+  flex-direction: row;
+  gap: 8px;
+  padding: 4px;
 `;

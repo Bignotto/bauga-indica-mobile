@@ -52,7 +52,13 @@ export function SearchRoutes() {
           headerShown: false,
         }}
       />
-      <Screen name="NewReview" component={NewReview} />
+      <Screen
+        name="NewReview"
+        component={NewReview}
+        options={{
+          headerTitle: "Nova avaliação",
+        }}
+      />
     </Navigator>
   );
 }
