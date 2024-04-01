@@ -117,18 +117,20 @@ type IContractMessage = {
 };
 
 type IServiceReview = {
-  id: string;
+  id?: string;
   title: string;
   text: string;
   review_date: Date;
   score: number;
-  contract_id: string;
-  service_id: string;
-  reviewer_id: {
-    id: string;
-    name: string;
-    image: string;
-  };
+  contract_id?: string;
+  service_id?: string;
+  reviewer_id?:
+    | string
+    | {
+        id: string;
+        name?: string;
+        image?: string;
+      };
 };
 
 interface IDataContextProps {
@@ -157,6 +159,7 @@ interface IDataContextProps {
   ): Promise<IContract>;
   contractCancel(contractId: string): Promise<void>;
   contractExecuted(contractId: string): Promise<void>;
+  createNewReview(newReview: IServiceReview): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -593,6 +596,14 @@ function DataProvider({ children }: DataProviderProps) {
     }
   }
 
+  async function createNewReview(newReview: IServiceReview) {
+    const { data, error } = await supabase.from("reviews").insert([newReview]);
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while creating new review", 500, "supabase");
+    }
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -617,6 +628,7 @@ function DataProvider({ children }: DataProviderProps) {
         contractAgreement,
         contractCancel,
         contractExecuted,
+        createNewReview,
       }}
     >
       {children}
