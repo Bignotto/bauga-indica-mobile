@@ -9,6 +9,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "@routes/Navigation.types";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
@@ -38,7 +40,7 @@ export default function NewReview() {
     resolver: yupResolver(validationSchema),
   });
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const [rate, setRate] = useState(0);
 
@@ -57,7 +59,7 @@ export default function NewReview() {
         reviewer_id: userProfile?.id,
       });
 
-      navigation.goBack();
+      navigation.reset({ routes: [{ name: "Home" }] });
     } catch (error) {
       if (error instanceof AppError) return Alert.alert(error.message);
 
