@@ -31,6 +31,7 @@ export default function Profile() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [savedPhone, setSavedPhone] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function Profile() {
     setName(`${userProfile?.name}`);
     setEmail(`${userProfile?.email}`);
     setPhone(`${userProfile?.phone}`);
+    setSavedPhone(`${userProfile?.phone}`);
     setIsLoading(false);
   }, [isSignedIn]);
 
@@ -60,6 +62,11 @@ export default function Profile() {
 
     if (phone.length > 0 && !isPhoneNumberValid(phone)) {
       return Alert.alert(`Número de telefone inválido.`);
+    }
+
+    if (phone !== savedPhone) {
+      navigation.navigate("PhoneValidation");
+      return;
     }
 
     try {
