@@ -7,7 +7,8 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { IUserDTO, useData } from "@hooks/DataContext";
+import { useData } from "@hooks/DataContext";
+import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -24,9 +25,9 @@ export default function Profile() {
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { loadUserProfile, updateProfile, userProfile } = useData();
+  const { updateProfile, userProfile } = useData();
+  const { sendVerification } = usePhoneVerification();
 
-  const [profile, setProfile] = useState<IUserDTO>();
   const [isLoading, setIsLoading] = useState(true);
 
   const [name, setName] = useState("");
@@ -64,17 +65,20 @@ export default function Profile() {
       return Alert.alert(`Número de telefone inválido.`);
     }
 
-    if (phone !== savedPhone) {
-      navigation.navigate("PhoneValidation");
-      return;
-    }
-
     try {
-      const updated = await updateProfile(user!.id, name, phone);
-      navigation.goBack();
+      //const updated = await updateProfile(user!.id, name, phone);
+
+      if (phone !== savedPhone) {
+        console.log("before");
+        await sendVerification(phone);
+        navigation.navigate("PhoneValidation");
+        return;
+      }
+
+      //navigation.goBack();
     } catch (error) {
-      Alert.alert("error");
-      console.log(JSON.stringify(error, null, 2));
+      Alert.alert(JSON.stringify(error, null, 2));
+      console.log(JSON.stringify(error, null, 2), "error after sending verify");
     }
   }
 
