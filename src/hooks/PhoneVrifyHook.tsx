@@ -1,4 +1,5 @@
 import { AppError } from "@errors/AppError";
+import { api } from "@services/api";
 import { ReactNode, createContext, useContext } from "react";
 
 interface PhoneVerifyProviderProps {
@@ -6,63 +7,51 @@ interface PhoneVerifyProviderProps {
 }
 
 interface IPhoneVerifyContextProps {
-  sendVerification(phone: string): Promise<void>;
-  verifyOtp(otp: string, phone: string): Promise<void>;
+  sendVerification(phone: string): Promise<boolean>;
+  verifyOtp(otp: string, phone: string): Promise<boolean>;
 }
 
-const PhoneVerifyContext = createContext<IPhoneVerifyContextProps>(
-  {} as IPhoneVerifyContextProps
-);
+const PhoneVerifyContext = createContext({} as IPhoneVerifyContextProps);
 
 function PhoneVerifyProvider({ children }: PhoneVerifyProviderProps) {
-  async function sendVerification(phone: string): Promise<void> {
-    console.log(
-      `https://verify.twilio.com/v2/Services/${process.env.TWILIO_SERVICE}/Verifications`
-    );
+  //NEXT: reimplement this function
+  async function sendVerification(phone: string): Promise<boolean> {
+    console.log({ phone, message: "sendVerification function" });
+    return false;
+  }
+
+  // async function sendVerification(phone: string): Promise<boolean> {
+  //   console.log({ phone });
+  //   try {
+  //     const response = await api.post("/phone/send", {
+  //       phone: `+55${phone}`,
+  //     });
+
+  //     if (response.status !== 200 && response.data.message !== "code sent")
+  //       throw new AppError("ERROR while creating new message", 500, "supabase");
+
+  //     return true;
+  //   } catch (error) {
+  //     console.log(JSON.stringify(error, null, 2));
+  //     throw new AppError("ERROR while creating new message", 500, "supabase");
+  //   }
+  // }
+
+  async function verifyOtp(otp: string, phone: string): Promise<boolean> {
     try {
-      const response = await fetch(
-        `https://verify.twilio.com/v2/Services/${process.env.TWILIO_SERVICE}/Verifications`,
-        {
-          method: "POST",
-          headers: {
-            Authorization:
-              "Basic " +
-              btoa(
-                `${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`
-              ),
-          },
-          body: new URLSearchParams({
-            To: `+55${phone}`,
-            Channel: "sms",
-          }),
-        }
-      );
-      console.log({ response });
-      return;
+      const response = await api.post("/phone/verify", {
+        phone: `+55${phone}`,
+        otp,
+      });
+
+      if (response.status !== 200 && response.data.message !== "valid otp")
+        throw new AppError("ERROR while creating new message", 500, "supabase");
+
+      return true;
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError("ERROR while creating new message", 500, "supabase");
     }
-  }
-
-  async function verifyOtp(otp: string, phone: string): Promise<void> {
-    try {
-      fetch(
-        `https://verify.twilio.com/v2/Services/${process.env.TWILIO_SERVICE}/Verifications`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization:
-              "Basic " +
-              btoa(
-                `${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`
-              ),
-          },
-          body: `To=%2B55${phone}&Code=${otp}`,
-        }
-      );
-    } catch (error) {}
   }
 
   return (

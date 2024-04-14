@@ -59,6 +59,11 @@ export default function Profile() {
   );
 
   async function handleSaveProfile() {
+    console.log({
+      phone,
+      message: "antes de tudo",
+      valid: isPhoneNumberValid(phone),
+    });
     if (name.length === 0) return Alert.alert("Nome não pode estar em branco.");
 
     if (phone.length > 0 && !isPhoneNumberValid(phone)) {
@@ -69,9 +74,10 @@ export default function Profile() {
       //const updated = await updateProfile(user!.id, name, phone);
 
       if (phone !== savedPhone) {
-        console.log("before");
-        await sendVerification(phone);
-        navigation.navigate("PhoneValidation");
+        console.log("before verify");
+        const response = await sendVerification(phone);
+        console.log(response);
+        if (response) navigation.navigate("PhoneValidation");
         return;
       }
 
