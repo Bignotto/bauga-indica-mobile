@@ -14,28 +14,21 @@ interface IPhoneVerifyContextProps {
 const PhoneVerifyContext = createContext({} as IPhoneVerifyContextProps);
 
 function PhoneVerifyProvider({ children }: PhoneVerifyProviderProps) {
-  //NEXT: reimplement this function
   async function sendVerification(phone: string): Promise<boolean> {
-    console.log({ phone, message: "sendVerification function" });
-    return false;
+    try {
+      const response = await api.post("/phone/send", {
+        phone: `+55${phone}`,
+      });
+
+      if (response.status !== 200 && response.data.message !== "code sent")
+        throw new AppError("ERROR while creating new message", 500, "supabase");
+
+      return true;
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while creating new message", 500, "supabase");
+    }
   }
-
-  // async function sendVerification(phone: string): Promise<boolean> {
-  //   console.log({ phone });
-  //   try {
-  //     const response = await api.post("/phone/send", {
-  //       phone: `+55${phone}`,
-  //     });
-
-  //     if (response.status !== 200 && response.data.message !== "code sent")
-  //       throw new AppError("ERROR while creating new message", 500, "supabase");
-
-  //     return true;
-  //   } catch (error) {
-  //     console.log(JSON.stringify(error, null, 2));
-  //     throw new AppError("ERROR while creating new message", 500, "supabase");
-  //   }
-  // }
 
   async function verifyOtp(otp: string, phone: string): Promise<boolean> {
     try {
@@ -44,13 +37,16 @@ function PhoneVerifyProvider({ children }: PhoneVerifyProviderProps) {
         otp,
       });
 
+      if (response.data.message === "wrong otp")
+        throw new AppError("Código de verificação errado.", 500, "supabase");
+
       if (response.status !== 200 && response.data.message !== "valid otp")
-        throw new AppError("ERROR while creating new message", 500, "supabase");
+        throw new AppError("ERROR outro erro", 500, "supabase");
 
       return true;
     } catch (error) {
       console.log(JSON.stringify(error, null, 2));
-      throw new AppError("ERROR while creating new message", 500, "supabase");
+      throw new AppError("ERROR while validating OTP", 500, "supabase");
     }
   }
 

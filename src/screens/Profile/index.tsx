@@ -59,11 +59,6 @@ export default function Profile() {
   );
 
   async function handleSaveProfile() {
-    console.log({
-      phone,
-      message: "antes de tudo",
-      valid: isPhoneNumberValid(phone),
-    });
     if (name.length === 0) return Alert.alert("Nome não pode estar em branco.");
 
     if (phone.length > 0 && !isPhoneNumberValid(phone)) {
@@ -74,19 +69,19 @@ export default function Profile() {
       //const updated = await updateProfile(user!.id, name, phone);
 
       if (phone !== savedPhone) {
-        console.log("before verify");
         const response = await sendVerification(phone);
-        console.log(response);
-        if (response) navigation.navigate("PhoneValidation");
+        if (response)
+          navigation.navigate("PhoneValidation", {
+            phone,
+          });
         return;
       }
 
-      //navigation.goBack();
+      navigation.reset({ routes: [{ name: "Home" }] });
     } catch (error) {
       Alert.alert(JSON.stringify(error, null, 2));
-      console.log(JSON.stringify(error, null, 2), "error after sending verify");
     }
-  }
+  } //800188
 
   return (
     <AppScreenContainer

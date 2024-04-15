@@ -5,7 +5,9 @@ export type StackParamList = {
   SignIn: {} | undefined;
   SignUp: {} | undefined;
   Profile: {} | undefined;
-  PhoneValidation: {} | undefined;
+  PhoneValidation: {
+    phone: string;
+  };
   CreateAccount:
     | {
         name: string;
