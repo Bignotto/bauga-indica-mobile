@@ -15,7 +15,6 @@ type Params = {
   phone: string;
 };
 
-//NEXT: fix phone validation return from backend
 export default function PhoneValidation() {
   const route = useRoute();
   const { phone } = route.params as Params;
@@ -33,7 +32,9 @@ export default function PhoneValidation() {
 
     try {
       const response = await verifyOtp(otp, phone);
-      if (response) navigation.reset({ routes: [{ name: "Home" }] });
+      console.log({ responseScreen: response });
+
+      if (response) return navigation.reset({ routes: [{ name: "Profile" }] });
 
       return Alert.alert(
         "Algo errado.",

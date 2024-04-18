@@ -37,6 +37,8 @@ function PhoneVerifyProvider({ children }: PhoneVerifyProviderProps) {
         otp,
       });
 
+      console.log({ responseResponse: response });
+
       if (response.data.message === "wrong otp")
         throw new AppError("Código de verificação errado.", 500, "supabase");
 
@@ -45,7 +47,7 @@ function PhoneVerifyProvider({ children }: PhoneVerifyProviderProps) {
 
       return true;
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2));
+      console.log({ strigfyError: error });
       throw new AppError("ERROR while validating OTP", 500, "supabase");
     }
   }
