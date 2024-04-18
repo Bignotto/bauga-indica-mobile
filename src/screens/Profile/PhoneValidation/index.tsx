@@ -4,6 +4,7 @@ import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
 import { AppError } from "@errors/AppError";
+import { useData } from "@hooks/DataContext";
 import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -22,6 +23,7 @@ export default function PhoneValidation() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const { verifyOtp } = usePhoneVerification();
+  const { setPhoneConfirmed, userProfile } = useData();
 
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string>();
@@ -34,7 +36,10 @@ export default function PhoneValidation() {
       const response = await verifyOtp(otp, phone);
       console.log({ responseScreen: response });
 
-      if (response) return navigation.reset({ routes: [{ name: "Profile" }] });
+      if (response) {
+        await setPhoneConfirmed(`${userProfile?.id}`);
+        return navigation.reset({ routes: [{ name: "Profile" }] });
+      }
 
       return Alert.alert(
         "Algo errado.",

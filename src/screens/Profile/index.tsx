@@ -7,6 +7,7 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
 import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -14,7 +15,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { isPhoneNumberValid } from "@utils/phoneValidator";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Masks } from "react-native-mask-input";
 import { useTheme } from "styled-components";
@@ -35,6 +36,13 @@ export default function Profile() {
   const [savedPhone, setSavedPhone] = useState("");
   const [email, setEmail] = useState("");
 
+  function setFormValues() {
+    setName(`${userProfile?.name}`);
+    setEmail(`${userProfile?.email}`);
+    setPhone(`${userProfile?.phone}`);
+    setSavedPhone(`${userProfile?.phone}`);
+  }
+
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn) {
@@ -42,10 +50,7 @@ export default function Profile() {
       return;
     }
 
-    setName(`${userProfile?.name}`);
-    setEmail(`${userProfile?.email}`);
-    setPhone(`${userProfile?.phone}`);
-    setSavedPhone(`${userProfile?.phone}`);
+    setFormValues();
     setIsLoading(false);
   }, [isSignedIn]);
 
@@ -55,6 +60,7 @@ export default function Profile() {
         navigation.navigate("SignIn");
         return;
       }
+      setFormValues();
     }, [isSignedIn])
   );
 
@@ -66,7 +72,7 @@ export default function Profile() {
     }
 
     try {
-      //const updated = await updateProfile(user!.id, name, phone);
+      const updated = await updateProfile(user!.id, name, phone);
 
       if (phone !== savedPhone) {
         const response = await sendVerification(phone);
@@ -81,7 +87,7 @@ export default function Profile() {
     } catch (error) {
       Alert.alert(JSON.stringify(error, null, 2));
     }
-  } //800188
+  }
 
   return (
     <AppScreenContainer
@@ -130,6 +136,42 @@ export default function Profile() {
           mask={Masks.BRL_PHONE}
           onChangeText={(text) => setPhone(text)}
         />
+        {userProfile?.phoneConfirmed ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="cellphone-check"
+              size={24}
+              color="green"
+            />
+            <AppText bold size="sm" color="">
+              Número de telefone verificado
+            </AppText>
+          </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="cellphone-remove"
+              size={24}
+              color="orange"
+            />
+            <AppText bold size="sm">
+              Número de telefone não verificado
+            </AppText>
+          </View>
+        )}
+
         <AppSpacer verticalSpace="xlg" />
         <AppButton
           title="Salvar"
