@@ -71,6 +71,7 @@ export default function Profile() {
       return Alert.alert(`Número de telefone inválido.`);
     }
 
+    setIsLoading(true);
     try {
       const updated = await updateProfile(user!.id, name, phone);
 
@@ -86,6 +87,8 @@ export default function Profile() {
       navigation.reset({ routes: [{ name: "Home" }] });
     } catch (error) {
       Alert.alert(JSON.stringify(error, null, 2));
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -132,6 +135,7 @@ export default function Profile() {
         <AppSpacer verticalSpace="lg" />
         <AppInput
           label="Telefone:"
+          keyboardType="phone-pad"
           value={phone}
           mask={Masks.BRL_PHONE}
           onChangeText={(text) => setPhone(text)}
@@ -178,6 +182,7 @@ export default function Profile() {
           variant="positive"
           outline
           onPress={handleSaveProfile}
+          isLoading={isLoading}
         />
         <AppSpacer />
         <AppButton title="Cancelar" variant="negative" outline />
