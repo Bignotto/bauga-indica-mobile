@@ -6,11 +6,11 @@ import { StorageProvider } from "@hooks/StorageContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Profile from "@screens/Profile";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useTheme } from "styled-components";
 import { DashboardRoutes } from "./dashboard.routes";
+import { ProfileRoutes } from "./profile.routes";
 import { PublicRoutes } from "./public.routes";
 import { SearchRoutes } from "./search.routes";
 
@@ -113,8 +113,8 @@ export default function Routes() {
               }}
             />
             <BottomTab.Screen
-              name="Profile"
-              component={Profile}
+              name="UserProfile"
+              component={ProfileRoutes}
               options={{
                 tabBarLabel: "Perfil",
                 tabBarActiveTintColor: theme.colors.primary,

@@ -18,14 +18,16 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bignotto.baugaindicamobile",
-      "buildNumber": "4"
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F0F0F0"
       },
-      "permissions": []
+      "permissions": [],
+      "package": "com.bignotto.baugaindicamobile",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

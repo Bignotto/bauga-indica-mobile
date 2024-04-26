@@ -7,13 +7,15 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { IUserDTO, useData } from "@hooks/DataContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useData } from "@hooks/DataContext";
+import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { isPhoneNumberValid } from "@utils/phoneValidator";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Masks } from "react-native-mask-input";
 import { useTheme } from "styled-components";
@@ -24,14 +26,22 @@ export default function Profile() {
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { loadUserProfile, updateProfile, userProfile } = useData();
+  const { updateProfile, userProfile } = useData();
+  const { sendVerification } = usePhoneVerification();
 
-  const [profile, setProfile] = useState<IUserDTO>();
   const [isLoading, setIsLoading] = useState(true);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [savedPhone, setSavedPhone] = useState("");
   const [email, setEmail] = useState("");
+
+  function setFormValues() {
+    setName(`${userProfile?.name}`);
+    setEmail(`${userProfile?.email}`);
+    setPhone(`${userProfile?.phone}`);
+    setSavedPhone(`${userProfile?.phone}`);
+  }
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -40,9 +50,7 @@ export default function Profile() {
       return;
     }
 
-    setName(`${userProfile?.name}`);
-    setEmail(`${userProfile?.email}`);
-    setPhone(`${userProfile?.phone}`);
+    setFormValues();
     setIsLoading(false);
   }, [isSignedIn]);
 
@@ -52,6 +60,7 @@ export default function Profile() {
         navigation.navigate("SignIn");
         return;
       }
+      setFormValues();
     }, [isSignedIn])
   );
 
@@ -62,12 +71,24 @@ export default function Profile() {
       return Alert.alert(`Número de telefone inválido.`);
     }
 
+    setIsLoading(true);
     try {
       const updated = await updateProfile(user!.id, name, phone);
-      navigation.goBack();
+
+      if (phone !== savedPhone) {
+        const response = await sendVerification(phone);
+        if (response)
+          navigation.navigate("PhoneValidation", {
+            phone,
+          });
+        return;
+      }
+
+      navigation.reset({ routes: [{ name: "Home" }] });
     } catch (error) {
-      Alert.alert("error");
-      console.log(JSON.stringify(error, null, 2));
+      Alert.alert(JSON.stringify(error, null, 2));
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -114,16 +135,54 @@ export default function Profile() {
         <AppSpacer verticalSpace="lg" />
         <AppInput
           label="Telefone:"
+          keyboardType="phone-pad"
           value={phone}
           mask={Masks.BRL_PHONE}
           onChangeText={(text) => setPhone(text)}
         />
+        {userProfile?.phoneConfirmed ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="cellphone-check"
+              size={24}
+              color="green"
+            />
+            <AppText bold size="sm" color="">
+              Número de telefone verificado
+            </AppText>
+          </View>
+        ) : (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="cellphone-remove"
+              size={24}
+              color="orange"
+            />
+            <AppText bold size="sm">
+              Número de telefone não verificado
+            </AppText>
+          </View>
+        )}
+
         <AppSpacer verticalSpace="xlg" />
         <AppButton
           title="Salvar"
           variant="positive"
           outline
           onPress={handleSaveProfile}
+          isLoading={isLoading}
         />
         <AppSpacer />
         <AppButton title="Cancelar" variant="negative" outline />

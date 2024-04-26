@@ -4,6 +4,10 @@ export type StackParamList = {
   Home: {} | undefined;
   SignIn: {} | undefined;
   SignUp: {} | undefined;
+  Profile: {} | undefined;
+  PhoneValidation: {
+    phone: string;
+  };
   CreateAccount:
     | {
         name: string;

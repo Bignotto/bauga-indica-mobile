@@ -13,6 +13,7 @@ type IUserDTO = {
   phone?: string;
   userType?: string;
   image?: string;
+  phoneConfirmed?: boolean;
 };
 
 type IServiceType = {
@@ -138,7 +139,8 @@ interface IDataContextProps {
   isEmailAvailable(email: string): Promise<boolean>;
   createNewAccount(newUser: IUserDTO): Promise<IUserDTO>;
   loadUserProfile(userId: string): Promise<IUserDTO>;
-  updateProfile(userId: string, name: string, phone: string): Promise<void>;
+  updateProfile(userId: string, name: string, phone: string): Promise<IUserDTO>;
+  setPhoneConfirmed(userId: string): Promise<IUserDTO>;
   getDashboardData(): Promise<IDashboardData>;
   getUserServiceAds(): Promise<IUserServiceAd[] | undefined>;
   getAvailableServiceTypes(): Promise<IServiceType[] | undefined>;
@@ -228,7 +230,32 @@ function DataProvider({ children }: DataProviderProps) {
     if (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError(
-        "ERROR while saving new user into database",
+        "ERROR while updating user into database",
+        500,
+        "supabase"
+      );
+    }
+
+    if (data) {
+      setUserProfile(data[0]);
+      return data[0];
+    }
+    return undefined;
+  }
+
+  async function setPhoneConfirmed(userId: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        phoneConfirmed: true,
+      })
+      .eq("id", userId)
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR phone confirmed - while updating user into database",
         500,
         "supabase"
       );
@@ -612,6 +639,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewAccount,
         loadUserProfile,
         updateProfile,
+        setPhoneConfirmed,
         getDashboardData,
         getUserServiceAds,
         getAvailableServiceTypes,
