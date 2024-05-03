@@ -134,6 +134,16 @@ type IServiceReview = {
       };
 };
 
+type IActivityLog = {
+  id?: number;
+  event: string;
+  event_date?: Date;
+  subject: string;
+  data?: string;
+  user_id?: string;
+  user_provider?: string;
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
@@ -162,6 +172,7 @@ interface IDataContextProps {
   contractCancel(contractId: string): Promise<void>;
   contractExecuted(contractId: string): Promise<void>;
   createNewReview(newReview: IServiceReview): Promise<void>;
+  activityLog(logData: IActivityLog): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -644,6 +655,18 @@ function DataProvider({ children }: DataProviderProps) {
     }
   }
 
+  async function activityLog(logData: IActivityLog): Promise<void> {
+    const { data, error } = await supabase.from("log").insert([
+      {
+        event: "click",
+        subject: logData.subject,
+        data: logData.data,
+        user_id: userProfile ? userProfile.id : "guest",
+        user_provider: logData.user_provider,
+      },
+    ]);
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -670,6 +693,7 @@ function DataProvider({ children }: DataProviderProps) {
         contractCancel,
         contractExecuted,
         createNewReview,
+        activityLog,
       }}
     >
       {children}

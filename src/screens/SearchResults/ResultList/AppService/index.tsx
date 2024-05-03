@@ -1,10 +1,10 @@
 import AppButton from "@components/AppButton";
 import AppText from "@components/AppText";
-import { IUserServiceAd } from "@hooks/DataContext";
+import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "styled-components";
 import {
   ContentWrapper,
@@ -33,13 +33,20 @@ export default function AppService({
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  async function handleServiceDetails(serviceId: string) {
-    navigation.navigate("ServiceDetails", { serviceId });
-  }
+  const { activityLog } = useData();
 
-  async function handleContactProvider(serviceId: string) {
-    //TODO: reimplement
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleCheckServiceDetails(serviceId: string) {
+    setIsLoading(true);
+    await activityLog({
+      event: "click",
+      subject: item.id!,
+      user_provider: item.providerId?.id,
+    });
+
     navigation.navigate("ServiceDetails", { serviceId });
+    setIsLoading(false);
   }
   return (
     <ResultItem>
@@ -74,13 +81,15 @@ export default function AppService({
         {showButton && buttonType === "details" && (
           <AppButton
             title="Ver mais detalhes"
-            onPress={() => handleServiceDetails(item.id!)}
+            onPress={() => handleCheckServiceDetails(item.id!)}
+            isLoading={isLoading}
           />
         )}
         {showButton && buttonType === "contact" && (
           <AppButton
             title="Entrar em contato!"
-            onPress={() => handleContactProvider(item.id!)}
+            isLoading={isLoading}
+            onPress={() => handleCheckServiceDetails(item.id!)}
           />
         )}
       </ContentWrapper>
