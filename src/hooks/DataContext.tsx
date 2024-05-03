@@ -404,6 +404,19 @@ function DataProvider({ children }: DataProviderProps) {
       throw new AppError("ERROR while searching database", 500, "supabase");
     }
 
+    const { data: logData, error: error2 } = await supabase.from("log").insert([
+      {
+        event: "search",
+        subject: searchText,
+        user_id: userProfile ? userProfile.id : "guest",
+      },
+    ]);
+
+    if (error2) {
+      console.log(JSON.stringify(error2, null, 2));
+      throw new AppError("ERROR while logging search", 500, "supabase");
+    }
+
     if (data) return data;
 
     return [];
