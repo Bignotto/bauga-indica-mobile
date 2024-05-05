@@ -73,7 +73,7 @@ export default function SearchResults() {
         </View>
       }
     >
-      <ResultList itens={services} />
+      <ResultList itens={services} searchText={searchedText} />
     </AppScreenContainer>
   );
 }

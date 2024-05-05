@@ -4,13 +4,14 @@ import { ResultListWrapper } from "./styles";
 
 interface ResultListProps {
   itens: IUserServiceAd[];
+  searchText: string;
 }
 
-export default function ResultList({ itens }: ResultListProps) {
+export default function ResultList({ itens, searchText }: ResultListProps) {
   return (
     <ResultListWrapper>
       {itens.map((item) => (
-        <AppService item={item} key={item.id} />
+        <AppService item={item} key={item.id} searchText={searchText} />
       ))}
     </ResultListWrapper>
   );
