@@ -73,8 +73,7 @@ export default function SearchResults() {
         </View>
       }
     >
-      {/* TODO: implement send search terms to item component to log searched text when click event */}
-      <ResultList itens={services} />
+      <ResultList itens={services} searchText={searchedText} />
     </AppScreenContainer>
   );
 }

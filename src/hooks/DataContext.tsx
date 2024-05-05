@@ -44,6 +44,7 @@ type IUserServiceAd = {
     id: string;
     name: string;
     image: string;
+    phone: string;
   };
   serviceTypeId?: {
     id: number;
@@ -658,7 +659,7 @@ function DataProvider({ children }: DataProviderProps) {
   async function activityLog(logData: IActivityLog): Promise<void> {
     const { data, error } = await supabase.from("log").insert([
       {
-        event: "click",
+        event: logData.event,
         subject: logData.subject,
         data: logData.data,
         user_id: userProfile ? userProfile.id : "guest",

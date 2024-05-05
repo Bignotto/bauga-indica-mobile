@@ -21,12 +21,14 @@ import {
 
 type AppServiceProps = {
   item: IUserServiceAd;
+  searchText?: string;
   buttonType?: "details" | "contact";
   showButton?: boolean;
 };
 
 export default function AppService({
   item,
+  searchText,
   buttonType = "details",
   showButton = true,
 }: AppServiceProps) {
@@ -43,6 +45,7 @@ export default function AppService({
       event: "click",
       subject: item.id!,
       user_provider: item.providerId?.id,
+      data: searchText,
     });
 
     navigation.navigate("ServiceDetails", { serviceId });

@@ -44,7 +44,7 @@ export default function ServiceDetails() {
   const { serviceId } = route.params as Params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { getServiceAdById, userProfile } = useData();
+  const { getServiceAdById, userProfile, activityLog } = useData();
   const [isLoading, setIsLoading] = useState(true);
   const [service, setService] = useState<IUserServiceAd>();
 
@@ -81,6 +81,21 @@ export default function ServiceDetails() {
   function handleReview() {
     userProfile && service
       ? navigation.navigate("NewReview", { service })
+      : navigation.navigate("SignIn");
+  }
+
+  //TODO: include searched text to contact logging
+  async function handleContact() {
+    await activityLog({
+      event: "contact",
+      subject: `${service?.id}`,
+      user_provider: service?.providerId?.id,
+    });
+
+    userProfile && service
+      ? Linking.openURL(
+          `whatsapp://send?text=Olá ${service.providerId?.name}! Encontrei seu contato no Bauga Indica. Gostaria de um orçamento para o serviço ${service.title}&phone=+55${service.providerId?.phone}`
+        )
       : navigation.navigate("SignIn");
   }
 
@@ -156,16 +171,13 @@ export default function ServiceDetails() {
                 leftIcon={
                   <FontAwesome5 name="whatsapp" size={24} color="white" />
                 }
-                onPress={() =>
-                  Linking.openURL(
-                    `whatsapp://send?text=Teste de mensagem no whatsapp!&phone=+5519999909400`
-                  )
-                }
+                onPress={handleContact}
               />
               <AppSpacer />
               <AppButton
                 title="Escrever uma avaliação"
                 variant="positive"
+                outline
                 leftIcon={
                   <FontAwesome5 name="whatsapp" size={24} color="white" />
                 }
