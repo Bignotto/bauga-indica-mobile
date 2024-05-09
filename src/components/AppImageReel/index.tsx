@@ -32,7 +32,7 @@ export default function AppImageReel({ images }: AppImageReelProps) {
         source={{
           uri: item.imagePath,
         }}
-        width={Dimensions.get("window").width - 16}
+        width={Dimensions.get("window").width - 20}
         height={280}
         resizeMode="cover"
       />
@@ -42,12 +42,9 @@ export default function AppImageReel({ images }: AppImageReelProps) {
   const onViewChangeCallback = useCallback(
     ({ viewableItems }: HandleScrollProps) => {
       setViewIndex(viewableItems[0].index ?? 0);
-      console.log(viewableItems[0].index ?? 0);
     },
     []
   );
-
-  //NEXT: implement image counter
 
   if (!images) return <AppText>Algo errado com as imagens</AppText>;
 
@@ -57,8 +54,9 @@ export default function AppImageReel({ images }: AppImageReelProps) {
     <View>
       <FlatList
         horizontal
+        showsHorizontalScrollIndicator={false}
         decelerationRate={"fast"}
-        snapToInterval={Dimensions.get("window").width - 16}
+        snapToInterval={Dimensions.get("window").width - 20}
         onViewableItemsChanged={onViewChangeCallback}
         // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
         //   console.log({ viewableItems })
@@ -69,16 +67,18 @@ export default function AppImageReel({ images }: AppImageReelProps) {
       />
       <View
         style={{
+          flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
         {
-          //NEXT: fix indicator position
+          //NEXT: fix indicator style and snap position
           images.map((img, i) => (
             <IndexIndicator
               key={img.id}
-              indexWidth={imageIndexWidth * i}
+              left={imageIndexWidth * i}
+              indexWidth={imageIndexWidth - 50}
               highlight={i === viewIndex}
             />
           ))
