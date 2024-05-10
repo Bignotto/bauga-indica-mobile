@@ -2,14 +2,9 @@ import styled from "styled-components/native";
 
 interface IndexIndicatorProps {
   highlight: boolean;
-  indexWidth?: number;
-  left?: number;
 }
 
 export const IndexIndicator = styled.View<IndexIndicatorProps>`
-  /* position: absolute; */
-  /* left: ${({ theme, indexWidth, highlight, left }) => left}px; */
-  /* bottom: 8px; */
   margin: 4px;
   height: 8px;
   border-radius: 4px;

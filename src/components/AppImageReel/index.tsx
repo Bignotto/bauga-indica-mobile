@@ -48,8 +48,6 @@ export default function AppImageReel({ images }: AppImageReelProps) {
 
   if (!images) return <AppText>Algo errado com as imagens</AppText>;
 
-  const imageIndexWidth = (Dimensions.get("window").width - 32) / images.length;
-
   return (
     <View>
       <FlatList
@@ -65,16 +63,11 @@ export default function AppImageReel({ images }: AppImageReelProps) {
       <View
         style={{
           flexDirection: "row",
-          // alignItems: "center",
-          // justifyContent: "center",
         }}
       >
-        {
-          //NEXT: fix indicator style and snap position
-          images.map((img, i) => (
-            <IndexIndicator key={img.id} highlight={i === viewIndex} />
-          ))
-        }
+        {images.map((img, i) => (
+          <IndexIndicator key={img.id} highlight={i === viewIndex} />
+        ))}
       </View>
     </View>
   );
