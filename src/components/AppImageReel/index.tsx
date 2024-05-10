@@ -32,7 +32,7 @@ export default function AppImageReel({ images }: AppImageReelProps) {
         source={{
           uri: item.imagePath,
         }}
-        width={Dimensions.get("window").width - 20}
+        width={Dimensions.get("window").width - 32}
         height={280}
         resizeMode="cover"
       />
@@ -48,7 +48,7 @@ export default function AppImageReel({ images }: AppImageReelProps) {
 
   if (!images) return <AppText>Algo errado com as imagens</AppText>;
 
-  const imageIndexWidth = (Dimensions.get("window").width - 4) / images.length;
+  const imageIndexWidth = (Dimensions.get("window").width - 32) / images.length;
 
   return (
     <View>
@@ -56,11 +56,8 @@ export default function AppImageReel({ images }: AppImageReelProps) {
         horizontal
         showsHorizontalScrollIndicator={false}
         decelerationRate={"fast"}
-        snapToInterval={Dimensions.get("window").width - 20}
+        snapToInterval={Dimensions.get("window").width - 28}
         onViewableItemsChanged={onViewChangeCallback}
-        // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
-        //   console.log({ viewableItems })
-        // }
         data={images}
         keyExtractor={(item) => `${item.id}`}
         renderItem={renderItem}
@@ -68,19 +65,14 @@ export default function AppImageReel({ images }: AppImageReelProps) {
       <View
         style={{
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+          // alignItems: "center",
+          // justifyContent: "center",
         }}
       >
         {
           //NEXT: fix indicator style and snap position
           images.map((img, i) => (
-            <IndexIndicator
-              key={img.id}
-              left={imageIndexWidth * i}
-              indexWidth={imageIndexWidth - 50}
-              highlight={i === viewIndex}
-            />
+            <IndexIndicator key={img.id} highlight={i === viewIndex} />
           ))
         }
       </View>
