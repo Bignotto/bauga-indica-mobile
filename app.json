@@ -38,7 +38,9 @@
         {
           "photosPermission": "The app accesses your photos to let you use to advertise your services."
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {
