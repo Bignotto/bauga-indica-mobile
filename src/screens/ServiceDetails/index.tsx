@@ -1,4 +1,5 @@
 import AppButton from "@components/AppButton";
+import AppImageReel from "@components/AppImageReel";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppTag from "@components/AppTag";
@@ -12,32 +13,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import * as Linking from "expo-linking";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  Image,
-  ListRenderItem,
-} from "react-native";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { ActivityIndicator, Alert } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import ReviewScoreCard from "./ReviewScoreCard";
 
 type Params = {
   serviceId: string;
 };
-
-// type HandleScrollProps = {
-//   viewableItems: Array<ViewToken>;
-// };
-
-type ImageItem = {
-  id: number;
-  imagePath: string;
-};
-
-// type RenderProps = {
-//   img: ImageItem;
-// };
 
 export default function ServiceDetails() {
   const route = useRoute();
@@ -99,19 +81,6 @@ export default function ServiceDetails() {
       : navigation.navigate("SignIn");
   }
 
-  const renderItem: ListRenderItem<ImageItem> = ({ item }) => {
-    return (
-      <Image
-        source={{
-          uri: item.imagePath,
-        }}
-        width={Dimensions.get("window").width}
-        height={280}
-        resizeMode="cover"
-      />
-    );
-  };
-
   return (
     <AppScreenContainer>
       <ScrollView>
@@ -129,17 +98,7 @@ export default function ServiceDetails() {
             />
             <AppText>{service?.description}</AppText>
             <AppSpacer verticalSpace="lg" />
-            <FlatList
-              horizontal
-              decelerationRate={"fast"}
-              snapToInterval={Dimensions.get("window").width}
-              // onViewableItemsChanged={({ viewableItems }: HandleScrollProps) =>
-              //   console.log({ viewableItems })
-              // }
-              data={service?.service_images}
-              keyExtractor={(item) => `${item.id}`}
-              renderItem={renderItem}
-            />
+            <AppImageReel images={service?.service_images} />
           </>
         )}
         {isLoading ? (
