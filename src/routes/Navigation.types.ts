@@ -34,4 +34,5 @@ export type StackParamList = {
   UserProvidedServices: {} | undefined;
   ContractCreated: {} | undefined;
   NewReview: { service: IUserServiceAd };
+  EditServiceAd: { serviceAdId: string };
 };
