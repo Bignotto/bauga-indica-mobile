@@ -12,7 +12,6 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
-import ImageSelector, { AppImagesList } from "./ImageSelector";
 import {
   ColumnWrapper,
   DatePickerWrapper,
@@ -20,6 +19,7 @@ import {
   TwoColumnsWrapper,
 } from "./styles";
 
+import AppImageSelector, { AppImagesList } from "@components/AppImageSelector";
 import { AppError } from "@errors/AppError";
 import { IServiceType, useData } from "@hooks/DataContext";
 import { useStorage } from "@hooks/StorageContext";
@@ -132,6 +132,8 @@ export default function NewServiceAd() {
     setModalOn(!modalOn);
     setSelectedCategory(item);
   }
+
+  //NEXT: make image selector an AppComponent!
 
   async function onSubmit({ adValue, description, title }: any) {
     if (!selectedCategory)
@@ -323,7 +325,7 @@ export default function NewServiceAd() {
         <AppText>Imagens</AppText>
         <AppText size="sm">Selecione até 4 imagens para o seu anúncio.</AppText>
         <AppSpacer verticalSpace="sm" />
-        <ImageSelector
+        <AppImageSelector
           onAddImage={handleAddImage}
           onRemoveImage={handleRemoveImage}
           selectedImages={adImages}
