@@ -16,6 +16,7 @@ export default function EditServiceAd() {
   const { serviceAdId } = route.params as Params;
 
   const [service, setService] = useState<IUserServiceAd>();
+  const [adImages, setAdImages] = useState<AppImagesList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const { getServiceAdById } = useData();
@@ -25,7 +26,22 @@ export default function EditServiceAd() {
       setIsLoading(true);
       try {
         const response = await getServiceAdById(serviceAdId);
+
         setService(response);
+
+        const images: AppImagesList[] =
+          response && response.service_images
+            ? response?.service_images?.map((img) => {
+                const i: AppImagesList = {
+                  id: `${img.id}`,
+                  path: img.imagePath,
+                  local: false,
+                };
+                return i;
+              })
+            : [];
+
+        setAdImages(images);
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
         return Alert.alert("erro desconhecido");
@@ -37,26 +53,29 @@ export default function EditServiceAd() {
     loadServiceAd();
   }, []);
 
-  const images: AppImagesList[] =
-    service && service.service_images
-      ? service?.service_images?.map((img) => {
-          const i: AppImagesList = {
-            id: `${img.id}`,
-            path: img.imagePath,
-            local: false,
-          };
-          return i;
-        })
-      : [];
+  function handleAddImage(imagePath: string) {
+    const newImage: AppImagesList = {
+      id: imagePath,
+      path: imagePath,
+      local: true,
+    };
+
+    setAdImages([...adImages, newImage]);
+  }
+
+  function handleRemoveImage(imagePath: string) {
+    const filteredImages = adImages.filter((image) => imagePath !== image.path);
+    setAdImages(filteredImages);
+  }
 
   return (
     <AppScreenContainer>
       <AppText>Edit service add</AppText>
       <AppText>Service ad id: {serviceAdId}</AppText>
       <AppImageSelector
-        onAddImage={() => {}}
-        onRemoveImage={() => {}}
-        selectedImages={images}
+        onAddImage={handleAddImage}
+        onRemoveImage={handleRemoveImage}
+        selectedImages={adImages}
       />
     </AppScreenContainer>
   );

@@ -133,8 +133,6 @@ export default function NewServiceAd() {
     setSelectedCategory(item);
   }
 
-  //NEXT: make image selector an AppComponent!
-
   async function onSubmit({ adValue, description, title }: any) {
     if (!selectedCategory)
       return Alert.alert("Selecione uma categoria para o anúncio.");
