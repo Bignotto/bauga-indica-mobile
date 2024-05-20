@@ -10,13 +10,20 @@ import React, { useState } from "react";
 import { useTheme } from "styled-components";
 import { DatePickerWrapper, TwoColumnsWrapper } from "./styles";
 
-interface DateRangeSelector {}
+interface DateRangeSelectorProps {
+  onSelectFromDate(dateFrom: Date): void;
+  onSelectToDate(dateTo: Date): void;
+  dateFromValue: Date | undefined;
+  dateToValue: Date | undefined;
+}
 
-export default function DateRangeSelector() {
+export default function DateRangeSelector({
+  onSelectFromDate,
+  onSelectToDate,
+  dateFromValue,
+  dateToValue,
+}: DateRangeSelectorProps) {
   const theme = useTheme();
-
-  const [validFrom, setValidFrom] = useState<Date | undefined>();
-  const [validTo, setValidTo] = useState<Date | undefined>();
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showDatePickerTo, setShowDatePickerTo] = useState(false);
@@ -26,7 +33,7 @@ export default function DateRangeSelector() {
     selectedDate: Date | undefined
   ) {
     setShowDatePicker(false);
-    setValidFrom(selectedDate);
+    if (selectedDate) onSelectFromDate(selectedDate);
   }
 
   function onChangeValidTo(
@@ -34,7 +41,7 @@ export default function DateRangeSelector() {
     selectedDate: Date | undefined
   ) {
     setShowDatePickerTo(false);
-    setValidTo(selectedDate);
+    if (selectedDate) onSelectToDate(selectedDate);
   }
 
   return (
@@ -42,7 +49,7 @@ export default function DateRangeSelector() {
       <AppInput
         label="Válido de"
         editable={false}
-        value={`${moment(validFrom).format("DD/MM/yyyy")}`}
+        value={`${moment(dateFromValue).format("DD/MM/yyyy")}`}
       />
       <DatePickerWrapper>
         <AppButton
@@ -63,7 +70,7 @@ export default function DateRangeSelector() {
         />
         {showDatePicker && (
           <DateTimePicker
-            value={validFrom ?? new Date()}
+            value={dateFromValue ?? new Date()}
             onChange={onChangeValidFrom}
           />
         )}
@@ -72,7 +79,7 @@ export default function DateRangeSelector() {
       <AppInput
         label="Válido até"
         editable={false}
-        value={`${moment(validTo).format("DD/MM/yyyy")}`}
+        value={`${moment(dateToValue).format("DD/MM/yyyy")}`}
       />
       <DatePickerWrapper>
         <AppButton
@@ -93,7 +100,7 @@ export default function DateRangeSelector() {
         />
         {showDatePickerTo && (
           <DateTimePicker
-            value={validTo ?? new Date()}
+            value={dateToValue ?? new Date()}
             onChange={onChangeValidTo}
           />
         )}

@@ -48,6 +48,9 @@ export default function EditServiceAd() {
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
+
   const { getServiceAdById } = useData();
 
   useEffect(() => {
@@ -85,6 +88,14 @@ export default function EditServiceAd() {
 
     loadServiceAd();
   }, []);
+
+  function handleSetDateFrom(dateFrom: Date) {
+    setDateFrom(dateFrom);
+  }
+
+  function handleSetDateTo(dateTo: Date) {
+    setDateTo(dateTo);
+  }
 
   function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
@@ -154,7 +165,12 @@ export default function EditServiceAd() {
         </FormContainer>
 
         <AppSpacer />
-        <DateRangeSelector />
+        <DateRangeSelector
+          onSelectFromDate={handleSetDateFrom}
+          onSelectToDate={handleSetDateTo}
+          dateFromValue={dateFrom}
+          dateToValue={dateTo}
+        />
         <AppSpacer />
 
         <AppImageSelector
