@@ -1,19 +1,48 @@
 import AppImageSelector, { AppImagesList } from "@components/AppImageSelector";
+import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
-import AppText from "@components/AppText";
+import AppSpacer from "@components/AppSpacer";
+import DateRangeSelector from "@components/DateRangeSelector";
 import { AppError } from "@errors/AppError";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
 import { useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import * as yup from "yup";
+import { FormContainer } from "./styles";
 
 type Params = {
   serviceAdId: string;
 };
 
+const validationSchema = yup.object({
+  title: yup.string().required("O anúncio precisa de um título."),
+  description: yup.string().required("Descreva seu anúncio."),
+  adValue: yup
+    .number()
+    .required()
+    .typeError("Valor inválido.")
+    .positive("Valor inválido."),
+});
+
 export default function EditServiceAd() {
   const route = useRoute();
   const { serviceAdId } = route.params as Params;
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      adValue: 0,
+    },
+  });
 
   const [service, setService] = useState<IUserServiceAd>();
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
@@ -28,6 +57,10 @@ export default function EditServiceAd() {
         const response = await getServiceAdById(serviceAdId);
 
         setService(response);
+
+        setValue("title", `${response?.title}`);
+        setValue("description", `${response?.description}`);
+        setValue("adValue", response?.value ?? 0);
 
         const images: AppImagesList[] =
           response && response.service_images
@@ -70,13 +103,66 @@ export default function EditServiceAd() {
 
   return (
     <AppScreenContainer>
-      <AppText>Edit service add</AppText>
-      <AppText>Service ad id: {serviceAdId}</AppText>
-      <AppImageSelector
-        onAddImage={handleAddImage}
-        onRemoveImage={handleRemoveImage}
-        selectedImages={adImages}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <AppSpacer />
+        <FormContainer>
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                label="Título do anúncio"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={errors.title?.message}
+              />
+            )}
+            name="title"
+          />
+          <AppSpacer />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                label="Descrição do anúncio"
+                multiline={true}
+                numberOfLines={4}
+                textAlignVertical="top"
+                error={errors.description?.message}
+              />
+            )}
+            name="description"
+          />
+          <AppSpacer />
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <AppInput
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={`${value}`}
+                label="Valor"
+                keyboardType="decimal-pad"
+                error={errors.adValue?.message}
+              />
+            )}
+            name="adValue"
+          />
+        </FormContainer>
+
+        <AppSpacer />
+        <DateRangeSelector />
+        <AppSpacer />
+
+        <AppImageSelector
+          onAddImage={handleAddImage}
+          onRemoveImage={handleRemoveImage}
+          selectedImages={adImages}
+        />
+      </ScrollView>
     </AppScreenContainer>
   );
 }
