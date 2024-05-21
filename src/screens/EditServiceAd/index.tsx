@@ -1,3 +1,4 @@
+import AppButton from "@components/AppButton";
 import AppImageSelector, { AppImagesList } from "@components/AppImageSelector";
 import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
@@ -12,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as yup from "yup";
-import { FormContainer } from "./styles";
+import { ButtonColumn, ButtonsWrapper, FormContainer } from "./styles";
 
 type Params = {
   serviceAdId: string;
@@ -46,10 +47,11 @@ export default function EditServiceAd() {
 
   const [service, setService] = useState<IUserServiceAd>();
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const { getServiceAdById } = useData();
 
@@ -64,6 +66,10 @@ export default function EditServiceAd() {
         setValue("title", `${response?.title}`);
         setValue("description", `${response?.description}`);
         setValue("adValue", response?.value ?? 0);
+
+        console.log(typeof response?.valid_from);
+        // setDateFrom(response?.valid_from);
+        // setDateTo(response?.valid_to);
 
         const images: AppImagesList[] =
           response && response.service_images
@@ -110,6 +116,10 @@ export default function EditServiceAd() {
   function handleRemoveImage(imagePath: string) {
     const filteredImages = adImages.filter((image) => imagePath !== image.path);
     setAdImages(filteredImages);
+  }
+
+  async function onSubmit({ adValue, description, title }: any) {
+    console.log({ adValue, description, title, dateFrom, dateTo });
   }
 
   return (
@@ -178,6 +188,21 @@ export default function EditServiceAd() {
           onRemoveImage={handleRemoveImage}
           selectedImages={adImages}
         />
+        <AppSpacer />
+        <ButtonsWrapper>
+          <ButtonColumn>
+            <AppButton title="Cancelar" variant="negative" />
+          </ButtonColumn>
+          <ButtonColumn>
+            <AppButton
+              title="Salvar"
+              variant="positive"
+              onPress={() => handleSubmit(onSubmit)()}
+              isLoading={isLoading}
+            />
+          </ButtonColumn>
+        </ButtonsWrapper>
+        <AppSpacer />
       </ScrollView>
     </AppScreenContainer>
   );
