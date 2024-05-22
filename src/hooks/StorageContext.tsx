@@ -12,6 +12,8 @@ type IUploadFile = {
   name: string;
   path: string;
 };
+
+//NEXT: implement delete from storage and database!
 interface IStorageContextProps {
   upload(files: IUploadFile | IUploadFile[]): Promise<string[] | undefined>;
 }
