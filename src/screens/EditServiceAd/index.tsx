@@ -7,7 +7,7 @@ import DateRangeSelector from "@components/DateRangeSelector";
 import { AppError } from "@errors/AppError";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
@@ -32,6 +32,8 @@ const validationSchema = yup.object({
 export default function EditServiceAd() {
   const route = useRoute();
   const { serviceAdId } = route.params as Params;
+
+  const navigation = useNavigation();
 
   const {
     control,
@@ -61,15 +63,15 @@ export default function EditServiceAd() {
       try {
         const response = await getServiceAdById(serviceAdId);
 
+        if (!response) return Alert.alert("Anúncio não encontrado.");
         setService(response);
 
-        setValue("title", `${response?.title}`);
-        setValue("description", `${response?.description}`);
-        setValue("adValue", response?.value ?? 0);
+        setValue("title", response.title);
+        setValue("description", response.description);
+        setValue("adValue", response.value);
 
-        console.log(typeof response?.valid_from);
-        // setDateFrom(response?.valid_from);
-        // setDateTo(response?.valid_to);
+        setDateFrom(new Date(response.valid_from!));
+        setDateTo(new Date(response.valid_to!));
 
         const images: AppImagesList[] =
           response && response.service_images
@@ -191,7 +193,11 @@ export default function EditServiceAd() {
         <AppSpacer />
         <ButtonsWrapper>
           <ButtonColumn>
-            <AppButton title="Cancelar" variant="negative" />
+            <AppButton
+              title="Cancelar"
+              variant="negative"
+              onPress={() => navigation.goBack()}
+            />
           </ButtonColumn>
           <ButtonColumn>
             <AppButton
