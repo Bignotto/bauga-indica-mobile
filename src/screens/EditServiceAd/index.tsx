@@ -7,6 +7,7 @@ import DateRangeSelector from "@components/DateRangeSelector";
 import { AppError } from "@errors/AppError";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserServiceAd, useData } from "@hooks/DataContext";
+import { useStorage } from "@hooks/StorageContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -47,6 +48,9 @@ export default function EditServiceAd() {
     },
   });
 
+  const { getServiceAdById, updateServiceAdImages } = useData();
+  const { upload } = useStorage();
+
   const [service, setService] = useState<IUserServiceAd>();
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
 
@@ -54,8 +58,6 @@ export default function EditServiceAd() {
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
   const [isLoading, setIsLoading] = useState(true);
-
-  const { getServiceAdById } = useData();
 
   useEffect(() => {
     async function loadServiceAd() {
@@ -75,7 +77,7 @@ export default function EditServiceAd() {
 
         const images: AppImagesList[] =
           response && response.service_images
-            ? response?.service_images?.map((img) => {
+            ? response.service_images.map((img) => {
                 const i: AppImagesList = {
                   id: `${img.id}`,
                   path: img.imagePath,
@@ -105,7 +107,7 @@ export default function EditServiceAd() {
     setDateTo(dateTo);
   }
 
-  function handleAddImage(imagePath: string) {
+  async function handleAddImage(imagePath: string) {
     const newImage: AppImagesList = {
       id: imagePath,
       path: imagePath,
@@ -113,6 +115,24 @@ export default function EditServiceAd() {
     };
 
     setAdImages([...adImages, newImage]);
+
+    try {
+      const uploadResponse = await upload([
+        {
+          name: `${serviceAdId}__${adImages.length + 1}`,
+          path: imagePath,
+        },
+      ]);
+      if (!uploadResponse)
+        return Alert.alert("Ocorreu um erro ao fazer upload das imagens...");
+
+      await updateServiceAdImages(serviceAdId, uploadResponse);
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
   }
 
   function handleRemoveImage(imagePath: string) {
