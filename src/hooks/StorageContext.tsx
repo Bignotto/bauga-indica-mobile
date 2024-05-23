@@ -13,9 +13,9 @@ type IUploadFile = {
   path: string;
 };
 
-//NEXT: implement delete from storage and database!
 interface IStorageContextProps {
   upload(files: IUploadFile | IUploadFile[]): Promise<string[] | undefined>;
+  remove(files: IUploadFile | IUploadFile[]): Promise<void>;
 }
 
 const StorageContext = createContext<IStorageContextProps>(
@@ -41,11 +41,7 @@ function StorageProvider({ children }: StorageProviderProps) {
 
       if (error) {
         console.log(JSON.stringify(error, null, 2));
-        throw new AppError(
-          "ERROR while saving new user into database",
-          500,
-          "supabase"
-        );
+        throw new AppError("ERROR while uploading image.", 500, "supabase");
       }
 
       returnArray.push(data.path);
@@ -54,10 +50,25 @@ function StorageProvider({ children }: StorageProviderProps) {
     return returnArray.length > 0 ? returnArray : undefined;
   }
 
+  async function remove(files: IUploadFile | IUploadFile[]) {
+    const filesArray = Array.isArray(files) ? [...files] : [files];
+    const returnArray = [];
+
+    const { data, error } = await supabase.storage
+      .from("images_services")
+      .remove(filesArray.map((f) => f.name));
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while deleting image", 500, "supabase");
+    }
+    return;
+  }
+
   return (
     <StorageContext.Provider
       value={{
         upload,
+        remove,
       }}
     >
       {children}

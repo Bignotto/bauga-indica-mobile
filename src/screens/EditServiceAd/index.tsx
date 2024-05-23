@@ -49,7 +49,7 @@ export default function EditServiceAd() {
   });
 
   const { getServiceAdById, updateServiceAdImages } = useData();
-  const { upload } = useStorage();
+  const { upload, remove } = useStorage();
 
   const [service, setService] = useState<IUserServiceAd>();
   const [adImages, setAdImages] = useState<AppImagesList[]>([]);
@@ -135,9 +135,25 @@ export default function EditServiceAd() {
     }
   }
 
-  function handleRemoveImage(imagePath: string) {
+  async function handleRemoveImage(imagePath: string) {
     const filteredImages = adImages.filter((image) => imagePath !== image.path);
     setAdImages(filteredImages);
+
+    try {
+      const filename = new URL(imagePath).pathname.split("/").pop();
+      console.log({ filename });
+      remove([
+        {
+          name: `${filename}`,
+          path: imagePath,
+        },
+      ]);
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
   }
 
   async function onSubmit({ adValue, description, title }: any) {
