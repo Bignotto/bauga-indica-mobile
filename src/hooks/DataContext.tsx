@@ -174,6 +174,7 @@ interface IDataContextProps {
   contractExecuted(contractId: string): Promise<void>;
   createNewReview(newReview: IServiceReview): Promise<void>;
   activityLog(logData: IActivityLog): Promise<void>;
+  removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -668,6 +669,27 @@ function DataProvider({ children }: DataProviderProps) {
     ]);
   }
 
+  async function removeImageFromService(
+    serviceAdId: string,
+    imagePath: string
+  ): Promise<void> {
+    const { data, error } = await supabase
+      .from("service_images")
+      .delete()
+      .eq("serviceId", serviceAdId)
+      .eq("imagePath", imagePath);
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while removing images from database",
+        500,
+        "supabase"
+      );
+    }
+    return;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -695,6 +717,7 @@ function DataProvider({ children }: DataProviderProps) {
         contractExecuted,
         createNewReview,
         activityLog,
+        removeImageFromService,
       }}
     >
       {children}

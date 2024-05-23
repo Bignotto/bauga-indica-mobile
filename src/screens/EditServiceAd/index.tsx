@@ -48,7 +48,8 @@ export default function EditServiceAd() {
     },
   });
 
-  const { getServiceAdById, updateServiceAdImages } = useData();
+  const { getServiceAdById, updateServiceAdImages, removeImageFromService } =
+    useData();
   const { upload, remove } = useStorage();
 
   const [service, setService] = useState<IUserServiceAd>();
@@ -135,6 +136,7 @@ export default function EditServiceAd() {
     }
   }
 
+  //NEXT: confirmation dialog before remove image
   async function handleRemoveImage(imagePath: string) {
     const filteredImages = adImages.filter((image) => imagePath !== image.path);
     setAdImages(filteredImages);
@@ -148,6 +150,8 @@ export default function EditServiceAd() {
           path: imagePath,
         },
       ]);
+
+      await removeImageFromService(serviceAdId, imagePath);
     } catch (error) {
       if (error instanceof AppError) {
         return Alert.alert(error.message);
