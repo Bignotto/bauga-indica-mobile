@@ -65,8 +65,8 @@ type ICreateServiceDTO = {
   value: number;
   validFrom: Date;
   validTo: Date;
-  serviceTypeId: number;
-  providerId: string;
+  serviceTypeId?: number;
+  providerId?: string;
 };
 
 type ICreateContractDTO = {
@@ -175,6 +175,7 @@ interface IDataContextProps {
   createNewReview(newReview: IServiceReview): Promise<void>;
   activityLog(logData: IActivityLog): Promise<void>;
   removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
+  updateServiceAd(newData: ICreateServiceDTO): Promise<IUserServiceAd>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -690,6 +691,29 @@ function DataProvider({ children }: DataProviderProps) {
     return;
   }
 
+  async function updateServiceAd(
+    newData: ICreateServiceDTO
+  ): Promise<IUserServiceAd> {
+    const { data, error } = await supabase
+      .from("services")
+      .update({
+        title: newData.title,
+        description: newData.description,
+        value: newData.value,
+        valid_to: newData.validTo,
+        valid_from: newData.validFrom,
+      })
+      .eq("id", newData.id)
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while updating database", 500, "supabase");
+    }
+
+    return data[0];
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -718,6 +742,7 @@ function DataProvider({ children }: DataProviderProps) {
         createNewReview,
         activityLog,
         removeImageFromService,
+        updateServiceAd,
       }}
     >
       {children}

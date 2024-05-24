@@ -48,8 +48,12 @@ export default function EditServiceAd() {
     },
   });
 
-  const { getServiceAdById, updateServiceAdImages, removeImageFromService } =
-    useData();
+  const {
+    getServiceAdById,
+    updateServiceAdImages,
+    removeImageFromService,
+    updateServiceAd,
+  } = useData();
   const { upload, remove } = useStorage();
 
   const [service, setService] = useState<IUserServiceAd>();
@@ -180,7 +184,23 @@ export default function EditServiceAd() {
   }
 
   async function onSubmit({ adValue, description, title }: any) {
-    console.log({ adValue, description, title, dateFrom, dateTo });
+    try {
+      await updateServiceAd({
+        description,
+        title,
+        validFrom: dateFrom!,
+        validTo: dateTo!,
+        value: adValue,
+        id: serviceAdId,
+      });
+
+      navigation.goBack();
+    } catch (error) {
+      if (error instanceof AppError) {
+        return Alert.alert(error.message);
+      }
+      Alert.alert("Ocorreu um erro desconhecido!");
+    }
   }
 
   return (
