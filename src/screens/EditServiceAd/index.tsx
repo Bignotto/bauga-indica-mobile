@@ -136,28 +136,47 @@ export default function EditServiceAd() {
     }
   }
 
-  //NEXT: confirmation dialog before remove image
   async function handleRemoveImage(imagePath: string) {
-    const filteredImages = adImages.filter((image) => imagePath !== image.path);
-    setAdImages(filteredImages);
+    async function doRemoval() {
+      const filteredImages = adImages.filter(
+        (image) => imagePath !== image.path
+      );
+      setAdImages(filteredImages);
 
-    try {
       const filename = new URL(imagePath).pathname.split("/").pop();
-      console.log({ filename });
-      remove([
-        {
-          name: `${filename}`,
-          path: imagePath,
-        },
-      ]);
 
-      await removeImageFromService(serviceAdId, imagePath);
-    } catch (error) {
-      if (error instanceof AppError) {
-        return Alert.alert(error.message);
+      try {
+        await remove([
+          {
+            name: `${filename}`,
+            path: imagePath,
+          },
+        ]);
+
+        await removeImageFromService(serviceAdId, imagePath);
+      } catch (error) {
+        if (error instanceof AppError) {
+          return Alert.alert(error.message);
+        }
+        Alert.alert("Ocorreu um erro desconhecido!");
       }
-      Alert.alert("Ocorreu um erro desconhecido!");
     }
+
+    await Alert.alert(
+      "Remover imagem",
+      "Tem certeza que quer remover a imagem?",
+      [
+        {
+          text: "Sim",
+          style: "default",
+          onPress: doRemoval,
+        },
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+      ]
+    );
   }
 
   async function onSubmit({ adValue, description, title }: any) {
