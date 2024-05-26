@@ -702,6 +702,7 @@ function DataProvider({ children }: DataProviderProps) {
         value: newData.value,
         valid_to: newData.validTo,
         valid_from: newData.validFrom,
+        serviceTypeId: newData.serviceTypeId,
       })
       .eq("id", newData.id)
       .select();

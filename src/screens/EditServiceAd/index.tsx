@@ -4,9 +4,10 @@ import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import DateRangeSelector from "@components/DateRangeSelector";
+import ServiceCategorySelector from "@components/ServiceCategorySelector";
 import { AppError } from "@errors/AppError";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { IUserServiceAd, useData } from "@hooks/DataContext";
+import { IServiceType, IUserServiceAd, useData } from "@hooks/DataContext";
 import { useStorage } from "@hooks/StorageContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
@@ -53,6 +54,7 @@ export default function EditServiceAd() {
     updateServiceAdImages,
     removeImageFromService,
     updateServiceAd,
+    getAvailableServiceTypes,
   } = useData();
   const { upload, remove } = useStorage();
 
@@ -62,7 +64,16 @@ export default function EditServiceAd() {
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<
+    IServiceType | undefined
+  >(undefined);
+
+  const [availableServiceTypes, setAvailableServiceTypes] = useState<
+    IServiceType[] | undefined
+  >(undefined);
+
+  const [modalOn, setModalOn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function loadServiceAd() {
@@ -93,6 +104,11 @@ export default function EditServiceAd() {
             : [];
 
         setAdImages(images);
+
+        const categories = await getAvailableServiceTypes();
+        setAvailableServiceTypes(categories);
+
+        setSelectedCategory(response.serviceTypeId);
       } catch (error) {
         if (error instanceof AppError) return Alert.alert(error.message);
         return Alert.alert("erro desconhecido");
@@ -183,6 +199,12 @@ export default function EditServiceAd() {
     );
   }
 
+  function handleSelected(item: IServiceType) {
+    setModalOn(!modalOn);
+    if (!item) return;
+    setSelectedCategory(item);
+  }
+
   async function onSubmit({ adValue, description, title }: any) {
     try {
       await updateServiceAd({
@@ -192,6 +214,7 @@ export default function EditServiceAd() {
         validTo: dateTo!,
         value: adValue,
         id: serviceAdId,
+        serviceTypeId: selectedCategory?.id,
       });
 
       navigation.goBack();
@@ -262,7 +285,26 @@ export default function EditServiceAd() {
           dateFromValue={dateFrom}
           dateToValue={dateTo}
         />
-        <AppSpacer />
+        <AppSpacer verticalSpace="xlg" />
+        <ServiceCategorySelector
+          visible={modalOn}
+          onRequestClose={() => setModalOn(!modalOn)}
+          itens={availableServiceTypes}
+          onSelect={handleSelected}
+          selectedItem={selectedCategory}
+        />
+        <AppButton
+          title={
+            selectedCategory
+              ? selectedCategory.name
+              : "Selecione a categoria do anúncio"
+          }
+          onPress={() => {
+            setModalOn(true);
+          }}
+          isLoading={isLoading}
+        />
+        <AppSpacer verticalSpace="xlg" />
 
         <AppImageSelector
           onAddImage={handleAddImage}
