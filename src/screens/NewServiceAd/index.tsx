@@ -12,7 +12,6 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
-import ImageSelector, { AppImagesList } from "./ImageSelector";
 import {
   ColumnWrapper,
   DatePickerWrapper,
@@ -20,6 +19,8 @@ import {
   TwoColumnsWrapper,
 } from "./styles";
 
+import AppImageSelector, { AppImagesList } from "@components/AppImageSelector";
+import ServiceCategorySelector from "@components/ServiceCategorySelector";
 import { AppError } from "@errors/AppError";
 import { IServiceType, useData } from "@hooks/DataContext";
 import { useStorage } from "@hooks/StorageContext";
@@ -27,7 +28,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
 import { Alert } from "react-native";
 import * as yup from "yup";
-import ServiceCategorySelector from "./ServiceCategorySelector";
 
 const validationSchema = yup.object({
   title: yup.string().required("O anúncio precisa de um título."),
@@ -239,6 +239,7 @@ export default function NewServiceAd() {
           <AppText>Validade do anúncio</AppText>
           <AppText size="sm">Por quanto tempo quer seu anúncio ativo?</AppText>
           <AppSpacer />
+          {/* TODO: use app component to select dates */}
           <TwoColumnsWrapper>
             <AppInput
               label="Válido de"
@@ -323,7 +324,7 @@ export default function NewServiceAd() {
         <AppText>Imagens</AppText>
         <AppText size="sm">Selecione até 4 imagens para o seu anúncio.</AppText>
         <AppSpacer verticalSpace="sm" />
-        <ImageSelector
+        <AppImageSelector
           onAddImage={handleAddImage}
           onRemoveImage={handleRemoveImage}
           selectedImages={adImages}

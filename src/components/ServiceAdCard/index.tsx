@@ -49,6 +49,13 @@ export default function ServiceAdCard({
       ? navigation.navigate("NewContract", { service: item })
       : navigation.navigate("SignIn");
   }
+
+  async function handleEditServiceAd(serviceId: string) {
+    navigation.navigate("EditServiceAd", {
+      serviceAdId: serviceId,
+    });
+  }
+
   return (
     <ResultItem>
       <ContentWrapper>
@@ -86,7 +93,11 @@ export default function ServiceAdCard({
         {userProfile?.id === item.providerId!.id ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
-            <AppButton size="sm" title="Editar" />
+            <AppButton
+              size="sm"
+              title="Editar"
+              onPress={() => handleEditServiceAd(`${item.id}`)}
+            />
           </OwnerButtonsWrapper>
         ) : (
           <>

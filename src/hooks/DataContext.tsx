@@ -65,8 +65,8 @@ type ICreateServiceDTO = {
   value: number;
   validFrom: Date;
   validTo: Date;
-  serviceTypeId: number;
-  providerId: string;
+  serviceTypeId?: number;
+  providerId?: string;
 };
 
 type ICreateContractDTO = {
@@ -174,6 +174,8 @@ interface IDataContextProps {
   contractExecuted(contractId: string): Promise<void>;
   createNewReview(newReview: IServiceReview): Promise<void>;
   activityLog(logData: IActivityLog): Promise<void>;
+  removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
+  updateServiceAd(newData: ICreateServiceDTO): Promise<IUserServiceAd>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -668,6 +670,51 @@ function DataProvider({ children }: DataProviderProps) {
     ]);
   }
 
+  async function removeImageFromService(
+    serviceAdId: string,
+    imagePath: string
+  ): Promise<void> {
+    const { data, error } = await supabase
+      .from("service_images")
+      .delete()
+      .eq("serviceId", serviceAdId)
+      .eq("imagePath", imagePath);
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while removing images from database",
+        500,
+        "supabase"
+      );
+    }
+    return;
+  }
+
+  async function updateServiceAd(
+    newData: ICreateServiceDTO
+  ): Promise<IUserServiceAd> {
+    const { data, error } = await supabase
+      .from("services")
+      .update({
+        title: newData.title,
+        description: newData.description,
+        value: newData.value,
+        valid_to: newData.validTo,
+        valid_from: newData.validFrom,
+        serviceTypeId: newData.serviceTypeId,
+      })
+      .eq("id", newData.id)
+      .select();
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while updating database", 500, "supabase");
+    }
+
+    return data[0];
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -695,6 +742,8 @@ function DataProvider({ children }: DataProviderProps) {
         contractExecuted,
         createNewReview,
         activityLog,
+        removeImageFromService,
+        updateServiceAd,
       }}
     >
       {children}

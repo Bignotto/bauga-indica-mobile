@@ -16,11 +16,13 @@ import {
 interface ServiceCategorySelectorProps extends ModalProps {
   itens: IServiceType[] | undefined;
   onSelect(category: IServiceType | undefined): void;
+  selectedItem?: IServiceType;
 }
 
 export default function ServiceCategorySelector({
   itens,
   onSelect,
+  selectedItem,
   ...rest
 }: ServiceCategorySelectorProps) {
   const theme = useTheme();
@@ -51,7 +53,14 @@ export default function ServiceCategorySelector({
                       },
                     ]}
                   >
-                    <ItemWrapper>
+                    <ItemWrapper
+                      style={{
+                        backgroundColor:
+                          i.id === selectedItem?.id
+                            ? theme.colors.text_disabled
+                            : theme.colors.white,
+                      }}
+                    >
                       <AppText>{i.name}</AppText>
                     </ItemWrapper>
                   </Pressable>

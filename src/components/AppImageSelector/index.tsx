@@ -25,7 +25,7 @@ interface ImageSelectorProps {
   imageLimit?: number;
 }
 
-export default function ImageSelector({
+export default function AppImageSelector({
   onAddImage,
   onRemoveImage,
   selectedImages,
