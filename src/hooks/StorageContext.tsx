@@ -16,6 +16,7 @@ type IUploadFile = {
 interface IStorageContextProps {
   upload(files: IUploadFile | IUploadFile[]): Promise<string[] | undefined>;
   remove(files: IUploadFile | IUploadFile[]): Promise<void>;
+  profileImageUpload(file: IUploadFile): Promise<string>;
 }
 
 const StorageContext = createContext<IStorageContextProps>(
@@ -64,11 +65,31 @@ function StorageProvider({ children }: StorageProviderProps) {
     return;
   }
 
+  async function profileImageUpload(file: IUploadFile) {
+    const base64 = await FileSystem.readAsStringAsync(file.path, {
+      encoding: "base64",
+    });
+    const { data, error } = await supabase.storage
+      .from("images_avatars")
+      .upload(`${file.name}.jpeg`, decode(base64), {
+        contentType: "image/jpeg",
+        upsert: true,
+      });
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError("ERROR while uploading image.", 500, "supabase");
+    }
+
+    return data.path;
+  }
+
   return (
     <StorageContext.Provider
       value={{
         upload,
         remove,
+        profileImageUpload,
       }}
     >
       {children}

@@ -7,9 +7,11 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
+import { AppError } from "@errors/AppError";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
 import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
+import { useStorage } from "@hooks/StorageContext";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -27,8 +29,9 @@ export default function Profile() {
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { updateProfile, userProfile } = useData();
+  const { updateProfile, userProfile, updateProfileImage } = useData();
   const { sendVerification } = usePhoneVerification();
+  const { profileImageUpload } = useStorage();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -104,10 +107,22 @@ export default function Profile() {
 
     if (selectedImages.canceled) return;
 
-    setImage(selectedImages.assets[0].uri);
+    try {
+      const response = await profileImageUpload({
+        name: `${userProfile?.id}`,
+        path: selectedImages.assets[0].uri,
+      });
 
-    //NEXT: update image info in database
-    //onAddImage(selectedImages.assets[0].uri);
+      await updateProfileImage(
+        `${userProfile?.id}`,
+        `${process.env.EXPO_PUBLIC_STORAGE_BASE_URL}/images_avatars/${response}`
+      );
+      setImage(selectedImages.assets[0].uri);
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) return Alert.alert(error.message);
+      return Alert.alert("Erro desconhecido ao fazer upload da imagem.");
+    }
   }
 
   return (
