@@ -176,6 +176,7 @@ interface IDataContextProps {
   activityLog(logData: IActivityLog): Promise<void>;
   removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
   updateServiceAd(newData: ICreateServiceDTO): Promise<IUserServiceAd>;
+  updateProfileImage(userId: string, newImagePath: string): Promise<void>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -715,6 +716,24 @@ function DataProvider({ children }: DataProviderProps) {
     return data[0];
   }
 
+  async function updateProfileImage(userId: string, newImagePath: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .update({
+        image: newImagePath,
+      })
+      .eq("id", userId);
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while updating new image path on database",
+        500,
+        "supabase"
+      );
+    }
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -744,6 +763,7 @@ function DataProvider({ children }: DataProviderProps) {
         activityLog,
         removeImageFromService,
         updateServiceAd,
+        updateProfileImage,
       }}
     >
       {children}

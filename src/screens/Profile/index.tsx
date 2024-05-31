@@ -7,27 +7,31 @@ import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AppError } from "@errors/AppError";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useData } from "@hooks/DataContext";
 import { usePhoneVerification } from "@hooks/PhoneVrifyHook";
+import { useStorage } from "@hooks/StorageContext";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { isPhoneNumberValid } from "@utils/phoneValidator";
+import * as ImagePicker from "expo-image-picker";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Masks } from "react-native-mask-input";
 import { useTheme } from "styled-components";
-import { HeaderContainer } from "./styles";
+import { AvatarWrapper, HeaderContainer, ImageEditIcon } from "./styles";
 
 export default function Profile() {
   const theme = useTheme();
   const { user, isLoaded, isSignedIn } = useUser();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const { updateProfile, userProfile } = useData();
+  const { updateProfile, userProfile, updateProfileImage } = useData();
   const { sendVerification } = usePhoneVerification();
+  const { profileImageUpload } = useStorage();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,12 +39,14 @@ export default function Profile() {
   const [phone, setPhone] = useState("");
   const [savedPhone, setSavedPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [image, setImage] = useState("");
 
   function setFormValues() {
     setName(`${userProfile?.name}`);
     setEmail(`${userProfile?.email}`);
     setPhone(`${userProfile?.phone}`);
     setSavedPhone(`${userProfile?.phone}`);
+    setImage(`${userProfile?.image}`);
   }
 
   useEffect(() => {
@@ -92,6 +98,33 @@ export default function Profile() {
     }
   }
 
+  async function handleImageSelect() {
+    const selectedImages = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      allowsEditing: true,
+    });
+
+    if (selectedImages.canceled) return;
+
+    try {
+      const response = await profileImageUpload({
+        name: `${userProfile?.id}`,
+        path: selectedImages.assets[0].uri,
+      });
+
+      await updateProfileImage(
+        `${userProfile?.id}`,
+        `${process.env.EXPO_PUBLIC_STORAGE_BASE_URL}/images_avatars/${response}`
+      );
+      setImage(selectedImages.assets[0].uri);
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
+      if (error instanceof AppError) return Alert.alert(error.message);
+      return Alert.alert("Erro desconhecido ao fazer upload da imagem.");
+    }
+  }
+
   return (
     <AppScreenContainer
       headerColor={theme.colors.white}
@@ -104,7 +137,16 @@ export default function Profile() {
               <AppCenter>
                 <AppLogo size="sm" />
                 <AppSpacer verticalSpace="sm" />
-                <AppAvatar imagePath={`${userProfile?.image}`} size={180} />
+                <AvatarWrapper>
+                  <AppAvatar imagePath={`${image}`} size={180} />
+                  <ImageEditIcon onPress={handleImageSelect}>
+                    <MaterialIcons
+                      name="mode-edit"
+                      size={24}
+                      color={theme.colors.white}
+                    />
+                  </ImageEditIcon>
+                </AvatarWrapper>
                 <AppSpacer verticalSpace="sm" />
                 <AppText bold>Perfil público de </AppText>
                 <AppText size="xlg" bold>
