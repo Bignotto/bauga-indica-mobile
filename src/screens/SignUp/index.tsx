@@ -54,6 +54,7 @@ export default function SignUp() {
 
     if (password !== confirmation) {
       Alert.alert("A confirmação de senha não bate com a senha.");
+      return;
     }
 
     if (!isLoaded) {
@@ -83,7 +84,10 @@ export default function SignUp() {
         Alert.alert(
           "Endereço de e-mail em uso. Faça login usando este e-mail."
         );
-      }
+      } else if (error.errors[0].code === "form_password_length_too_short")
+        Alert.alert("A senha precisa ter pelo menos 8 caracteres.");
+      else if (error.errors[0].code === "form_password_pwned")
+        Alert.alert("Esta senha está comprometida. Use uma mais difícil.");
     } finally {
       setIsLoading(false);
     }
