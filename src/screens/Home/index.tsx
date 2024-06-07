@@ -7,7 +7,9 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { useState } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
+import TopServices from "./TopServices";
 import { HomeContainer, SearchInputWrapper } from "./styles";
 
 export default function Home() {
@@ -19,30 +21,30 @@ export default function Home() {
   const theme = useTheme();
 
   async function handleSearch() {
-    //TODO: Log search
-
     if (searchText.length === 0) return null;
     navigation.navigate("Search", { searchText });
   }
 
   return (
     <AppScreenContainer>
-      <HomeContainer>
-        <AppLogo size="lg" />
-        <SearchInputWrapper>
-          <AppInput
-            placeholder="O que você procura?"
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-          <AppButton
-            title="Procurar"
-            variant={"solid"}
-            onPress={handleSearch}
-          />
-          <AppButton title="Logout" onPress={() => signOut()} />
-        </SearchInputWrapper>
-      </HomeContainer>
+      <ScrollView>
+        <HomeContainer>
+          <AppLogo size="lg" />
+          <SearchInputWrapper>
+            <AppInput
+              placeholder="O que você procura?"
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+            <AppButton
+              title="Procurar"
+              variant={"solid"}
+              onPress={handleSearch}
+            />
+          </SearchInputWrapper>
+        </HomeContainer>
+        <TopServices />
+      </ScrollView>
     </AppScreenContainer>
   );
 }

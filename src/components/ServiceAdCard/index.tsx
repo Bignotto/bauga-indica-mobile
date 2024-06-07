@@ -1,7 +1,7 @@
 import AppButton from "@components/AppButton";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { IUserServiceAd, useData } from "@hooks/DataContext";
+import { ITopServiceAds, IUserServiceAd, useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -22,7 +22,8 @@ import {
 } from "./styles";
 
 interface ServiceAdCard {
-  item: IUserServiceAd;
+  item?: IUserServiceAd;
+  topService?: ITopServiceAds;
   buttonType?: "details" | "contact";
   showButton?: boolean;
   showDescription?: boolean;
@@ -31,6 +32,7 @@ interface ServiceAdCard {
 
 export default function ServiceAdCard({
   item,
+  topService,
   buttonType = "details",
   showButton = true,
   showDescription = true,
@@ -46,7 +48,7 @@ export default function ServiceAdCard({
 
   async function handleContactProvider() {
     userProfile
-      ? navigation.navigate("NewContract", { service: item })
+      ? navigation.navigate("NewContract", { service: item! })
       : navigation.navigate("SignIn");
   }
 
@@ -56,20 +58,37 @@ export default function ServiceAdCard({
     });
   }
 
+  const serviceTypeName = topService
+    ? topService.service_type
+    : item!.serviceTypeId!.name;
+  const serviceId = topService ? topService.service_id : item!.id;
+  const serviceTitle = topService ? topService.title : item!.title;
+  const serviceDescription = topService
+    ? topService.description
+    : item!.description;
+  const providerName = topService
+    ? topService.provider_name
+    : item!.providerId?.name;
+  const providerImage = topService
+    ? topService.provider_image
+    : item!.providerId?.image;
+  const providerId = topService ? topService.provider_id : item!.providerId?.id;
+  const serviceValue = topService ? topService.service_value : item!.value;
+
   return (
     <ResultItem>
       <ContentWrapper>
         <TagWrapper>
           <Tag>
-            <TagText>{item.serviceTypeId!.name}</TagText>
+            <TagText>{serviceTypeName}</TagText>
           </Tag>
         </TagWrapper>
         <TitleWrapper>
           <AppText bold size="lg">
-            {item.title}
+            {serviceTitle}
           </AppText>
         </TitleWrapper>
-        {showDescription && <AppText>{item.description}</AppText>}
+        {showDescription && <AppText>{serviceDescription}</AppText>}
 
         <AppSpacer verticalSpace="lg" />
         <ProviderPriceWrapper>
@@ -77,26 +96,26 @@ export default function ServiceAdCard({
             <ProviderInfoWrapper>
               <ProviderAvatar
                 source={{
-                  uri: item.providerId!.image,
+                  uri: providerImage,
                 }}
               />
               <ProviderName>
-                <AppText bold>{item.providerId!.name}</AppText>
+                <AppText bold>{providerName}</AppText>
               </ProviderName>
             </ProviderInfoWrapper>
           )}
 
           <AppText bold size="lg" color={theme.colors.primary_dark}>
-            {`R$ ${item.value.toFixed(2)}`}
+            {`R$ ${serviceValue.toFixed(2)}`}
           </AppText>
         </ProviderPriceWrapper>
-        {userProfile?.id === item.providerId!.id ? (
+        {userProfile?.id === providerId ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton
               size="sm"
               title="Editar"
-              onPress={() => handleEditServiceAd(`${item.id}`)}
+              onPress={() => handleEditServiceAd(`${serviceId}`)}
             />
           </OwnerButtonsWrapper>
         ) : (
@@ -104,7 +123,7 @@ export default function ServiceAdCard({
             {showButton && buttonType === "details" && (
               <AppButton
                 title="Ver mais detalhes"
-                onPress={() => handleServiceDetails(`${item.id}`)}
+                onPress={() => handleServiceDetails(`${serviceId}`)}
               />
             )}
             {showButton && buttonType === "contact" && (

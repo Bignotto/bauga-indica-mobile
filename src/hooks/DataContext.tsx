@@ -155,7 +155,7 @@ type ITopServiceAds = {
   provider_id: string;
   provider_name: string;
   provider_image: string;
-  service_value: string;
+  service_value: number;
 };
 
 interface IDataContextProps {
@@ -190,7 +190,7 @@ interface IDataContextProps {
   removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
   updateServiceAd(newData: ICreateServiceDTO): Promise<IUserServiceAd>;
   updateProfileImage(userId: string, newImagePath: string): Promise<void>;
-  topServiceAds(): Promise<IUserServiceAd[] | undefined>;
+  topServiceAds(): Promise<ITopServiceAds[] | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -748,14 +748,14 @@ function DataProvider({ children }: DataProviderProps) {
     }
   }
 
-  async function topServiceAds() {
+  async function topServiceAds(): Promise<ITopServiceAds[] | undefined> {
     const { data, error } = await supabase
       .from("top_services_per_click")
       .select();
     if (error) {
       console.log(JSON.stringify(error, null, 2));
       throw new AppError(
-        "ERROR while updating new image path on database",
+        "ERROR while loading top service ads",
         500,
         "supabase"
       );
@@ -815,6 +815,7 @@ export {
   IDashboardData,
   IServiceReview,
   IServiceType,
+  ITopServiceAds,
   IUpdateContractDTO,
   IUserDTO,
   IUserServiceAd,
