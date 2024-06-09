@@ -30,6 +30,29 @@ interface ServiceAdCard {
   showProvider?: boolean;
 }
 
+interface ServiceAdCardProps {
+  service?: {
+    id?: string;
+    title?: string;
+    description?: string;
+    value?: number;
+    provider?: {
+      id?: string;
+      name?: string;
+      image?: string;
+    };
+    rating?: number;
+    serviceType?: {
+      id?: number;
+      name?: string;
+    };
+  };
+  buttonType?: "details" | "contact";
+  showButton?: boolean;
+  showDescription?: boolean;
+  showProvider?: boolean;
+}
+
 export default function ServiceAdCard({
   item,
   topService,

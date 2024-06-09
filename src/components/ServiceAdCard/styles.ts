@@ -7,6 +7,9 @@ export const ResultItem = styled.View`
   /*TODO: fix margin bottom should not be inside component */
   margin-bottom: 16px;
   background-color: ${({ theme }) => theme.colors.white};
+  /* border-radius: 8px;
+    border-width: 1px;
+    border-color: gray; */
 `;
 
 export const TitleWrapper = styled.View`
