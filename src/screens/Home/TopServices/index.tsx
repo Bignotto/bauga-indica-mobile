@@ -31,10 +31,26 @@ export default function TopServices() {
       {topServices &&
         topServices.map((s) => (
           <ServiceAdCard
-            topService={s}
-            showDescription={true}
+            showDescription={false}
             showProvider={true}
             key={s.service_id}
+            service={{
+              id: s.provider_id,
+              value: s.service_value,
+              description: s.description,
+              provider: {
+                phone: s.provider_name,
+                name: s.provider_name,
+                id: s.provider_id,
+                image: s.provider_image,
+              },
+              rating: 5,
+              serviceType: {
+                id: s.service_type_id,
+                name: s.service_type,
+              },
+              title: s.title,
+            }}
           />
         ))}
     </Container>
