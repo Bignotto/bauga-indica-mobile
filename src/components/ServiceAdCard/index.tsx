@@ -1,5 +1,6 @@
 import AppButton from "@components/AppButton";
 import AppSpacer from "@components/AppSpacer";
+import AppStarsScore from "@components/AppStarsScore";
 import AppText from "@components/AppText";
 import { useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
@@ -39,11 +40,16 @@ interface ServiceAdCardProps {
       id?: number;
       name?: string;
     };
+    review?: {
+      count: number;
+      score_total: number;
+    };
   };
   buttonType?: "details" | "contact";
   showButton?: boolean;
   showDescription?: boolean;
   showProvider?: boolean;
+  showReviewScore?: boolean;
 }
 
 export default function ServiceAdCard({
@@ -52,6 +58,7 @@ export default function ServiceAdCard({
   showButton = true,
   showDescription = true,
   showProvider = true,
+  showReviewScore = false,
 }: ServiceAdCardProps) {
   const { userProfile } = useData();
   const theme = useTheme();
@@ -89,6 +96,12 @@ export default function ServiceAdCard({
           </AppText>
         </TitleWrapper>
         {showDescription && <AppText>{service?.description}</AppText>}
+        {showReviewScore && (
+          <AppStarsScore
+            reviewCount={service?.review?.count ?? 0}
+            score={service?.review?.score_total ?? 0}
+          />
+        )}
 
         <AppSpacer verticalSpace="lg" />
         <ProviderPriceWrapper>

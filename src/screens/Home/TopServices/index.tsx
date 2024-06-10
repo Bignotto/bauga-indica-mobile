@@ -34,6 +34,7 @@ export default function TopServices() {
             showDescription={false}
             showProvider={true}
             key={s.service_id}
+            showReviewScore={true}
             service={{
               id: s.provider_id,
               value: s.service_value,
@@ -50,6 +51,10 @@ export default function TopServices() {
                 name: s.service_type,
               },
               title: s.title,
+              review: {
+                count: s.review_count,
+                score_total: s.score_total,
+              },
             }}
           />
         ))}

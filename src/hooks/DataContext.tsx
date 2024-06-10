@@ -156,6 +156,8 @@ type ITopServiceAds = {
   provider_name: string;
   provider_image: string;
   service_value: number;
+  review_count: number;
+  score_total: number;
 };
 
 interface IDataContextProps {
