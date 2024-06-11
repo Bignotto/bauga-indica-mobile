@@ -1,3 +1,4 @@
+import { RectButton } from "react-native-gesture-handler";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
@@ -16,7 +17,7 @@ export const TitleWrapper = styled.View`
   padding-right: 8px;
 `;
 
-export const ContentWrapper = styled.View`
+export const ContentWrapper = styled(RectButton)`
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;

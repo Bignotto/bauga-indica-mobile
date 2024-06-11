@@ -36,7 +36,7 @@ export default function TopServices() {
             key={s.service_id}
             showReviewScore={true}
             service={{
-              id: s.provider_id,
+              id: s.service_id,
               value: s.service_value,
               description: s.description,
               provider: {

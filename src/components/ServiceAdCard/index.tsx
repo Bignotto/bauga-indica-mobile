@@ -84,7 +84,7 @@ export default function ServiceAdCard({
 
   return (
     <ResultItem>
-      <ContentWrapper>
+      <ContentWrapper onPress={() => handleServiceDetails(`${service?.id}`)}>
         <TagWrapper>
           <Tag>
             <TagText>{service?.serviceType?.name}</TagText>
