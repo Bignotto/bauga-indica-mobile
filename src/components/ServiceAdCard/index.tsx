@@ -122,7 +122,8 @@ export default function ServiceAdCard({
             {`R$ ${service ? service.value.toFixed(2) : 0}`}
           </AppText>
         </ProviderPriceWrapper>
-        {userProfile?.id === service?.provider?.id ? (
+
+        {userProfile && userProfile?.id === service?.provider?.id ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton
