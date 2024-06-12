@@ -1,11 +1,13 @@
 import AppButton from "@components/AppButton";
 import AppSpacer from "@components/AppSpacer";
+import AppStarsScore from "@components/AppStarsScore";
 import AppText from "@components/AppText";
-import { IUserServiceAd, useData } from "@hooks/DataContext";
+import { useData } from "@hooks/DataContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import React from "react";
+import { Linking } from "react-native";
 import { useTheme } from "styled-components";
 import {
   ContentWrapper,
@@ -21,21 +23,43 @@ import {
   TitleWrapper,
 } from "./styles";
 
-interface ServiceAdCard {
-  item: IUserServiceAd;
+interface ServiceAdCardProps {
+  service?: {
+    id?: string;
+    title?: string;
+    description?: string;
+    value: number;
+    provider?: {
+      id?: string;
+      name?: string;
+      image?: string;
+      phone: string;
+    };
+    rating?: number;
+    serviceType?: {
+      id?: number;
+      name?: string;
+    };
+    review?: {
+      count: number;
+      score_total: number;
+    };
+  };
   buttonType?: "details" | "contact";
   showButton?: boolean;
   showDescription?: boolean;
   showProvider?: boolean;
+  showReviewScore?: boolean;
 }
 
 export default function ServiceAdCard({
-  item,
+  service,
   buttonType = "details",
   showButton = true,
   showDescription = true,
   showProvider = true,
-}: ServiceAdCard) {
+  showReviewScore = false,
+}: ServiceAdCardProps) {
   const { userProfile } = useData();
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -46,7 +70,9 @@ export default function ServiceAdCard({
 
   async function handleContactProvider() {
     userProfile
-      ? navigation.navigate("NewContract", { service: item })
+      ? Linking.openURL(
+          `whatsapp://send?text=Olá ${service?.provider?.name}! Encontrei seu contato no IndicApp. Gostaria de um orçamento para o serviço ${service?.title}&phone=+55${service?.provider?.phone}`
+        )
       : navigation.navigate("SignIn");
   }
 
@@ -58,18 +84,24 @@ export default function ServiceAdCard({
 
   return (
     <ResultItem>
-      <ContentWrapper>
+      <ContentWrapper onPress={() => handleServiceDetails(`${service?.id}`)}>
         <TagWrapper>
           <Tag>
-            <TagText>{item.serviceTypeId!.name}</TagText>
+            <TagText>{service?.serviceType?.name}</TagText>
           </Tag>
         </TagWrapper>
         <TitleWrapper>
           <AppText bold size="lg">
-            {item.title}
+            {service?.title}
           </AppText>
         </TitleWrapper>
-        {showDescription && <AppText>{item.description}</AppText>}
+        {showDescription && <AppText>{service?.description}</AppText>}
+        {showReviewScore && (
+          <AppStarsScore
+            reviewCount={service?.review?.count ?? 0}
+            score={service?.review?.score_total ?? 0}
+          />
+        )}
 
         <AppSpacer verticalSpace="lg" />
         <ProviderPriceWrapper>
@@ -77,26 +109,27 @@ export default function ServiceAdCard({
             <ProviderInfoWrapper>
               <ProviderAvatar
                 source={{
-                  uri: item.providerId!.image,
+                  uri: service?.provider?.image,
                 }}
               />
               <ProviderName>
-                <AppText bold>{item.providerId!.name}</AppText>
+                <AppText bold>{service?.provider?.name}</AppText>
               </ProviderName>
             </ProviderInfoWrapper>
           )}
 
           <AppText bold size="lg" color={theme.colors.primary_dark}>
-            {`R$ ${item.value.toFixed(2)}`}
+            {`R$ ${service ? service.value.toFixed(2) : 0}`}
           </AppText>
         </ProviderPriceWrapper>
-        {userProfile?.id === item.providerId!.id ? (
+
+        {userProfile && userProfile?.id === service?.provider?.id ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton
               size="sm"
               title="Editar"
-              onPress={() => handleEditServiceAd(`${item.id}`)}
+              onPress={() => handleEditServiceAd(`${service?.id}`)}
             />
           </OwnerButtonsWrapper>
         ) : (
@@ -104,7 +137,7 @@ export default function ServiceAdCard({
             {showButton && buttonType === "details" && (
               <AppButton
                 title="Ver mais detalhes"
-                onPress={() => handleServiceDetails(`${item.id}`)}
+                onPress={() => handleServiceDetails(`${service?.id}`)}
               />
             )}
             {showButton && buttonType === "contact" && (

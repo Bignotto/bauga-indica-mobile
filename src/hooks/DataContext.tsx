@@ -145,6 +145,21 @@ type IActivityLog = {
   user_provider?: string;
 };
 
+type ITopServiceAds = {
+  clicks: number;
+  service_id: string;
+  title: string;
+  description: string;
+  service_type: string;
+  service_type_id: number;
+  provider_id: string;
+  provider_name: string;
+  provider_image: string;
+  service_value: number;
+  review_count: number;
+  score_total: number;
+};
+
 interface IDataContextProps {
   userProfile: IUserDTO | undefined;
   isEmailAvailable(email: string): Promise<boolean>;
@@ -177,6 +192,7 @@ interface IDataContextProps {
   removeImageFromService(serviceAdId: string, imagePath: string): Promise<void>;
   updateServiceAd(newData: ICreateServiceDTO): Promise<IUserServiceAd>;
   updateProfileImage(userId: string, newImagePath: string): Promise<void>;
+  topServiceAds(): Promise<ITopServiceAds[] | undefined>;
 }
 
 const DataContext = createContext({} as IDataContextProps);
@@ -734,6 +750,24 @@ function DataProvider({ children }: DataProviderProps) {
     }
   }
 
+  async function topServiceAds(): Promise<ITopServiceAds[] | undefined> {
+    const { data, error } = await supabase
+      .from("top_services_per_click")
+      .select();
+    if (error) {
+      console.log(JSON.stringify(error, null, 2));
+      throw new AppError(
+        "ERROR while loading top service ads",
+        500,
+        "supabase"
+      );
+    }
+
+    if (data.length === 0) return undefined;
+
+    return data;
+  }
+
   return (
     <DataContext.Provider
       value={{
@@ -764,6 +798,7 @@ function DataProvider({ children }: DataProviderProps) {
         removeImageFromService,
         updateServiceAd,
         updateProfileImage,
+        topServiceAds,
       }}
     >
       {children}
@@ -782,6 +817,7 @@ export {
   IDashboardData,
   IServiceReview,
   IServiceType,
+  ITopServiceAds,
   IUpdateContractDTO,
   IUserDTO,
   IUserServiceAd,

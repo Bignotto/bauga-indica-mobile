@@ -1,3 +1,4 @@
+import { RectButton } from "react-native-gesture-handler";
 import { RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 
@@ -7,13 +8,16 @@ export const ResultItem = styled.View`
   /*TODO: fix margin bottom should not be inside component */
   margin-bottom: 16px;
   background-color: ${({ theme }) => theme.colors.white};
+  /* border-radius: 8px;
+    border-width: 1px;
+    border-color: gray; */
 `;
 
 export const TitleWrapper = styled.View`
   padding-right: 8px;
 `;
 
-export const ContentWrapper = styled.View`
+export const ContentWrapper = styled(RectButton)`
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;
