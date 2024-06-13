@@ -18,6 +18,7 @@ export type StackParamList = {
   };
   ServiceDetails: {
     serviceId: string;
+    searchTerm?: string;
   };
   NewContract: {
     service: IUserServiceAd;

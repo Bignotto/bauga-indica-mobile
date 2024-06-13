@@ -19,11 +19,12 @@ import ReviewScoreCard from "./ReviewScoreCard";
 
 type Params = {
   serviceId: string;
+  searchTerm?: string;
 };
 
 export default function ServiceDetails() {
   const route = useRoute();
-  const { serviceId } = route.params as Params;
+  const { serviceId, searchTerm } = route.params as Params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const { getServiceAdById, userProfile, activityLog } = useData();
@@ -72,6 +73,7 @@ export default function ServiceDetails() {
       event: "contact",
       subject: `${service?.id}`,
       user_provider: service?.providerId?.id,
+      data: searchTerm,
     });
 
     userProfile && service

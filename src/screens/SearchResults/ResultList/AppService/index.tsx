@@ -48,7 +48,10 @@ export default function AppService({
       data: searchText,
     });
 
-    navigation.navigate("ServiceDetails", { serviceId });
+    navigation.navigate("ServiceDetails", {
+      serviceId,
+      searchTerm: searchText,
+    });
     setIsLoading(false);
   }
   return (
