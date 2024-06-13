@@ -65,7 +65,21 @@ export default function UserServiceAds() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {adsList.map((ad) => (
           <ServiceAdCard
-            item={ad}
+            service={{
+              id: ad.id,
+              value: ad.value,
+              description: ad.description,
+              provider: {
+                id: ad.providerId?.id,
+                phone: `${ad.providerId?.phone}`,
+                image: ad.providerId?.image,
+                name: ad.providerId?.name,
+              },
+              serviceType: {
+                id: ad.serviceTypeId?.id,
+                name: ad.serviceTypeId?.name,
+              },
+            }}
             showDescription={true}
             showProvider={true}
             key={ad.id}
