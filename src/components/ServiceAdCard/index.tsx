@@ -143,7 +143,9 @@ export default function ServiceAdCard({
           </AppText>
         </ProviderPriceWrapper>
 
-        {userProfile && userProfile?.id === service.provider?.id ? (
+        {userProfile &&
+        userProfile?.id === service.provider?.id &&
+        showButton ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton

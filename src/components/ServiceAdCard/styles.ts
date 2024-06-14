@@ -5,8 +5,8 @@ import styled from "styled-components/native";
 export const ResultItem = styled.View`
   width: 100%;
 
-  /*TODO: fix margin bottom should not be inside component */
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+  margin-bottom: 8px;
   background-color: ${({ theme }) => theme.colors.white};
   /* border-radius: 8px;
     border-width: 1px;
