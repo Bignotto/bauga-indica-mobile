@@ -19,11 +19,12 @@ import ReviewScoreCard from "./ReviewScoreCard";
 
 type Params = {
   serviceId: string;
+  searchTerm?: string;
 };
 
 export default function ServiceDetails() {
   const route = useRoute();
-  const { serviceId } = route.params as Params;
+  const { serviceId, searchTerm } = route.params as Params;
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   const { getServiceAdById, userProfile, activityLog } = useData();
@@ -66,12 +67,12 @@ export default function ServiceDetails() {
       : navigation.navigate("SignIn");
   }
 
-  //TODO: include searched text to contact logging
   async function handleContact() {
     await activityLog({
       event: "contact",
       subject: `${service?.id}`,
       user_provider: service?.providerId?.id,
+      data: searchTerm,
     });
 
     userProfile && service

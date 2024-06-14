@@ -3,6 +3,7 @@ import AppButton from "@components/AppButton";
 import AppInput from "@components/AppInput";
 import AppLogo from "@components/AppLogo";
 import AppScreenContainer from "@components/AppScreenContainer";
+import AppSpacer from "@components/AppSpacer";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
@@ -42,6 +43,7 @@ export default function Home() {
               onPress={handleSearch}
             />
           </SearchInputWrapper>
+          <AppSpacer verticalSpace="lg" />
         </HomeContainer>
         <TopServices />
       </ScrollView>

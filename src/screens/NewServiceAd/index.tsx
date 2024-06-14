@@ -3,23 +3,15 @@ import AppInput from "@components/AppInput";
 import AppScreenContainer from "@components/AppScreenContainer";
 import AppSpacer from "@components/AppSpacer";
 import AppText from "@components/AppText";
-import { AntDesign } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTheme } from "styled-components";
-import {
-  ColumnWrapper,
-  DatePickerWrapper,
-  FormContainer,
-  TwoColumnsWrapper,
-} from "./styles";
+import { ColumnWrapper, FormContainer, TwoColumnsWrapper } from "./styles";
 
 import AppImageSelector, { AppImagesList } from "@components/AppImageSelector";
+import DateRangeSelector from "@components/DateRangeSelector";
 import ServiceCategorySelector from "@components/ServiceCategorySelector";
 import { AppError } from "@errors/AppError";
 import { IServiceType, useData } from "@hooks/DataContext";
@@ -112,20 +104,12 @@ export default function NewServiceAd() {
     setAdImages(filteredImages);
   }
 
-  function onChangeValidFrom(
-    event: DateTimePickerEvent,
-    selectedDate: Date | undefined
-  ) {
-    setShowDatePicker(false);
-    setValidFrom(selectedDate);
+  function handleSetDateFrom(dateFrom: Date) {
+    setValidFrom(dateFrom);
   }
 
-  function onChangeValidTo(
-    event: DateTimePickerEvent,
-    selectedDate: Date | undefined
-  ) {
-    setShowDatePickerTo(false);
-    setValidTo(selectedDate);
+  function handleSetDateTo(dateTo: Date) {
+    setValidTo(dateTo);
   }
 
   function handleSelected(item: IServiceType) {
@@ -239,68 +223,12 @@ export default function NewServiceAd() {
           <AppText>Validade do anúncio</AppText>
           <AppText size="sm">Por quanto tempo quer seu anúncio ativo?</AppText>
           <AppSpacer />
-          {/* TODO: use app component to select dates */}
-          <TwoColumnsWrapper>
-            <AppInput
-              label="Válido de"
-              editable={false}
-              value={`${moment(validFrom).format("DD/MM/yyyy")}`}
-            />
-            <DatePickerWrapper>
-              <AppButton
-                title=""
-                onPress={() => setShowDatePicker(true)}
-                outline
-                leftIcon={
-                  <>
-                    <AppSpacer />
-                    <AntDesign
-                      name="calendar"
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                    <AppSpacer />
-                  </>
-                }
-              />
-              {showDatePicker && (
-                <DateTimePicker
-                  value={validFrom ?? new Date()}
-                  onChange={onChangeValidFrom}
-                />
-              )}
-            </DatePickerWrapper>
-            <AppSpacer />
-            <AppInput
-              label="Válido até"
-              editable={false}
-              value={`${moment(validTo).format("DD/MM/yyyy")}`}
-            />
-            <DatePickerWrapper>
-              <AppButton
-                title=""
-                onPress={() => setShowDatePickerTo(true)}
-                outline
-                leftIcon={
-                  <>
-                    <AppSpacer />
-                    <AntDesign
-                      name="calendar"
-                      size={24}
-                      color={theme.colors.primary}
-                    />
-                    <AppSpacer />
-                  </>
-                }
-              />
-              {showDatePickerTo && (
-                <DateTimePicker
-                  value={validTo ?? new Date()}
-                  onChange={onChangeValidTo}
-                />
-              )}
-            </DatePickerWrapper>
-          </TwoColumnsWrapper>
+          <DateRangeSelector
+            dateFromValue={validFrom}
+            dateToValue={validTo}
+            onSelectFromDate={handleSetDateFrom}
+            onSelectToDate={handleSetDateTo}
+          />
         </FormContainer>
         <AppSpacer verticalSpace="xlg" />
         <ServiceCategorySelector
