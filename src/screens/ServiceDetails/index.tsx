@@ -67,7 +67,6 @@ export default function ServiceDetails() {
       : navigation.navigate("SignIn");
   }
 
-  //TODO: include searched text to contact logging
   async function handleContact() {
     await activityLog({
       event: "contact",

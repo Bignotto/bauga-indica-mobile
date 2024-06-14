@@ -428,7 +428,7 @@ function DataProvider({ children }: DataProviderProps) {
   async function search(searchText: string): Promise<IUserServiceAd[]> {
     const { data, error } = await supabase
       .from("services")
-      .select("*,serviceTypeId(*),providerId(*)")
+      .select("*,serviceTypeId(*),providerId(*),reviews(*)")
       .or(`title.ilike.%${searchText}%,description.ilike.%${searchText}%`);
     if (error) {
       console.log(JSON.stringify(error, null, 2));

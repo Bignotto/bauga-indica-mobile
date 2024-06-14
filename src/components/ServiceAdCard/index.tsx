@@ -24,7 +24,7 @@ import {
 } from "./styles";
 
 interface ServiceAdCardProps {
-  service?: {
+  service: {
     id?: string;
     title?: string;
     description?: string;
@@ -50,6 +50,7 @@ interface ServiceAdCardProps {
   showDescription?: boolean;
   showProvider?: boolean;
   showReviewScore?: boolean;
+  searchText?: string;
 }
 
 export default function ServiceAdCard({
@@ -59,19 +60,38 @@ export default function ServiceAdCard({
   showDescription = true,
   showProvider = true,
   showReviewScore = false,
+  searchText,
 }: ServiceAdCardProps) {
-  const { userProfile } = useData();
+  const { userProfile, activityLog } = useData();
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
   async function handleServiceDetails(serviceId: string) {
-    navigation.navigate("ServiceDetails", { serviceId });
+    await activityLog({
+      event: "click",
+      subject: `${service.id}`,
+      data: searchText,
+      user_id: userProfile ? userProfile.id : "guest",
+      user_provider: service.provider?.id,
+    });
+    navigation.navigate("ServiceDetails", {
+      serviceId,
+      searchTerm: searchText,
+    });
   }
 
   async function handleContactProvider() {
+    await activityLog({
+      event: "contact",
+      subject: `${service.id}`,
+      data: searchText,
+      user_id: userProfile ? userProfile.id : "guest",
+      user_provider: service.provider?.id,
+    });
+
     userProfile
       ? Linking.openURL(
-          `whatsapp://send?text=Olá ${service?.provider?.name}! Encontrei seu contato no IndicApp. Gostaria de um orçamento para o serviço ${service?.title}&phone=+55${service?.provider?.phone}`
+          `whatsapp://send?text=Olá ${service.provider?.name}! Encontrei seu contato no IndicApp. Gostaria de um orçamento para o serviço ${service.title}&phone=+55${service.provider?.phone}`
         )
       : navigation.navigate("SignIn");
   }
@@ -84,22 +104,22 @@ export default function ServiceAdCard({
 
   return (
     <ResultItem>
-      <ContentWrapper onPress={() => handleServiceDetails(`${service?.id}`)}>
+      <ContentWrapper onPress={() => handleServiceDetails(`${service.id}`)}>
         <TagWrapper>
           <Tag>
-            <TagText>{service?.serviceType?.name}</TagText>
+            <TagText>{service.serviceType?.name}</TagText>
           </Tag>
         </TagWrapper>
         <TitleWrapper>
           <AppText bold size="lg">
-            {service?.title}
+            {service.title}
           </AppText>
         </TitleWrapper>
-        {showDescription && <AppText>{service?.description}</AppText>}
+        {showDescription && <AppText>{service.description}</AppText>}
         {showReviewScore && (
           <AppStarsScore
-            reviewCount={service?.review?.count ?? 0}
-            score={service?.review?.score_total ?? 0}
+            reviewCount={service.review?.count ?? 0}
+            score={service.review?.score_total ?? 0}
           />
         )}
 
@@ -109,11 +129,11 @@ export default function ServiceAdCard({
             <ProviderInfoWrapper>
               <ProviderAvatar
                 source={{
-                  uri: service?.provider?.image,
+                  uri: service.provider?.image,
                 }}
               />
               <ProviderName>
-                <AppText bold>{service?.provider?.name}</AppText>
+                <AppText bold>{service.provider?.name}</AppText>
               </ProviderName>
             </ProviderInfoWrapper>
           )}
@@ -123,13 +143,13 @@ export default function ServiceAdCard({
           </AppText>
         </ProviderPriceWrapper>
 
-        {userProfile && userProfile?.id === service?.provider?.id ? (
+        {userProfile && userProfile?.id === service.provider?.id ? (
           <OwnerButtonsWrapper>
             <AppButton size="sm" title="Excluir" variant="negative" />
             <AppButton
               size="sm"
               title="Editar"
-              onPress={() => handleEditServiceAd(`${service?.id}`)}
+              onPress={() => handleEditServiceAd(`${service.id}`)}
             />
           </OwnerButtonsWrapper>
         ) : (
@@ -137,7 +157,7 @@ export default function ServiceAdCard({
             {showButton && buttonType === "details" && (
               <AppButton
                 title="Ver mais detalhes"
-                onPress={() => handleServiceDetails(`${service?.id}`)}
+                onPress={() => handleServiceDetails(`${service.id}`)}
               />
             )}
             {showButton && buttonType === "contact" && (
