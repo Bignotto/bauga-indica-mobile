@@ -17,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "@routes/Navigation.types";
 import { isPhoneNumberValid } from "@utils/phoneValidator";
 import * as ImagePicker from "expo-image-picker";
+import * as Linking from "expo-linking";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -125,6 +126,10 @@ export default function Profile() {
     }
   }
 
+  async function handleOpenUserPortal() {
+    Linking.openURL("https://native-octopus-80.accounts.dev/user");
+  }
+
   return (
     <AppScreenContainer
       headerColor={theme.colors.white}
@@ -228,6 +233,13 @@ export default function Profile() {
         />
         <AppSpacer />
         <AppButton title="Cancelar" variant="negative" outline />
+        <AppSpacer />
+        <AppButton
+          title="Portal do usuário"
+          onPress={handleOpenUserPortal}
+          outline
+        />
+        <AppSpacer verticalSpace="xlg" />
       </ScrollView>
     </AppScreenContainer>
   );
